@@ -1,0 +1,29 @@
+# config context path to "/" by setting an empty string
+server:
+  contextPath:
+
+# JACKSON
+spring:
+  jackson:
+    serialization:
+      INDENT_OUTPUT: true
+
+jwt:
+  header: Authorization
+  secret: mySecret
+  expiration: 604800
+  route:
+    authentication:
+      path: auth
+      refresh: refresh
+
+wechat:
+  mp:
+    secret: d4624c36b6795d1d99dcf0547af5443d
+    appId: wxf183e81ce4464169
+    token: aa
+    aesKey: bb
+#logging:
+#  level:
+#    org.springframework:
+#      security: DEBUG
