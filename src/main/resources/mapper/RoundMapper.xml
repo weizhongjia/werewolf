@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.msh.mapper.RoundMapper">
+  <resultMap id="BaseResultMap" type="com.msh.model.werewolf.Round">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="room_id" jdbcType="INTEGER" property="roomId" />
+    <result column="roundno" jdbcType="INTEGER" property="roundno" />
+    <result column="player_number" jdbcType="INTEGER" property="playerNumber" />
+    <result column="player_state" jdbcType="INTEGER" property="playerState" />
+    <result column="inserttime" jdbcType="INTEGER" property="inserttime" />
+    <result column="overtime" jdbcType="INTEGER" property="overtime" />
+    <result column="state" jdbcType="INTEGER" property="state" />
+    <result column="sheriffuid" jdbcType="INTEGER" property="sheriffuid" />
+    <result column="sheriffpid" jdbcType="INTEGER" property="sheriffpid" />
+    <result column="wolfkilluid" jdbcType="INTEGER" property="wolfkilluid" />
+    <result column="wolfkillpid" jdbcType="INTEGER" property="wolfkillpid" />
+    <result column="prophetuid" jdbcType="INTEGER" property="prophetuid" />
+    <result column="prophetpid" jdbcType="INTEGER" property="prophetpid" />
+    <result column="witchpoisonuid" jdbcType="INTEGER" property="witchpoisonuid" />
+    <result column="witchpoisonpid" jdbcType="INTEGER" property="witchpoisonpid" />
+    <result column="witchsaveduid" jdbcType="INTEGER" property="witchsaveduid" />
+    <result column="witchsavedpid" jdbcType="INTEGER" property="witchsavedpid" />
+    <result column="voteuid" jdbcType="INTEGER" property="voteuid" />
+    <result column="votepid" jdbcType="INTEGER" property="votepid" />
+  </resultMap>
+  <resultMap id="BaseResultMap" type="com.msh.model.werewolf.Round">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="room_id" jdbcType="INTEGER" property="roomId" />
+    <result column="roundno" jdbcType="INTEGER" property="roundno" />
+    <result column="player_number" jdbcType="INTEGER" property="playerNumber" />
+    <result column="player_state" jdbcType="INTEGER" property="playerState" />
+    <result column="inserttime" jdbcType="INTEGER" property="inserttime" />
+    <result column="overtime" jdbcType="INTEGER" property="overtime" />
+    <result column="state" jdbcType="INTEGER" property="state" />
+    <result column="sheriffuid" jdbcType="INTEGER" property="sheriffuid" />
+    <result column="sheriffpid" jdbcType="INTEGER" property="sheriffpid" />
+    <result column="wolfkilluid" jdbcType="INTEGER" property="wolfkilluid" />
+    <result column="wolfkillpid" jdbcType="INTEGER" property="wolfkillpid" />
+    <result column="prophetuid" jdbcType="INTEGER" property="prophetuid" />
+    <result column="prophetpid" jdbcType="INTEGER" property="prophetpid" />
+    <result column="witchpoisonuid" jdbcType="INTEGER" property="witchpoisonuid" />
+    <result column="witchpoisonpid" jdbcType="INTEGER" property="witchpoisonpid" />
+    <result column="witchsaveduid" jdbcType="INTEGER" property="witchsaveduid" />
+    <result column="witchsavedpid" jdbcType="INTEGER" property="witchsavedpid" />
+    <result column="voteuid" jdbcType="INTEGER" property="voteuid" />
+    <result column="votepid" jdbcType="INTEGER" property="votepid" />
+  </resultMap>
+  <resultMap id="BaseResultMap" type="tk.mybatis.springboot.model.Round">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="room_id" jdbcType="INTEGER" property="roomId" />
+    <result column="roundno" jdbcType="INTEGER" property="roundno" />
+    <result column="player_number" jdbcType="INTEGER" property="playerNumber" />
+    <result column="player_state" jdbcType="INTEGER" property="playerState" />
+    <result column="inserttime" jdbcType="INTEGER" property="inserttime" />
+    <result column="overtime" jdbcType="INTEGER" property="overtime" />
+    <result column="state" jdbcType="INTEGER" property="state" />
+    <result column="sheriffuid" jdbcType="INTEGER" property="sheriffuid" />
+    <result column="sheriffpid" jdbcType="INTEGER" property="sheriffpid" />
+    <result column="wolfkilluid" jdbcType="INTEGER" property="wolfkilluid" />
+    <result column="wolfkillpid" jdbcType="INTEGER" property="wolfkillpid" />
+    <result column="prophetuid" jdbcType="INTEGER" property="prophetuid" />
+    <result column="prophetpid" jdbcType="INTEGER" property="prophetpid" />
+    <result column="witchpoisonuid" jdbcType="INTEGER" property="witchpoisonuid" />
+    <result column="witchpoisonpid" jdbcType="INTEGER" property="witchpoisonpid" />
+    <result column="witchsaveduid" jdbcType="INTEGER" property="witchsaveduid" />
+    <result column="witchsavedpid" jdbcType="INTEGER" property="witchsavedpid" />
+    <result column="voteuid" jdbcType="INTEGER" property="voteuid" />
+    <result column="votepid" jdbcType="INTEGER" property="votepid" />
+  </resultMap>
+</mapper>

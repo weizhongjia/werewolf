@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.msh.mapper.RoleMapper">
+  <resultMap id="BaseResultMap" type="com.msh.model.werewolf.Role">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="uid" jdbcType="INTEGER" property="uid" />
+    <result column="role" jdbcType="VARCHAR" property="role" />
+    <result column="player_no" jdbcType="INTEGER" property="playerNo" />
+    <result column="player_state" jdbcType="INTEGER" property="playerState" />
+    <result column="inserttime" jdbcType="INTEGER" property="inserttime" />
+    <result column="overtime" jdbcType="INTEGER" property="overtime" />
+    <result column="overround" jdbcType="INTEGER" property="overround" />
+    <result column="player_result" jdbcType="INTEGER" property="playerResult" />
+  </resultMap>
+  <resultMap id="BaseResultMap" type="com.msh.model.werewolf.Role">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="uid" jdbcType="INTEGER" property="uid" />
+    <result column="role" jdbcType="VARCHAR" property="role" />
+    <result column="player_no" jdbcType="INTEGER" property="playerNo" />
+    <result column="player_state" jdbcType="INTEGER" property="playerState" />
+    <result column="inserttime" jdbcType="INTEGER" property="inserttime" />
+    <result column="overtime" jdbcType="INTEGER" property="overtime" />
+    <result column="overround" jdbcType="INTEGER" property="overround" />
+    <result column="player_result" jdbcType="INTEGER" property="playerResult" />
+  </resultMap>
+  <resultMap id="BaseResultMap" type="tk.mybatis.springboot.model.Role">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="uid" jdbcType="INTEGER" property="uid" />
+    <result column="role" jdbcType="VARCHAR" property="role" />
+    <result column="player_no" jdbcType="INTEGER" property="playerNo" />
+    <result column="player_state" jdbcType="INTEGER" property="playerState" />
+    <result column="inserttime" jdbcType="INTEGER" property="inserttime" />
+    <result column="overtime" jdbcType="INTEGER" property="overtime" />
+    <result column="overround" jdbcType="INTEGER" property="overround" />
+    <result column="player_result" jdbcType="INTEGER" property="playerResult" />
+  </resultMap>
+</mapper>

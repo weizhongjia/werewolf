@@ -23,6 +23,38 @@ wechat:
     appId: wxf183e81ce4464169
     token: aa
     aesKey: bb
+druid:
+  url: jdbc:mysql://127.0.0.1:8001/werewolf
+  username: werewolf
+  password: 123456
+  initial-size: 1
+  min-idle: 1
+  max-active: 20
+  test-on-borrow: true
+  driver-class: com.mysql.jdbc.Driver
+
+mybatis:
+    type-aliases-package: tk.mybatis.springboot.model
+    mapper-locations: classpath:mapper/*.xml
+
+mapper:
+    mappers:
+        - tk.mybatis.springboot.util.MyMapper
+    not-empty: false
+    identity: MYSQL
+security:
+  oauth2:
+    client:
+      appid: wxf183e81ce4464169
+      secret: d4624c36b6795d1d99dcf0547af5443d
+      accessTokenUri:  https://api.weixin.qq.com/sns/oauth2/access_token
+      userAuthorizationUri: https://open.weixin.qq.com/connect/oauth2/authorize
+      tokenName: access_token
+      authenticationScheme: query
+      clientAuthenticationScheme: form
+    resource:
+      userInfoUri: https://api.weixin.qq.com/sns/userinfo
+
 #logging:
 #  level:
 #    org.springframework:
