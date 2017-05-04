@@ -39,7 +39,7 @@ mybatis:
 
 mapper:
     mappers:
-        - tk.mybatis.springboot.util.MyMapper
+        - com.msh.util.MyMapper
     not-empty: false
     identity: MYSQL
 security:

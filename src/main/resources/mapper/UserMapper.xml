@@ -1,55 +1,21 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.msh.mapper.UserMapper">
-  <resultMap id="BaseResultMap" type="com.msh.model.security.User">
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.msh.mapper.UserMapper" >
+  <resultMap id="BaseResultMap" type="com.msh.model.security.User" >
     <!--
       WARNING - @mbg.generated
     -->
-    <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="openid" jdbcType="VARCHAR" property="openid" />
-    <result column="nickname" jdbcType="VARCHAR" property="nickname" />
-    <result column="sex" jdbcType="INTEGER" property="sex" />
-    <result column="city" jdbcType="VARCHAR" property="city" />
-    <result column="province" jdbcType="VARCHAR" property="province" />
-    <result column="country" jdbcType="VARCHAR" property="country" />
-    <result column="headimgurl" jdbcType="VARCHAR" property="headimgurl" />
-    <result column="subscribe_time" jdbcType="INTEGER" property="subscribeTime" />
-    <result column="remark" jdbcType="VARCHAR" property="remark" />
-    <result column="groupid" jdbcType="VARCHAR" property="groupid" />
-    <result column="groupname" jdbcType="VARCHAR" property="groupname" />
-  </resultMap>
-  <resultMap id="BaseResultMap" type="com.msh.model.security.User">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="openid" jdbcType="VARCHAR" property="openid" />
-    <result column="nickname" jdbcType="VARCHAR" property="nickname" />
-    <result column="sex" jdbcType="INTEGER" property="sex" />
-    <result column="city" jdbcType="VARCHAR" property="city" />
-    <result column="province" jdbcType="VARCHAR" property="province" />
-    <result column="country" jdbcType="VARCHAR" property="country" />
-    <result column="headimgurl" jdbcType="VARCHAR" property="headimgurl" />
-    <result column="subscribe_time" jdbcType="INTEGER" property="subscribeTime" />
-    <result column="remark" jdbcType="VARCHAR" property="remark" />
-    <result column="groupid" jdbcType="VARCHAR" property="groupid" />
-    <result column="groupname" jdbcType="VARCHAR" property="groupname" />
-  </resultMap>
-  <resultMap id="BaseResultMap" type="tk.mybatis.springboot.model.User">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="openid" jdbcType="VARCHAR" property="openid" />
-    <result column="nickname" jdbcType="VARCHAR" property="nickname" />
-    <result column="sex" jdbcType="INTEGER" property="sex" />
-    <result column="city" jdbcType="VARCHAR" property="city" />
-    <result column="province" jdbcType="VARCHAR" property="province" />
-    <result column="country" jdbcType="VARCHAR" property="country" />
-    <result column="headimgurl" jdbcType="VARCHAR" property="headimgurl" />
-    <result column="subscribe_time" jdbcType="INTEGER" property="subscribeTime" />
-    <result column="remark" jdbcType="VARCHAR" property="remark" />
-    <result column="groupid" jdbcType="VARCHAR" property="groupid" />
-    <result column="groupname" jdbcType="VARCHAR" property="groupname" />
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="openid" property="openid" jdbcType="VARCHAR" />
+    <result column="nickname" property="nickname" jdbcType="VARCHAR" />
+    <result column="sex" property="sex" jdbcType="INTEGER" />
+    <result column="city" property="city" jdbcType="VARCHAR" />
+    <result column="province" property="province" jdbcType="VARCHAR" />
+    <result column="country" property="country" jdbcType="VARCHAR" />
+    <result column="headimgurl" property="headimgurl" jdbcType="VARCHAR" />
+    <result column="subscribe_time" property="subscribeTime" jdbcType="INTEGER" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="groupid" property="groupid" jdbcType="VARCHAR" />
+    <result column="groupname" property="groupname" jdbcType="VARCHAR" />
   </resultMap>
 </mapper>

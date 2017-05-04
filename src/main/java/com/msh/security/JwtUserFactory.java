@@ -1,14 +1,13 @@
 package com.msh.security;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import com.msh.model.security.Authority;
 import com.msh.model.security.AuthorityName;
 import com.msh.model.security.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public final class JwtUserFactory {
 

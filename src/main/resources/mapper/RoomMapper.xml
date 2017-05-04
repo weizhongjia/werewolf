@@ -1,49 +1,19 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.msh.mapper.RoomMapper">
-  <resultMap id="BaseResultMap" type="com.msh.model.werewolf.Room">
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.msh.mapper.RoomMapper" >
+  <resultMap id="BaseResultMap" type="com.msh.model.Room" >
     <!--
       WARNING - @mbg.generated
     -->
-    <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="room_id" jdbcType="INTEGER" property="roomId" />
-    <result column="state" jdbcType="INTEGER" property="state" />
-    <result column="size" jdbcType="INTEGER" property="size" />
-    <result column="judge" jdbcType="INTEGER" property="judge" />
-    <result column="wereworf_victory" jdbcType="INTEGER" property="wereworfVictory" />
-    <result column="roundnum" jdbcType="INTEGER" property="roundnum" />
-    <result column="insettime" jdbcType="INTEGER" property="insettime" />
-    <result column="starttime" jdbcType="INTEGER" property="starttime" />
-    <result column="endtime" jdbcType="INTEGER" property="endtime" />
-  </resultMap>
-  <resultMap id="BaseResultMap" type="com.msh.model.werewolf.Room">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="room_id" jdbcType="INTEGER" property="roomId" />
-    <result column="state" jdbcType="INTEGER" property="state" />
-    <result column="size" jdbcType="INTEGER" property="size" />
-    <result column="judge" jdbcType="INTEGER" property="judge" />
-    <result column="wereworf_victory" jdbcType="INTEGER" property="wereworfVictory" />
-    <result column="roundnum" jdbcType="INTEGER" property="roundnum" />
-    <result column="insettime" jdbcType="INTEGER" property="insettime" />
-    <result column="starttime" jdbcType="INTEGER" property="starttime" />
-    <result column="endtime" jdbcType="INTEGER" property="endtime" />
-  </resultMap>
-  <resultMap id="BaseResultMap" type="tk.mybatis.springboot.model.Room">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="room_id" jdbcType="INTEGER" property="roomId" />
-    <result column="state" jdbcType="INTEGER" property="state" />
-    <result column="size" jdbcType="INTEGER" property="size" />
-    <result column="judge" jdbcType="INTEGER" property="judge" />
-    <result column="wereworf_victory" jdbcType="INTEGER" property="wereworfVictory" />
-    <result column="roundnum" jdbcType="INTEGER" property="roundnum" />
-    <result column="insettime" jdbcType="INTEGER" property="insettime" />
-    <result column="starttime" jdbcType="INTEGER" property="starttime" />
-    <result column="endtime" jdbcType="INTEGER" property="endtime" />
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="room_id" property="roomId" jdbcType="INTEGER" />
+    <result column="state" property="state" jdbcType="INTEGER" />
+    <result column="size" property="size" jdbcType="INTEGER" />
+    <result column="judge" property="judge" jdbcType="INTEGER" />
+    <result column="wereworf_victory" property="wereworfVictory" jdbcType="INTEGER" />
+    <result column="roundnum" property="roundnum" jdbcType="INTEGER" />
+    <result column="insettime" property="insettime" jdbcType="INTEGER" />
+    <result column="starttime" property="starttime" jdbcType="INTEGER" />
+    <result column="endtime" property="endtime" jdbcType="INTEGER" />
   </resultMap>
 </mapper>

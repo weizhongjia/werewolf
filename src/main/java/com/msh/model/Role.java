@@ -1,4 +1,4 @@
-package com.msh.model.werewolf;
+package com.msh.model;
 
 import javax.persistence.*;
 
