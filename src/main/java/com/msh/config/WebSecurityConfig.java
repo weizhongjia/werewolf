@@ -2,6 +2,7 @@ package com.msh.config;
 
 import com.msh.security.JwtAuthenticationEntryPoint;
 import com.msh.security.JwtAuthenticationTokenFilter;
+import com.msh.security.service.WechatAuthProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,23 +28,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private JwtAuthenticationEntryPoint unauthorizedHandler;
 
     @Autowired
-    private UserDetailsService userDetailsService;
-
-    @Autowired
     public void configureAuthentication(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
         authenticationManagerBuilder
-                .userDetailsService(this.userDetailsService)
-                .passwordEncoder(passwordEncoder());
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+                .authenticationProvider(wechatAuthProvider());
     }
 
     @Bean
     public JwtAuthenticationTokenFilter authenticationTokenFilterBean() throws Exception {
         return new JwtAuthenticationTokenFilter();
+    }
+
+    @Bean
+    public WechatAuthProvider wechatAuthProvider() {
+        return new WechatAuthProvider();
     }
 
     @Override

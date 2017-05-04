@@ -1,144 +1,200 @@
 package com.msh.model.security;
 
-import java.util.Date;
-import java.util.List;
+import javax.persistence.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
-@Entity
-@Table(name = "USER")
 public class User {
-
     @Id
-    @Column(name = "ID")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq")
-    @SequenceGenerator(name = "user_seq", sequenceName = "user_seq", allocationSize = 1)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
-    @Column(name = "USERNAME", length = 50, unique = true)
-    @NotNull
-    @Size(min = 4, max = 50)
-    private String username;
+    private String openid;
 
-    @Column(name = "PASSWORD", length = 100)
-    @NotNull
-    @Size(min = 4, max = 100)
-    private String password;
+    private String nickname;
 
-    @Column(name = "FIRSTNAME", length = 50)
-    @NotNull
-    @Size(min = 4, max = 50)
-    private String firstname;
+    private Integer sex;
 
-    @Column(name = "LASTNAME", length = 50)
-    @NotNull
-    @Size(min = 4, max = 50)
-    private String lastname;
+    private String city;
 
-    @Column(name = "EMAIL", length = 50)
-    @NotNull
-    @Size(min = 4, max = 50)
-    private String email;
+    private String province;
 
-    @Column(name = "ENABLED")
-    @NotNull
-    private Boolean enabled;
+    private String country;
 
-    @Column(name = "LASTPASSWORDRESETDATE")
-    @Temporal(TemporalType.TIMESTAMP)
-    @NotNull
-    private Date lastPasswordResetDate;
+    private String headimgurl;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "USER_AUTHORITY",
-            joinColumns = {@JoinColumn(name = "USER_ID", referencedColumnName = "ID")},
-            inverseJoinColumns = {@JoinColumn(name = "AUTHORITY_ID", referencedColumnName = "ID")})
-    private List<Authority> authorities;
+    @Column(name = "subscribe_time")
+    private Integer subscribeTime;
 
-    public Long getId() {
+    private String remark;
+
+    private String groupid;
+
+    private String groupname;
+
+    /**
+     * @return id
+     */
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    /**
+     * @param id
+     */
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public String getUsername() {
-        return username;
+    /**
+     * @return openid
+     */
+    public String getOpenid() {
+        return openid;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    /**
+     * @param openid
+     */
+    public void setOpenid(String openid) {
+        this.openid = openid;
     }
 
-    public String getPassword() {
-        return password;
+    /**
+     * @return nickname
+     */
+    public String getNickname() {
+        return nickname;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    /**
+     * @param nickname
+     */
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 
-    public String getFirstname() {
-        return firstname;
+    /**
+     * @return sex
+     */
+    public Integer getSex() {
+        return sex;
     }
 
-    public void setFirstname(String firstname) {
-        this.firstname = firstname;
+    /**
+     * @param sex
+     */
+    public void setSex(Integer sex) {
+        this.sex = sex;
     }
 
-    public String getLastname() {
-        return lastname;
+    /**
+     * @return city
+     */
+    public String getCity() {
+        return city;
     }
 
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
+    /**
+     * @param city
+     */
+    public void setCity(String city) {
+        this.city = city;
     }
 
-    public String getEmail() {
-        return email;
+    /**
+     * @return province
+     */
+    public String getProvince() {
+        return province;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    /**
+     * @param province
+     */
+    public void setProvince(String province) {
+        this.province = province;
     }
 
-    public Boolean getEnabled() {
-        return enabled;
+    /**
+     * @return country
+     */
+    public String getCountry() {
+        return country;
     }
 
-    public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
+    /**
+     * @param country
+     */
+    public void setCountry(String country) {
+        this.country = country;
     }
 
-    public List<Authority> getAuthorities() {
-        return authorities;
+    /**
+     * @return headimgurl
+     */
+    public String getHeadimgurl() {
+        return headimgurl;
     }
 
-    public void setAuthorities(List<Authority> authorities) {
-        this.authorities = authorities;
+    /**
+     * @param headimgurl
+     */
+    public void setHeadimgurl(String headimgurl) {
+        this.headimgurl = headimgurl;
     }
 
-    public Date getLastPasswordResetDate() {
-        return lastPasswordResetDate;
+    /**
+     * @return subscribe_time
+     */
+    public Integer getSubscribeTime() {
+        return subscribeTime;
     }
 
-    public void setLastPasswordResetDate(Date lastPasswordResetDate) {
-        this.lastPasswordResetDate = lastPasswordResetDate;
+    /**
+     * @param subscribeTime
+     */
+    public void setSubscribeTime(Integer subscribeTime) {
+        this.subscribeTime = subscribeTime;
+    }
+
+    /**
+     * @return remark
+     */
+    public String getRemark() {
+        return remark;
+    }
+
+    /**
+     * @param remark
+     */
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
+    /**
+     * @return groupid
+     */
+    public String getGroupid() {
+        return groupid;
+    }
+
+    /**
+     * @param groupid
+     */
+    public void setGroupid(String groupid) {
+        this.groupid = groupid;
+    }
+
+    /**
+     * @return groupname
+     */
+    public String getGroupname() {
+        return groupname;
+    }
+
+    /**
+     * @param groupname
+     */
+    public void setGroupname(String groupname) {
+        this.groupname = groupname;
     }
 }

@@ -5,7 +5,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mobile.device.Device;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
@@ -120,9 +119,9 @@ public class JwtTokenUtil implements Serializable {
         return (AUDIENCE_TABLET.equals(audience) || AUDIENCE_MOBILE.equals(audience));
     }
 
-    public String generateToken(UserDetails userDetails, Device device) {
+    public String generateToken(JwtUser userDetails, Device device) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put(CLAIM_KEY_USERNAME, userDetails.getUsername());
+        claims.put(CLAIM_KEY_USERNAME, userDetails.getOpenId());
         claims.put(CLAIM_KEY_AUDIENCE, generateAudience(device));
         claims.put(CLAIM_KEY_CREATED, new Date());
         return generateToken(claims);
@@ -154,14 +153,7 @@ public class JwtTokenUtil implements Serializable {
         return refreshedToken;
     }
 
-    public Boolean validateToken(String token, UserDetails userDetails) {
-        JwtUser user = (JwtUser) userDetails;
-        final String username = getUsernameFromToken(token);
-        final Date created = getCreatedDateFromToken(token);
-        //final Date expiration = getExpirationDateFromToken(token);
-        return (
-                username.equals(user.getUsername())
-                        && !isTokenExpired(token)
-                        && !isCreatedBeforeLastPasswordReset(created, user.getLastPasswordResetDate()));
+    public Boolean validateToken(String token) {
+        return !isTokenExpired(token);
     }
 }
