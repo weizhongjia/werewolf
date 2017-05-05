@@ -10,7 +10,24 @@
 
     <name>werewolf</name>
     <description>狼人杀游戏</description>
-
+    <repositories>
+        <repository>
+            <id>nexus-aliyun</id>
+            <name>Nexus aliyun</name>
+            <layout>default</layout>
+            <url>http://maven.aliyun.com/nexus/content/groups/public</url>
+        </repository>
+        <!-- 中央仓库 -->
+        <repository>
+            <id>central</id>
+            <name> Maven Repository Switchboard</name>
+            <!--<layout> default</layout>-->
+            <url>http://repo1.maven.org/maven2</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
