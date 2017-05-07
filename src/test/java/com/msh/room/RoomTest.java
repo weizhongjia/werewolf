@@ -4,12 +4,12 @@ import com.msh.room.cache.RoomStateDataRepository;
 import com.msh.room.dto.event.JudgeEvent;
 import com.msh.room.dto.event.JudgeEventType;
 import com.msh.room.dto.event.PlayerEvent;
+import com.msh.room.dto.event.PlayerEventType;
 import com.msh.room.dto.response.JudgeDisplayInfo;
 import com.msh.room.dto.response.PlayerDisplayInfo;
 import com.msh.room.dto.response.seat.PlayerSeatInfo;
 import com.msh.room.dto.room.RoomStateData;
 import com.msh.room.dto.room.RoomStatus;
-import com.msh.room.exception.RoomBusinessException;
 import com.msh.room.model.role.Roles;
 import com.msh.room.model.room.Room;
 import com.msh.room.model.room.RoomManager;
@@ -20,8 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Created by zhangruiqian on 2017/5/5.
@@ -50,7 +49,7 @@ public class RoomTest {
     }
 
     @Test
-    public void testCreateRoom() throws RoomBusinessException {
+    public void testCreateRoom() {
         JudgeEvent event = constructCreateRoomEvent(roomCode);
         Room room = roomManager.loadRoom(event.getRoomCode());
         //执行事件
@@ -61,13 +60,14 @@ public class RoomTest {
         //房间状态
         assertEquals(RoomStatus.CRATING, judgeDisplayInfo.getStatus());
         //座位校验
-        List<PlayerSeatInfo> seatInfoList = judgeDisplayInfo.getPlayerSeatInfo();
+        List<PlayerSeatInfo> seatInfoList = judgeDisplayInfo.getPlayerSeatInfoList();
         assertEquals(12, seatInfoList.size());
         for (int i = 0; i < seatInfoList.size(); i++) {
             //每个座位均可用
             assertTrue(seatInfoList.get(i).isSeatAvailable());
             //每个座位号均不重复
             assertEquals(Integer.valueOf(i + 1), seatInfoList.get(i).getSeatNumber());
+            assertEquals(Roles.NONE, seatInfoList.get(i).getRole());
         }
 
         /**
@@ -90,15 +90,24 @@ public class RoomTest {
             assertTrue(stateDataPlayerSeatInfo.get(i).isSeatAvailable());
             //每个座位号均不重复
             assertEquals(Integer.valueOf(i + 1), stateDataPlayerSeatInfo.get(i).getSeatNumber());
+            assertEquals(Roles.NONE, stateDataPlayerSeatInfo.get(i).getRole());
         }
 
+        /**
+         * 普通用户视角
+         */
+        for (int i = 1; i <= 12; i++) {
+            PlayerDisplayInfo playerDisplayResult = room.getPlayerDisplayResult(i);
+            assertTrue(playerDisplayResult.getPlayerInfo().isSeatAvailable());
+            assertEquals(PlayerEventType.JOIN_ROOM, playerDisplayResult.getAcceptableEventTypeList().get(0));
+        }
     }
 
     private JudgeEvent constructCreateRoomEvent(String roomCode) {
         JudgeEvent event = new JudgeEvent(roomCode, JudgeEventType.CREATE_ROOM);
         Map<Roles, Integer> gameConfig = new HashMap<>();
         gameConfig.put(Roles.VILLAGER, 4);
-        gameConfig.put(Roles.WEREWOLVE, 4);
+        gameConfig.put(Roles.WEREWOLVES, 4);
         gameConfig.put(Roles.WITCH, 1);
         gameConfig.put(Roles.HUNTER, 1);
         gameConfig.put(Roles.SEER, 1);
@@ -108,11 +117,8 @@ public class RoomTest {
     }
 
     @Test
-    public void testJoinGame() throws RoomBusinessException {
-        //创建房间
-        JudgeEvent createRoomEvent = constructCreateRoomEvent(roomCode);
-        Room room = roomManager.loadRoom(createRoomEvent.getRoomCode());
-        room.resolveJudgeEvent(createRoomEvent);
+    public void testJoinGame() {
+        Room room = createRoom();
         String userId = "Richard";
         int seatNumber = 1;
         PlayerEvent event = constructPlayerJoinEvent(seatNumber, userId);
@@ -121,10 +127,14 @@ public class RoomTest {
         /**
          * 返回值校验
          */
+        //可接受离开事件
+        assertEquals(1, playerDisplayInfo.getAcceptableEventTypeList().size());
+        assertEquals(PlayerEventType.Exit_ROOM, playerDisplayInfo.getAcceptableEventTypeList().get(0));
+
         PlayerSeatInfo playerInfo = playerDisplayInfo.getPlayerInfo();
-        assertEquals(Roles.NONE, playerInfo.getRole());
-        assertEquals(false, playerInfo.isSeatAvailable());
-        assertEquals(true, playerInfo.isAlive());
+        assertEquals(Roles.UNASSIGN, playerInfo.getRole());
+        assertFalse(playerInfo.isSeatAvailable());
+        assertTrue(playerInfo.isAlive());
         assertEquals(userId, playerInfo.getUserID());
 
         List<PlayerSeatInfo> playerSeatInfoList = playerDisplayInfo.getPlayerSeatInfoList();
@@ -147,9 +157,9 @@ public class RoomTest {
         assertEquals(12, stateDataPlayerSeatInfo.size());
         for (int i = 0; i < stateDataPlayerSeatInfo.size(); i++) {
             if (i == (seatNumber - 1)) {
-                assertEquals(Roles.NONE, stateDataPlayerSeatInfo.get(i).getRole());
-                assertEquals(false, stateDataPlayerSeatInfo.get(i).isSeatAvailable());
-                assertEquals(true, stateDataPlayerSeatInfo.get(i).isAlive());
+                assertEquals(Roles.UNASSIGN, stateDataPlayerSeatInfo.get(i).getRole());
+                assertFalse(stateDataPlayerSeatInfo.get(i).isSeatAvailable());
+                assertTrue(stateDataPlayerSeatInfo.get(i).isAlive());
                 assertEquals(userId, stateDataPlayerSeatInfo.get(i).getUserID());
                 continue;
             }
@@ -158,13 +168,127 @@ public class RoomTest {
             //每个座位号均不重复
             assertEquals(Integer.valueOf(i + 1), stateDataPlayerSeatInfo.get(i).getSeatNumber());
         }
+
+        /**
+         * 法官界面校验
+         */
+        JudgeDisplayInfo judgeResult = room.getJudgeDisplayResult();
+        PlayerSeatInfo seatInfo = judgeResult.getPlayerSeatInfoList().get(seatNumber - 1);
+        assertEquals(Roles.UNASSIGN, seatInfo.getRole());
+        assertEquals(userId, seatInfo.getUserID());
+        assertFalse(seatInfo.isSeatAvailable());
+    }
+
+    private Room createRoom() {
+        //创建房间
+        JudgeEvent createRoomEvent = constructCreateRoomEvent(roomCode);
+        Room room = roomManager.loadRoom(createRoomEvent.getRoomCode());
+        room.resolveJudgeEvent(createRoomEvent);
+        return room;
     }
 
     private PlayerEvent constructPlayerJoinEvent(int seatNumber, String userId) {
-        PlayerEvent event = new PlayerEvent(seatNumber, userId);
+        PlayerEvent event = new PlayerEvent(PlayerEventType.JOIN_ROOM, seatNumber, userId);
         return event;
     }
 
+    @Test
+    public void testExitRoom() {
+        int seatNumber = 1;
+        String userId = "Richard";
+        Room room = createRoom();
+        PlayerEvent event = constructPlayerJoinEvent(seatNumber, userId);
+        //加入
+        room.resolvePlayerEvent(event);
+
+        PlayerEvent exitEvent = constructPlayerExitEvent(seatNumber, userId);
+        //处理离开事件
+        PlayerDisplayInfo playerDisplayInfo = room.resolvePlayerEvent(exitEvent);
+
+        assertEquals(PlayerEventType.JOIN_ROOM, playerDisplayInfo.getAcceptableEventTypeList().get(0));
+        assertTrue(playerDisplayInfo.getPlayerInfo().isSeatAvailable());
+        assertEquals(Roles.NONE, playerDisplayInfo.getPlayerInfo().getRole());
+        assertNull(playerDisplayInfo.getPlayerInfo().getUserID());
+        assertEquals(Integer.valueOf(seatNumber), playerDisplayInfo.getPlayerInfo().getSeatNumber());
+
+
+        RoomStateData stateData = repository.loadRoomStateData(roomCode);
+        PlayerSeatInfo seatInfo = stateData.getPlayerSeatInfo().get(seatNumber - 1);
+        assertEquals(playerDisplayInfo.getPlayerInfo(), seatInfo);
+    }
+
+    private PlayerEvent constructPlayerExitEvent(int seatNumber, String userId) {
+        PlayerEvent event = new PlayerEvent(PlayerEventType.Exit_ROOM, seatNumber, userId);
+        return event;
+    }
+
+    @Test
+    public void testJoinAllPlayers() {
+        Room room = createRoom();
+        joinAllPlayers(room);
+        JudgeDisplayInfo judgeDisplayResult = room.getJudgeDisplayResult();
+
+        assertEquals(JudgeEventType.COMPLETE_CREATE, judgeDisplayResult.getAcceptableEventTypes().get(0));
+        judgeDisplayResult.getPlayerSeatInfoList().stream().forEach(seatInfo -> {
+            assertTrue(seatInfo.isAlive());
+            assertFalse(seatInfo.isSeatAvailable());
+            assertEquals(Roles.UNASSIGN, seatInfo.getRole());
+        });
+    }
+
+    private void joinAllPlayers(Room room) {
+        for (int i = 1; i <= 12; i++) {
+            int seatNumber = i;
+            String userId = "Richard_" + i;
+            PlayerEvent event = constructPlayerJoinEvent(seatNumber, userId);
+            room.resolvePlayerEvent(event);
+        }
+    }
+
+    @Test
+    public void testCompleteCreateEvent() {
+        Room room = createRoom();
+        joinAllPlayers(room);
+        JudgeEvent event = generateCompleteCreateEvent();
+        JudgeDisplayInfo judgeDisplayInfo = room.resolveJudgeEvent(event);
+
+        assertEquals(RoomStatus.CRATED, judgeDisplayInfo.getStatus());
+        assertEquals(JudgeEventType.NIGHT_COMMING, judgeDisplayInfo.getAcceptableEventTypes().get(0));
+        List<PlayerSeatInfo> playerSeatInfoList = judgeDisplayInfo.getPlayerSeatInfoList();
+        playerSeatInfoList.forEach(seatInfo -> {
+            assertTrue(seatInfo.isAlive());
+            assertFalse(seatInfo.isSeatAvailable());
+            assertNotNull(seatInfo.getUserID());
+        });
+
+        long werewolvesCount = playerSeatInfoList.stream().filter(seatInfo -> Roles.WEREWOLVES.equals(seatInfo.getRole())).count();
+        long villagerCount = playerSeatInfoList.stream().filter(seatInfo -> Roles.VILLAGER.equals(seatInfo.getRole())).count();
+        long seerCount = playerSeatInfoList.stream().filter(seatInfo -> Roles.SEER.equals(seatInfo.getRole())).count();
+        long hunterCount = playerSeatInfoList.stream().filter(seatInfo -> Roles.HUNTER.equals(seatInfo.getRole())).count();
+        long moronCount = playerSeatInfoList.stream().filter(seatInfo -> Roles.MORON.equals(seatInfo.getRole())).count();
+
+        assertEquals(4, werewolvesCount);
+        assertEquals(4, villagerCount);
+        assertEquals(1, seerCount);
+        assertEquals(1, hunterCount);
+        assertEquals(1, moronCount);
+
+        for (int i = 1; i <= 12; i++) {
+            PlayerDisplayInfo playerDisplayResult = room.getPlayerDisplayResult(i);
+            assertEquals(playerSeatInfoList.get(i - 1).getRole(), playerDisplayResult.getPlayerInfo().getRole());
+            assertEquals(playerSeatInfoList.get(i - 1).getRole(), playerDisplayResult.getPlayerSeatInfoList().get(i - 1).getRole());
+            long unKnowCount = playerDisplayResult.getPlayerSeatInfoList().stream().filter(seatInfo -> seatInfo.getRole() == null).count();
+            if (Roles.WEREWOLVES.equals(playerDisplayResult.getPlayerInfo().getRole())) {
+                assertEquals(8, unKnowCount);
+            } else {
+                assertEquals(11, unKnowCount);
+            }
+        }
+    }
+
+    private JudgeEvent generateCompleteCreateEvent() {
+        return new JudgeEvent(roomCode, JudgeEventType.COMPLETE_CREATE);
+    }
 
     class MockRoomStateDataRepository extends RoomStateDataRepository {
         RoomStateData data;

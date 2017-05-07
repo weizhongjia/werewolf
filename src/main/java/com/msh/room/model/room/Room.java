@@ -7,9 +7,9 @@ import com.msh.room.dto.response.JudgeDisplayInfo;
 import com.msh.room.dto.response.PlayerDisplayInfo;
 import com.msh.room.dto.room.RoomStateData;
 import com.msh.room.exception.RoomBusinessException;
-import com.msh.room.model.role.CommonUser;
-import com.msh.room.model.role.JudgeUser;
-import com.msh.room.model.role.RoleFactory;
+import com.msh.room.model.role.CommonPlayer;
+import com.msh.room.model.role.Judge;
+import com.msh.room.model.role.PlayerRoleFactory;
 
 /**
  * Created by zhangruiqian on 2017/5/3.
@@ -35,34 +35,41 @@ public class Room {
     }
 
     synchronized public PlayerDisplayInfo resolvePlayerEvent(PlayerEvent event) {
-        CommonUser commonUser = generatePlayerRole(event);
-        RoomStateData stateData = commonUser.resolveEvent(event);
+        CommonPlayer commonPlayer = generatePlayerRole(event.getSeatNumber());
+        RoomStateData stateData = commonPlayer.resolveEvent(event);
         dataRepository.putRoomStateData(roomCode, stateData);
-        return commonUser.displayInfo();
+        //用户角色可能变化
+        CommonPlayer newCommonPlayer = generatePlayerRole(event.getSeatNumber());
+        return newCommonPlayer.displayInfo();
     }
 
-    private CommonUser generatePlayerRole(PlayerEvent event) {
+    private CommonPlayer generatePlayerRole(int seatNumber) {
         RoomStateData data = dataRepository.loadRoomStateData(roomCode);
-        return RoleFactory.createPlayerInstance(data, event.getSeatNumber());
+        return PlayerRoleFactory.createPlayerInstance(data, seatNumber);
     }
 
     public JudgeDisplayInfo resolveJudgeEvent(JudgeEvent event) throws RoomBusinessException {
-        JudgeUser judgeUser = genenrateJudgeUser();
+        Judge judge = generateJudgeUser();
 
-        RoomStateData newData = judgeUser.resolveEvent(event);
+        RoomStateData newData = judge.resolveEvent(event);
         dataRepository.putRoomStateData(roomCode, newData);
 
-        return judgeUser.displayInfo();
+        return judge.displayInfo();
     }
 
-    private JudgeUser genenrateJudgeUser() {
+    private Judge generateJudgeUser() {
         RoomStateData data = dataRepository.loadRoomStateData(roomCode);
-        return new JudgeUser(data);
+        return new Judge(data);
     }
 
-    public JudgeDisplayInfo getJudgeResult() {
-        JudgeUser judgeUser = genenrateJudgeUser();
-        return judgeUser.displayInfo();
+    public JudgeDisplayInfo getJudgeDisplayResult() {
+        Judge judge = generateJudgeUser();
+        return judge.displayInfo();
     }
 
+
+    public PlayerDisplayInfo getPlayerDisplayResult(int seatNumber) {
+        CommonPlayer player = generatePlayerRole(seatNumber);
+        return player.displayInfo();
+    }
 }

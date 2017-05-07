@@ -1,5 +1,6 @@
 package com.msh.room.dto.response;
 
+import com.msh.room.dto.event.JudgeEventType;
 import com.msh.room.dto.response.seat.PlayerSeatInfo;
 import com.msh.room.dto.room.RoomStatus;
 
@@ -12,7 +13,9 @@ import java.util.List;
 public class JudgeDisplayInfo {
     private String roomCode;
     private RoomStatus status;
-    private List<PlayerSeatInfo> playerSeatInfo;
+    private List<PlayerSeatInfo> playerSeatInfoList;
+    private List<JudgeEventType> acceptableEventTypes;
+
 
     public JudgeDisplayInfo() {
     }
@@ -37,18 +40,33 @@ public class JudgeDisplayInfo {
         this.roomCode = roomCode;
     }
 
-    public List<PlayerSeatInfo> getPlayerSeatInfo() {
-        return playerSeatInfo;
+    public List<PlayerSeatInfo> getPlayerSeatInfoList() {
+        return playerSeatInfoList;
     }
 
-    public void setPlayerSeatInfo(List<PlayerSeatInfo> playerSeatInfo) {
-        this.playerSeatInfo = playerSeatInfo;
+    public void setPlayerSeatInfoList(List<PlayerSeatInfo> playerSeatInfoList) {
+        this.playerSeatInfoList = playerSeatInfoList;
     }
 
     public void addPlayerSeatInfo(PlayerSeatInfo seatInfo) {
-        if (this.playerSeatInfo != null) {
-            playerSeatInfo = new ArrayList<>();
+        if (this.playerSeatInfoList != null) {
+            playerSeatInfoList = new ArrayList<>();
         }
-        playerSeatInfo.add(seatInfo);
+        playerSeatInfoList.add(seatInfo);
+    }
+
+    public List<JudgeEventType> getAcceptableEventTypes() {
+        return acceptableEventTypes;
+    }
+
+    public void setAcceptableEventTypes(List<JudgeEventType> acceptableEventTypes) {
+        this.acceptableEventTypes = acceptableEventTypes;
+    }
+
+    public void addAcceptableEventType(JudgeEventType eventType) {
+        if (acceptableEventTypes == null) {
+            acceptableEventTypes = new ArrayList<>();
+        }
+        acceptableEventTypes.add(eventType);
     }
 }

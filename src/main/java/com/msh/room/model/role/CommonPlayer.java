@@ -7,12 +7,12 @@ import com.msh.room.dto.response.PlayerDisplayInfo;
 /**
  * Created by zhangruiqian on 2017/5/4.
  */
-public abstract class CommonUser {
+public abstract class CommonPlayer {
     protected RoomStateData roomState;
     protected int number;
 
 
-    public CommonUser(RoomStateData roomState, int number) {
+    public CommonPlayer(RoomStateData roomState, int number) {
         this.roomState = roomState;
         this.number = number;
     }

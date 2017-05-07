@@ -3,7 +3,7 @@ package com.msh.room.exception;
 /**
  * Created by zhangruiqian on 2017/5/5.
  */
-public class RoomBusinessException extends Exception {
+public class RoomBusinessException extends RuntimeException {
     public RoomBusinessException() {
         super();
     }
