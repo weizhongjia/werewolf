@@ -36,9 +36,7 @@ public class Moron extends CommonPlayer {
     @Override
     public PlayerDisplayInfo displayInfo() {
         PlayerDisplayInfo displayInfo = new PlayerDisplayInfo();
-        roomState.getPlayerSeatInfo().stream().filter(seatInfo -> seatInfo.getSeatNumber() == number).forEach(seatInfo -> {
-            displayInfo.setPlayerInfo(seatInfo);
-        });
+        displayInfo.setPlayerInfo(roomState.getPlayerSeatInfo().get(number - 1));
         List<PlayerSeatInfo> playerSeatInfos = PlayerRoleMask.maskPlayerRole(roomState.getPlayerSeatInfo(), Arrays.asList(number));
         displayInfo.setPlayerSeatInfoList(playerSeatInfos);
         return displayInfo;

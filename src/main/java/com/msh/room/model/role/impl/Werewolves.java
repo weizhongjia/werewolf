@@ -6,6 +6,10 @@ import com.msh.room.dto.response.seat.PlayerSeatInfo;
 import com.msh.room.dto.room.RoomStateData;
 import com.msh.room.model.role.CommonPlayer;
 import com.msh.room.model.role.Roles;
+import com.msh.room.model.role.util.PlayerRoleMask;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by zhangruiqian on 2017/5/5.
@@ -33,24 +37,18 @@ public class Werewolves extends CommonPlayer {
     @Override
     public PlayerDisplayInfo displayInfo() {
         PlayerDisplayInfo displayInfo = new PlayerDisplayInfo();
-        roomState.getPlayerSeatInfo().stream().filter(seatInfo -> seatInfo.getSeatNumber() == number).forEach(seatInfo -> {
-            displayInfo.setPlayerInfo(seatInfo);
-        });
+        displayInfo.setPlayerInfo(roomState.getPlayerSeatInfo().get(number - 1));
         setOtherPlayersInfo(displayInfo);
         return displayInfo;
     }
 
     private PlayerDisplayInfo setOtherPlayersInfo(PlayerDisplayInfo displayInfo) {
-        roomState.getPlayerSeatInfo().stream().forEach(seatInfo -> {
-            PlayerSeatInfo playerSeatInfo = new PlayerSeatInfo(seatInfo.getSeatNumber(), false);
-            playerSeatInfo.setAlive(seatInfo.isAlive());
-            if (Roles.WEREWOLVES == seatInfo.getRole()) {
-                playerSeatInfo.setRole(seatInfo.getRole());
-            } else {
-                playerSeatInfo.setRole(null);
-            }
-            displayInfo.addPlayerSeatInfo(playerSeatInfo);
-        });
+        List<Integer> werewolvesNumbers = roomState.getPlayerSeatInfo().stream()
+                .filter(seatInfo -> Roles.WEREWOLVES.equals(seatInfo.getRole()))
+                .map(PlayerSeatInfo::getSeatNumber).collect(Collectors.toList());
+
+        List<PlayerSeatInfo> playerSeatInfos = PlayerRoleMask.maskPlayerRole(roomState.getPlayerSeatInfo(), werewolvesNumbers);
+        displayInfo.setPlayerSeatInfoList(playerSeatInfos);
         return displayInfo;
     }
 }
