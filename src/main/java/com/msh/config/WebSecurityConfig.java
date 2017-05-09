@@ -59,6 +59,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 // allow anonymous resource requests
                 .antMatchers("/werewolf/auth/**").permitAll()
+                .antMatchers("/room/**").permitAll()
                 .anyRequest().authenticated();
 
         // Custom JWT based security filter
