@@ -7,7 +7,8 @@ import java.util.Map;
 /**
  * Created by zhangruiqian on 2017/5/3.
  */
-public class JudgeEvent {
+public class
+JudgeEvent {
     private String roomCode;
     private JudgeEventType eventType;
     private Map<Roles, Integer> gameConfig;
