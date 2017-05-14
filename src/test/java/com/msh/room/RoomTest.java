@@ -290,7 +290,7 @@ public class RoomTest {
         return new JudgeEvent(roomCode, JudgeEventType.COMPLETE_CREATE);
     }
 
-    class MockRoomStateDataRepository extends RoomStateDataRepository {
+    class MockRoomStateDataRepository implements RoomStateDataRepository {
         RoomStateData data;
 
         @Override
