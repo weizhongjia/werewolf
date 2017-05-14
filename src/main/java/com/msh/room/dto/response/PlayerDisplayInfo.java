@@ -1,7 +1,7 @@
 package com.msh.room.dto.response;
 
 import com.msh.room.dto.event.PlayerEventType;
-import com.msh.room.dto.response.seat.PlayerSeatInfo;
+import com.msh.room.dto.room.seat.PlayerSeatInfo;
 
 import java.util.ArrayList;
 import java.util.List;

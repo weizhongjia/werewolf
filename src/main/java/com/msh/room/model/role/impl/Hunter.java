@@ -2,11 +2,12 @@ package com.msh.room.model.role.impl;
 
 import com.msh.room.dto.event.PlayerEvent;
 import com.msh.room.dto.response.PlayerDisplayInfo;
-import com.msh.room.dto.response.seat.PlayerSeatInfo;
+import com.msh.room.dto.room.seat.PlayerSeatInfo;
 import com.msh.room.dto.room.RoomStateData;
 import com.msh.room.model.role.CommonPlayer;
 import com.msh.room.model.role.util.PlayerRoleMask;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -39,6 +40,7 @@ public class Hunter extends CommonPlayer {
         displayInfo.setPlayerInfo(roomState.getPlayerSeatInfo().get(number - 1));
         List<PlayerSeatInfo> playerSeatInfos = PlayerRoleMask.maskPlayerRole(roomState.getPlayerSeatInfo(), Arrays.asList(number));
         displayInfo.setPlayerSeatInfoList(playerSeatInfos);
+        displayInfo.setAcceptableEventTypeList(new ArrayList<>());
         return displayInfo;
     }
 }

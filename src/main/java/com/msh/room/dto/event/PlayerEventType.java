@@ -5,5 +5,13 @@ package com.msh.room.dto.event;
  */
 public enum PlayerEventType {
     JOIN_ROOM,
-    Exit_ROOM;
+    Exit_ROOM,
+    //狼人指定杀人对象
+    WOLF_KILL,
+    //预言家验人
+    SEER_VERIFY,
+    //女巫救人
+    WITCH_SAVE,
+    //女巫毒人
+    WITCH_POISON
 }

@@ -8,9 +8,23 @@ public enum JudgeEventType {
     //发牌
     COMPLETE_CREATE,
     //天黑
-    NIGHT_COMMING,
+    NIGHT_COMING,
+    //狼人杀人
+    WOLF_KILL,
+
+    //预言家验人
+    SEER_VERIFY,
+    //假装预言家验人
+    FAKE_SEER_VERIFY,
+
+    //女巫救人
+    WITCH_SAVE,
+    //女巫毒人
+    WITCH_POISON,
+
+
     //重开游戏
     RESTART_GAME,
     //解散游戏
-    DISBAND_GAME;
+    DISBAND_GAME
 }

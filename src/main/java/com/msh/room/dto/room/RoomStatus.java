@@ -11,5 +11,9 @@ public enum RoomStatus {
     CRATING,
 
     //创建完成
-    CRATED;
+    CRATED,
+
+    //夜晚
+    NIGHT,
+    ;
 }

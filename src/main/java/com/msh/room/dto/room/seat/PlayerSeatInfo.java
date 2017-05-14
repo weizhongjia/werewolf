@@ -1,4 +1,4 @@
-package com.msh.room.dto.response.seat;
+package com.msh.room.dto.room.seat;
 
 import com.msh.room.model.role.Roles;
 
