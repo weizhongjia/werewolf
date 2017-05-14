@@ -290,6 +290,51 @@ public class RoomTest {
         return new JudgeEvent(roomCode, JudgeEventType.COMPLETE_CREATE);
     }
 
+    @Test
+    public void testRestartGameEvent() {
+        Room room = createRoom();
+        joinAllPlayers(room);
+        JudgeEvent event = generateCompleteCreateEvent();
+        JudgeDisplayInfo judgeDisplayInfo = room.resolveJudgeEvent(event);
+
+        JudgeEvent restartEvent = generateRestartGame();
+        JudgeDisplayInfo judgeDisplayResult = room.resolveJudgeEvent(restartEvent);
+        assertEquals(JudgeEventType.COMPLETE_CREATE, judgeDisplayResult.getAcceptableEventTypes().get(0));
+        judgeDisplayResult.getPlayerSeatInfoList().stream().forEach(seatInfo -> {
+            assertTrue(seatInfo.isAlive());
+            assertFalse(seatInfo.isSeatAvailable());
+            assertEquals(Roles.UNASSIGN, seatInfo.getRole());
+        });
+    }
+
+    @Test
+    public void testDisbandGameEvent() {
+        Room room = createRoom();
+        joinAllPlayers(room);
+        JudgeEvent event = generateCompleteCreateEvent();
+        room.resolveJudgeEvent(event);
+
+        JudgeEvent disbandEvent = generateDisbandGame();
+        JudgeDisplayInfo judgeDisplayResult = room.resolveJudgeEvent(disbandEvent);
+        assertEquals(JudgeEventType.CREATE_ROOM, judgeDisplayResult.getAcceptableEventTypes().get(0));
+        assertEquals(RoomStatus.VACANCY, judgeDisplayResult.getStatus());
+        assertNull(judgeDisplayResult.getPlayerSeatInfoList());
+    }
+
+    private JudgeEvent generateDisbandGame() {
+        JudgeEvent event = new JudgeEvent();
+        event.setRoomCode(roomCode);
+        event.setEventType(JudgeEventType.DISBAND_GAME);
+        return event;
+    }
+
+    private JudgeEvent generateRestartGame() {
+        JudgeEvent event = new JudgeEvent();
+        event.setRoomCode(roomCode);
+        event.setEventType(JudgeEventType.RESTART_GAME);
+        return event;
+    }
+
     class MockRoomStateDataRepository extends RoomStateDataRepository {
         RoomStateData data;
 

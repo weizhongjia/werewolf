@@ -30,7 +30,31 @@ public class Judge {
         if (JudgeEventType.COMPLETE_CREATE.equals(event.getEventType())) {
             resolveCompleteCreateEvent(event);
         }
+        if (JudgeEventType.RESTART_GAME.equals(event.getEventType())) {
+            resolveRestartGameEvent(event);
+        }
+        if (JudgeEventType.DISBAND_GAME.equals(event.getEventType())) {
+            resolveDisbandGameEvent(event);
+        }
         return roomState;
+    }
+
+    private void resolveDisbandGameEvent(JudgeEvent event) {
+        //房间清空
+        roomState=new RoomStateData();
+        roomState.setStatus(RoomStatus.VACANCY);
+        roomState.setRoomCode(event.getRoomCode());
+    }
+
+    private void resolveRestartGameEvent(JudgeEvent event) {
+        //重置所有座位
+        roomState.getPlayerSeatInfo().forEach(seatInfo -> {
+            if (!seatInfo.isSeatAvailable()) {
+                seatInfo.setRole(Roles.UNASSIGN);
+                seatInfo.setAlive(true);
+            }
+        });
+        roomState.setStatus(RoomStatus.CRATING);
     }
 
     private void resolveCompleteCreateEvent(JudgeEvent event) {
@@ -110,12 +134,15 @@ public class Judge {
     }
 
     private JudgeDisplayInfo acceptableEventCalculate(JudgeDisplayInfo displayInfo) {
+        if (RoomStatus.VACANCY.equals(roomState.getStatus())) {
+            displayInfo.addAcceptableEventType(JudgeEventType.CREATE_ROOM);
+        }
         if (RoomStatus.CRATING.equals(roomState.getStatus())) {
             if (allPlayersReady()) {
                 displayInfo.addAcceptableEventType(JudgeEventType.COMPLETE_CREATE);
             }
         }
-        if(RoomStatus.CRATED.equals(roomState.getStatus())){
+        if (RoomStatus.CRATED.equals(roomState.getStatus())) {
             displayInfo.addAcceptableEventType(JudgeEventType.NIGHT_COMMING);
         }
         displayInfo.addAcceptableEventType(JudgeEventType.RESTART_GAME);

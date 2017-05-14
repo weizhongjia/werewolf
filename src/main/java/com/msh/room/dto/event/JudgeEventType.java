@@ -9,7 +9,8 @@ public enum JudgeEventType {
     COMPLETE_CREATE,
     //天黑
     NIGHT_COMMING,
-
+    //重开游戏
     RESTART_GAME,
+    //解散游戏
     DISBAND_GAME;
 }
