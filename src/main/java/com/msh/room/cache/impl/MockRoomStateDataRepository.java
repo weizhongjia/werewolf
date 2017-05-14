@@ -10,8 +10,7 @@ import javax.annotation.PostConstruct;
 /**
  * Created by weizhongjia on 2017/5/14.
  */
-@Component
-public class MockRoomStateDataRepository implements RoomStateDataRepository{
+public class MockRoomStateDataRepository extends RoomStateDataRepository{
 
     private RoomStateData roomStateData;
 
