@@ -8,14 +8,8 @@ import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomi
 
 @SpringBootApplication
 @MapperScan(basePackages = "com.msh.mapper")
-public class WerewolfApplication implements EmbeddedServletContainerCustomizer {
-
+public class WerewolfApplication {
     public static void main(String[] args) {
         SpringApplication.run(WerewolfApplication.class, args);
-    }
-
-    @Override
-    public void customize(ConfigurableEmbeddedServletContainer container) {
-        container.setPort(8080);
     }
 }
