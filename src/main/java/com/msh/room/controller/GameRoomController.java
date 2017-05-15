@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
  * Created by zhangruiqian on 2017/5/9.
  */
 @RestController
+@CrossOrigin(origins = "http://localhost:8080")
+@RequestMapping(value = "werewolf")
 public class GameRoomController {
     @Autowired
     private RoomManager roomManager;
