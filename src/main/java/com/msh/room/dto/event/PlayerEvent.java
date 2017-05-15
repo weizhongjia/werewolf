@@ -8,6 +8,9 @@ public class PlayerEvent {
     private int seatNumber;
     private String userID;
 
+    //狼人杀人对象(0为空刀)
+    private Integer wolfKillNumber;
+
     public PlayerEvent() {
     }
 
@@ -39,5 +42,13 @@ public class PlayerEvent {
 
     public void setEventType(PlayerEventType eventType) {
         this.eventType = eventType;
+    }
+
+    public Integer getWolfKillNumber() {
+        return wolfKillNumber;
+    }
+
+    public void setWolfKillNumber(Integer wolfKillNumber) {
+        this.wolfKillNumber = wolfKillNumber;
     }
 }

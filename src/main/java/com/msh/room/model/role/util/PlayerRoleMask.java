@@ -1,6 +1,6 @@
 package com.msh.room.model.role.util;
 
-import com.msh.room.dto.response.seat.PlayerSeatInfo;
+import com.msh.room.dto.room.seat.PlayerSeatInfo;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -7,7 +7,7 @@ import com.msh.room.dto.event.PlayerEvent;
 import com.msh.room.dto.event.PlayerEventType;
 import com.msh.room.dto.response.JudgeDisplayInfo;
 import com.msh.room.dto.response.PlayerDisplayInfo;
-import com.msh.room.dto.response.seat.PlayerSeatInfo;
+import com.msh.room.dto.room.seat.PlayerSeatInfo;
 import com.msh.room.dto.room.RoomStateData;
 import com.msh.room.dto.room.RoomStatus;
 import com.msh.room.model.role.Roles;
@@ -253,7 +253,7 @@ public class RoomTest {
         JudgeDisplayInfo judgeDisplayInfo = room.resolveJudgeEvent(event);
 
         assertEquals(RoomStatus.CRATED, judgeDisplayInfo.getStatus());
-        assertEquals(JudgeEventType.NIGHT_COMMING, judgeDisplayInfo.getAcceptableEventTypes().get(0));
+        assertEquals(JudgeEventType.NIGHT_COMING, judgeDisplayInfo.getAcceptableEventTypes().get(0));
         List<PlayerSeatInfo> playerSeatInfoList = judgeDisplayInfo.getPlayerSeatInfoList();
         playerSeatInfoList.forEach(seatInfo -> {
             assertTrue(seatInfo.isAlive());
@@ -284,6 +284,18 @@ public class RoomTest {
                 assertEquals(11, unKnowCount);
             }
         }
+
+
+        RoomStateData stateData = repository.loadRoomStateData(roomCode);
+        assertTrue(stateData.getWitchState().isAlive());
+        assertTrue(stateData.getWitchState().isAntidoteAvailable());
+        assertTrue(stateData.getWitchState().isPoisonAvailable());
+        assertFalse(stateData.getWitchState().isSaveBySelf());
+
+        assertTrue(stateData.getHunterState().isAlive());
+        assertFalse(stateData.getHunterState().isShotAvailable());
+
+        assertFalse(stateData.getMoronState().isBeanVoted());
     }
 
     private JudgeEvent generateCompleteCreateEvent() {
