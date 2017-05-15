@@ -13,6 +13,7 @@ public class JudgeEvent {
     private Map<Roles, Integer> gameConfig;
 
     private Integer wolfKillNumber;
+    private Integer seerVerifyNumber;
 
     //默认构造方法
     public JudgeEvent() {
@@ -53,5 +54,13 @@ public class JudgeEvent {
 
     public void setWolfKillNumber(Integer wolfKillNumber) {
         this.wolfKillNumber = wolfKillNumber;
+    }
+
+    public Integer getSeerVerifyNumber() {
+        return seerVerifyNumber;
+    }
+
+    public void setSeerVerifyNumber(Integer seerVerifyNumber) {
+        this.seerVerifyNumber = seerVerifyNumber;
     }
 }

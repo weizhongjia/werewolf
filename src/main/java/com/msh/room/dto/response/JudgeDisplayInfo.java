@@ -15,7 +15,8 @@ public class JudgeDisplayInfo {
     private RoomStatus status;
     private List<PlayerSeatInfo> playerSeatInfoList;
     private List<JudgeEventType> acceptableEventTypes;
-
+    //预言家验人结果 true为好人，false为狼人
+    private boolean seerVerifyResult;
 
     public JudgeDisplayInfo() {
     }
@@ -68,5 +69,13 @@ public class JudgeDisplayInfo {
             acceptableEventTypes = new ArrayList<>();
         }
         acceptableEventTypes.add(eventType);
+    }
+
+    public boolean isSeerVerifyResult() {
+        return seerVerifyResult;
+    }
+
+    public void setSeerVerifyResult(boolean seerVerifyResult) {
+        this.seerVerifyResult = seerVerifyResult;
     }
 }

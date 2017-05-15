@@ -76,12 +76,15 @@ public class NightTest {
         for (int i = 1; i < 13; i++) {
             PlayerDisplayInfo displayInfo = room.getPlayerDisplayResult(i);
             if (Roles.WEREWOLVES.equals(stateData.getPlaySeatInfoBySeatNumber(i).getRole())) {
+                //睁眼状态
                 PlayerEventType playerEventType = displayInfo.getAcceptableEventTypeList().get(0);
                 assertEquals(PlayerEventType.WOLF_KILL, playerEventType);
             } else if (Roles.SEER.equals(stateData.getPlaySeatInfoBySeatNumber(i).getRole())) {
+                //睁眼状态
                 PlayerEventType playerEventType = displayInfo.getAcceptableEventTypeList().get(0);
                 assertEquals(PlayerEventType.SEER_VERIFY, playerEventType);
             } else {
+                //闭眼
                 assertEquals(0, displayInfo.getAcceptableEventTypeList().size());
             }
         }
@@ -107,11 +110,55 @@ public class NightTest {
             PlayerDisplayInfo displayInfo = room.getPlayerDisplayResult(i);
             PlayerSeatInfo seatInfo = stateData.getPlaySeatInfoBySeatNumber(i);
             if (Roles.WEREWOLVES.equals(seatInfo.getRole())) {
+                //闭眼了
                 assertEquals(0, displayInfo.getAcceptableEventTypeList().size());
             } else if (Roles.SEER.equals(seatInfo.getRole())) {
+                //睁眼状态
                 PlayerEventType playerEventType = displayInfo.getAcceptableEventTypeList().get(0);
                 assertEquals(PlayerEventType.SEER_VERIFY, playerEventType);
-            } else if (Roles.WITCH.equals(seatInfo.getRole())){
+            } else if (Roles.WITCH.equals(seatInfo.getRole())) {
+                //睁眼状态
+                PlayerEventType playerEventType = displayInfo.getAcceptableEventTypeList().get(0);
+                assertEquals(PlayerEventType.WITCH_SAVE, playerEventType);
+            }
+        }
+    }
+
+    @Test
+    public void testSeerVerifyWolf() {
+        Room room = roomManager.loadRoom(roomCode);
+        JudgeEvent nightComingEvent = new JudgeEvent(roomCode, JudgeEventType.NIGHT_COMING);
+        room.resolveJudgeEvent(nightComingEvent);
+
+        JudgeEvent wolfKillEvent = new JudgeEvent(roomCode, JudgeEventType.WOLF_KILL);
+        //杀个民
+        int seat = getAliveSeatByRole(Roles.VILLAGER);
+        wolfKillEvent.setWolfKillNumber(seat);
+        room.resolveJudgeEvent(wolfKillEvent);
+
+        JudgeEvent seerVerifyEvent = new JudgeEvent(roomCode, JudgeEventType.SEER_VERIFY);
+        //验个狼
+        int wolfSeat = getAliveSeatByRole(Roles.WEREWOLVES);
+        seerVerifyEvent.setSeerVerifyNumber(wolfSeat);
+        JudgeDisplayInfo judgeDisplayInfo = room.resolveJudgeEvent(seerVerifyEvent);
+
+        RoomStateData stateData = repository.loadRoomStateData(roomCode);
+        assertEquals(JudgeEventType.WITCH_SAVE, judgeDisplayInfo.getAcceptableEventTypes().get(0));
+        assertTrue(judgeDisplayInfo.isSeerVerifyResult());
+        assertEquals(Integer.valueOf(wolfSeat), stateData.getLastNightRecord().getSeerVerify());
+        assertTrue(stateData.getLastNightRecord().isSeerVerifyResult());
+
+        for (int i = 1; i < 13; i++) {
+            PlayerDisplayInfo displayInfo = room.getPlayerDisplayResult(i);
+            PlayerSeatInfo seatInfo = stateData.getPlaySeatInfoBySeatNumber(i);
+            if (Roles.WEREWOLVES.equals(seatInfo.getRole())) {
+                //闭眼了
+                assertEquals(0, displayInfo.getAcceptableEventTypeList().size());
+            } else if (Roles.SEER.equals(seatInfo.getRole())) {
+                //闭眼了
+                assertEquals(0, displayInfo.getAcceptableEventTypeList().size());
+            } else if (Roles.WITCH.equals(seatInfo.getRole())) {
+                //睁眼状态
                 PlayerEventType playerEventType = displayInfo.getAcceptableEventTypeList().get(0);
                 assertEquals(PlayerEventType.WITCH_SAVE, playerEventType);
             }

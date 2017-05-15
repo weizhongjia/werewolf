@@ -19,8 +19,10 @@ public enum JudgeEventType {
 
     //女巫救人
     WITCH_SAVE,
+    FAKE_WITCH_SAVE,
     //女巫毒人
     WITCH_POISON,
+    FAKE_WITCH_POISON,
 
 
     //重开游戏

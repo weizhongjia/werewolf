@@ -10,7 +10,7 @@ import com.msh.room.model.role.impl.*;
 public class PlayerRoleFactory {
     public static CommonPlayer createPlayerInstance(RoomStateData roomState, int number) {
         if (number > 0 && number <= roomState.getPlayerSeatInfo().size()) {
-            switch (roomState.getPlayerSeatInfo().get(number - 1).getRole()) {
+            switch (roomState.getPlaySeatInfoBySeatNumber(number).getRole()) {
                 case NONE:
                     return new NonePlayer(roomState, number);
                 case UNASSIGN:

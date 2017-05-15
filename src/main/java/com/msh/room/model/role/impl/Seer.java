@@ -4,9 +4,12 @@ import com.msh.room.dto.event.PlayerEvent;
 import com.msh.room.dto.event.PlayerEventType;
 import com.msh.room.dto.response.PlayerDisplayInfo;
 import com.msh.room.dto.room.RoomStatus;
+import com.msh.room.dto.room.record.NightRecord;
 import com.msh.room.dto.room.seat.PlayerSeatInfo;
 import com.msh.room.dto.room.RoomStateData;
+import com.msh.room.exception.RoomBusinessException;
 import com.msh.room.model.role.CommonPlayer;
+import com.msh.room.model.role.Roles;
 import com.msh.room.model.role.util.PlayerRoleMask;
 
 import java.util.ArrayList;
@@ -59,5 +62,15 @@ public class Seer extends CommonPlayer {
             }
         }
         return false;
+    }
+
+    public void verify(Integer seerVerifyNumber) {
+        if(isVerifyEnable()){
+            NightRecord lastNightRecord = roomState.getLastNightRecord();
+            lastNightRecord.setSeerVerify(seerVerifyNumber);
+
+            PlayerSeatInfo seatInfo = roomState.getPlaySeatInfoBySeatNumber(seerVerifyNumber);
+            lastNightRecord.setSeerVerifyResult(Roles.WEREWOLVES.equals(seatInfo.getRole()));
+        }else throw new RoomBusinessException("目前预言家无法验人");
     }
 }

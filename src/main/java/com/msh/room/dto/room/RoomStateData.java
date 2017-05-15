@@ -5,6 +5,7 @@ import com.msh.room.dto.room.seat.PlayerSeatInfo;
 import com.msh.room.dto.room.state.HunterState;
 import com.msh.room.dto.room.state.MoronState;
 import com.msh.room.dto.room.state.WitchState;
+import com.msh.room.exception.RoomBusinessException;
 import com.msh.room.model.role.Roles;
 
 import java.util.ArrayList;
@@ -59,6 +60,9 @@ public class RoomStateData {
     }
 
     public PlayerSeatInfo getPlaySeatInfoBySeatNumber(int number) {
+        if (number < 1 || number > getPlayerSeatInfo().size()) {
+            throw new RoomBusinessException("座位号非法，无法获取玩家信息");
+        }
         return getPlayerSeatInfo().get(number - 1);
     }
 

@@ -1,5 +1,6 @@
 package com.msh.room.model.role;
 
+import com.msh.model.Room;
 import com.msh.room.dto.event.JudgeEvent;
 import com.msh.room.dto.event.JudgeEventType;
 import com.msh.room.dto.response.JudgeDisplayInfo;
@@ -11,6 +12,7 @@ import com.msh.room.dto.room.state.HunterState;
 import com.msh.room.dto.room.state.MoronState;
 import com.msh.room.dto.room.state.WitchState;
 import com.msh.room.exception.RoomBusinessException;
+import com.msh.room.model.role.impl.Seer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +44,7 @@ public class Judge {
                 resolveWolfKill(event);
                 break;
             case SEER_VERIFY:
+                resolveSeerVerify(event);
                 break;
             case FAKE_SEER_VERIFY:
                 break;
@@ -57,6 +60,17 @@ public class Judge {
                 break;
         }
         return roomState;
+    }
+
+    private void resolveSeerVerify(JudgeEvent event) {
+        Integer seerVerifyNumber = event.getSeerVerifyNumber();
+        int seerNumber = roomState.getAliveSeatByRole(Roles.SEER);
+        if (seerNumber > 0) {
+            Seer seer = (Seer) PlayerRoleFactory.createPlayerInstance(roomState, seerNumber);
+            seer.verify(seerVerifyNumber);
+        } else {
+            throw new RoomBusinessException("预言家已死或没有预言家，无法验人");
+        }
     }
 
     private void resolveWolfKill(JudgeEvent event) {
@@ -214,13 +228,32 @@ public class Judge {
                 //预言家已死则没有验人环节
                 JudgeEventType type = (seerSeat == 0) ? JudgeEventType.FAKE_SEER_VERIFY : JudgeEventType.SEER_VERIFY;
                 displayInfo.addAcceptableEventType(type);
-            } else {
-                //女巫用药询问逻辑,此处逻辑仅限不能同时用两种药的情况
+            } else if (nightRecord.getSeerVerify() != null) {
+                displayInfo.setSeerVerifyResult(nightRecord.isSeerVerifyResult());
+
+                //女巫用药询问逻辑,此处逻辑仅限不能同时用两种药的情况.逻辑处理不太好，需要再做封装
                 //女巫本轮未询问用解药==null，女巫解药可用: WITCH_SAVE
+                if (nightRecord.getWitchSaved() == null && roomState.getWitchState().isAntidoteAvailable()) {
+                    displayInfo.addAcceptableEventType(JudgeEventType.WITCH_SAVE);
+                }
                 //女巫本轮未询问用解药==null，女巫解药不可用 FAKE_WITCH_SAVE
+                else if (nightRecord.getWitchSaved() == null && !roomState.getWitchState().isAntidoteAvailable()) {
+                    displayInfo.addAcceptableEventType(JudgeEventType.FAKE_WITCH_SAVE);
+                }
                 //女巫本轮已询问用解药,但未用==0，但未询问用毒药==null，女巫毒药可用 WITCH_POISON
+                else if (nightRecord.getWitchSaved() == 0 && nightRecord.getWitchPoisoned() == null
+                        && roomState.getWitchState().isPoisonAvailable()) {
+                    displayInfo.addAcceptableEventType(JudgeEventType.WITCH_POISON);
+                }
                 //女巫本轮已询问用解药,但未用==0，但未询问用毒药==null，女巫毒药不可用 FAKE_WITCH_POISON
+                else if (nightRecord.getWitchSaved() == 0 && nightRecord.getWitchPoisoned() == null
+                        && !roomState.getWitchState().isPoisonAvailable()) {
+                    displayInfo.addAcceptableEventType(JudgeEventType.FAKE_WITCH_POISON);
+                }
                 //女巫本轮已询问用解药，但已用!=0，但未询问是否用毒药 FAKE_WITCH_POISON
+                else if (nightRecord.getWitchSaved() != 0 && nightRecord.getWitchPoisoned() == null) {
+                    displayInfo.addAcceptableEventType(JudgeEventType.FAKE_WITCH_POISON);
+                }
                 //其他情况 null
             }
         }
