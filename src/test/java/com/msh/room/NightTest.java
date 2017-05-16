@@ -83,6 +83,10 @@ public class NightTest {
                 //睁眼状态
                 PlayerEventType playerEventType = displayInfo.getAcceptableEventTypeList().get(0);
                 assertEquals(PlayerEventType.SEER_VERIFY, playerEventType);
+            } else if (Roles.WITCH.equals(stateData.getPlaySeatInfoBySeatNumber(i).getRole())){
+                //睁眼状态
+                PlayerEventType playerEventType = displayInfo.getAcceptableEventTypeList().get(0);
+                assertEquals(PlayerEventType.WITCH_SAVE, playerEventType);
             } else {
                 //闭眼
                 assertEquals(0, displayInfo.getAcceptableEventTypeList().size());
