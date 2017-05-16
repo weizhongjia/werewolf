@@ -15,6 +15,11 @@ public class JudgeEvent {
     private Integer wolfKillNumber;
     private Integer seerVerifyNumber;
 
+    //true是救人，false是不救
+    private boolean witchSave;
+    //女巫毒人号码
+    private Integer witchPoisonNumber;
+
     //默认构造方法
     public JudgeEvent() {
     }
@@ -62,5 +67,21 @@ public class JudgeEvent {
 
     public void setSeerVerifyNumber(Integer seerVerifyNumber) {
         this.seerVerifyNumber = seerVerifyNumber;
+    }
+
+    public boolean isWitchSave() {
+        return witchSave;
+    }
+
+    public void setWitchSave(boolean witchSave) {
+        this.witchSave = witchSave;
+    }
+
+    public Integer getWitchPoisonNumber() {
+        return witchPoisonNumber;
+    }
+
+    public void setWitchPoisonNumber(Integer witchPoisonNumber) {
+        this.witchPoisonNumber = witchPoisonNumber;
     }
 }

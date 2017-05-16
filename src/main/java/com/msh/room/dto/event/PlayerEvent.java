@@ -11,6 +11,11 @@ public class PlayerEvent {
     //狼人杀人对象(0为空刀)
     private Integer wolfKillNumber;
 
+    //true是救人，false是不救
+    private boolean witchSave;
+    //女巫毒人号码
+    private Integer witchPoisonNumber;
+
     public PlayerEvent() {
     }
 
@@ -50,5 +55,21 @@ public class PlayerEvent {
 
     public void setWolfKillNumber(Integer wolfKillNumber) {
         this.wolfKillNumber = wolfKillNumber;
+    }
+
+    public boolean isWitchSave() {
+        return witchSave;
+    }
+
+    public void setWitchSave(boolean witchSave) {
+        this.witchSave = witchSave;
+    }
+
+    public Integer getWitchPoisonNumber() {
+        return witchPoisonNumber;
+    }
+
+    public void setWitchPoisonNumber(Integer witchPoisonNumber) {
+        this.witchPoisonNumber = witchPoisonNumber;
     }
 }

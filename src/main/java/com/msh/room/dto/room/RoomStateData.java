@@ -118,10 +118,15 @@ public class RoomStateData {
         return this.nightRecordList.get(size - 1);
     }
 
+    //没有则为0 死亡则为-1
     public int getAliveSeatByRole(Roles role) {
         for (PlayerSeatInfo seatInfo : playerSeatInfo) {
-            if (seatInfo.getRole().equals(role) && seatInfo.isAlive()) {
-                return seatInfo.getSeatNumber();
+            if (seatInfo.getRole().equals(role)) {
+                if (seatInfo.isAlive())
+                    return seatInfo.getSeatNumber();
+                else {
+                    return -1;
+                }
             }
         }
         return 0;

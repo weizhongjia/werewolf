@@ -5,6 +5,7 @@ import java.util.List;
 /**
  * Created by zhangruiqian on 2017/5/14.
  */
+//TODO 这个结构不好，应该是Map<Roles:<PlayerEventType:Object>>,这样能满足以后角色的扩展
 public class NightRecord {
     private Integer wolfKilledSeat;
     //0表示没有操作 null表示还没有处理事件

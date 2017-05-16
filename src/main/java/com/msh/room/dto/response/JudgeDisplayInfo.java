@@ -1,6 +1,7 @@
 package com.msh.room.dto.response;
 
 import com.msh.room.dto.event.JudgeEventType;
+import com.msh.room.dto.room.record.NightRecord;
 import com.msh.room.dto.room.seat.PlayerSeatInfo;
 import com.msh.room.dto.room.RoomStatus;
 
@@ -15,8 +16,8 @@ public class JudgeDisplayInfo {
     private RoomStatus status;
     private List<PlayerSeatInfo> playerSeatInfoList;
     private List<JudgeEventType> acceptableEventTypes;
-    //预言家验人结果 true为好人，false为狼人
-    private boolean seerVerifyResult;
+    //当夜结果
+    private NightRecord nightRecord;
 
     public JudgeDisplayInfo() {
     }
@@ -71,11 +72,11 @@ public class JudgeDisplayInfo {
         acceptableEventTypes.add(eventType);
     }
 
-    public boolean isSeerVerifyResult() {
-        return seerVerifyResult;
+    public NightRecord getNightRecord() {
+        return nightRecord;
     }
 
-    public void setSeerVerifyResult(boolean seerVerifyResult) {
-        this.seerVerifyResult = seerVerifyResult;
+    public void setNightRecord(NightRecord nightRecord) {
+        this.nightRecord = nightRecord;
     }
 }

@@ -12,6 +12,10 @@ public enum PlayerEventType {
     SEER_VERIFY,
     //女巫救人
     WITCH_SAVE,
+    //假装女巫救人
+    FAKE_WITCH_SAVE,
     //女巫毒人
-    WITCH_POISON
+    WITCH_POISON,
+    //假装女巫毒人
+    FAKE_WITCH_POISON
 }

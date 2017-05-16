@@ -24,6 +24,9 @@ public enum JudgeEventType {
     WITCH_POISON,
     FAKE_WITCH_POISON,
 
+    //天亮了
+    DAYTIME_COMING,
+
 
     //重开游戏
     RESTART_GAME,
