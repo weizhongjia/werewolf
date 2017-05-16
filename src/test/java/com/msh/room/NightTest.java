@@ -84,10 +84,6 @@ public class NightTest {
                 //睁眼状态
                 PlayerEventType playerEventType = displayInfo.getAcceptableEventTypeList().get(0);
                 assertEquals(PlayerEventType.SEER_VERIFY, playerEventType);
-            } else if (Roles.WITCH.equals(stateData.getPlaySeatInfoBySeatNumber(i).getRole())){
-                //睁眼状态
-                PlayerEventType playerEventType = displayInfo.getAcceptableEventTypeList().get(0);
-                assertEquals(PlayerEventType.WITCH_SAVE, playerEventType);
             } else {
                 //闭眼
                 assertEquals(0, displayInfo.getAcceptableEventTypeList().size());
@@ -123,6 +119,7 @@ public class NightTest {
                 assertEquals(PlayerEventType.SEER_VERIFY, playerEventType);
             } else if (Roles.WITCH.equals(seatInfo.getRole())) {
                 //睁眼状态
+                //TODO 此处也应该是闭眼情况，面杀不应该允许两种身份睁眼
                 PlayerEventType playerEventType = displayInfo.getAcceptableEventTypeList().get(0);
                 assertEquals(PlayerEventType.WITCH_SAVE, playerEventType);
             } else {
@@ -246,7 +243,7 @@ public class NightTest {
         room.resolveJudgeEvent(witchSaveEvent);
 
         JudgeEvent witchPoisonEvent = new JudgeEvent(roomCode, JudgeEventType.WITCH_POISON);
-        //毒个狼
+        //毒这个狼
         witchPoisonEvent.setWitchPoisonNumber(wolfSeat);
         JudgeDisplayInfo judgeDisplayInfo = room.resolveJudgeEvent(witchPoisonEvent);
 
