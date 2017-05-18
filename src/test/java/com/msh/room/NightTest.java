@@ -9,6 +9,7 @@ import com.msh.room.dto.response.JudgeDisplayInfo;
 import com.msh.room.dto.response.PlayerDisplayInfo;
 import com.msh.room.dto.room.RoomStateData;
 import com.msh.room.dto.room.RoomStatus;
+import com.msh.room.dto.room.record.NightRecord;
 import com.msh.room.dto.room.seat.PlayerSeatInfo;
 import com.msh.room.model.role.Roles;
 import com.msh.room.model.room.Room;
@@ -95,16 +96,15 @@ public class NightTest {
     public void testWolfKillVillager() {
         Room room = roomManager.loadRoom(roomCode);
         JudgeEvent nightComingEvent = new JudgeEvent(roomCode, JudgeEventType.NIGHT_COMING);
-        room.resolveJudgeEvent(nightComingEvent);
+        JudgeDisplayInfo info = room.resolveJudgeEvent(nightComingEvent);
 
         JudgeEvent wolfKillEvent = new JudgeEvent(roomCode, JudgeEventType.WOLF_KILL);
         int seat = getAliveSeatByRole(Roles.VILLAGER);
         wolfKillEvent.setWolfKillNumber(seat);
-        room.resolveJudgeEvent(wolfKillEvent);
+        JudgeDisplayInfo judgeDisplayInfo = room.resolveJudgeEvent(wolfKillEvent);
         RoomStateData stateData = repository.loadRoomStateData(roomCode);
         assertEquals(Integer.valueOf(seat), stateData.getLastNightRecord().getWolfKilledSeat());
 
-        JudgeDisplayInfo judgeDisplayInfo = room.resolveJudgeEvent(wolfKillEvent);
         JudgeEventType eventType = judgeDisplayInfo.getAcceptableEventTypes().get(0);
         assertEquals(JudgeEventType.SEER_VERIFY, eventType);
         for (int i = 1; i < 13; i++) {
@@ -274,6 +274,108 @@ public class NightTest {
         }
 
     }
+
+    @Test
+    public void testDaytimeComing() {
+        Room room = roomManager.loadRoom(roomCode);
+        JudgeEvent nightComingEvent = new JudgeEvent(roomCode, JudgeEventType.NIGHT_COMING);
+        room.resolveJudgeEvent(nightComingEvent);
+        JudgeEvent wolfKillEvent = new JudgeEvent(roomCode, JudgeEventType.WOLF_KILL);
+        //杀个民
+        int seat = getAliveSeatByRole(Roles.VILLAGER);
+        wolfKillEvent.setWolfKillNumber(seat);
+        room.resolveJudgeEvent(wolfKillEvent);
+        JudgeEvent seerVerifyEvent = new JudgeEvent(roomCode, JudgeEventType.SEER_VERIFY);
+        //验个狼
+        int wolfSeat = getAliveSeatByRole(Roles.WEREWOLVES);
+        seerVerifyEvent.setSeerVerifyNumber(wolfSeat);
+        room.resolveJudgeEvent(seerVerifyEvent);
+        //没救
+        JudgeEvent witchSaveEvent = new JudgeEvent(roomCode, JudgeEventType.WITCH_SAVE);
+        witchSaveEvent.setWitchSave(false);
+        room.resolveJudgeEvent(witchSaveEvent);
+        JudgeEvent witchPoisonEvent = new JudgeEvent(roomCode, JudgeEventType.WITCH_POISON);
+        //也没毒
+        witchPoisonEvent.setWitchPoisonNumber(0);
+        room.resolveJudgeEvent(witchPoisonEvent);
+
+        JudgeEvent daytimeEvent = new JudgeEvent(roomCode, JudgeEventType.DAYTIME_COMING);
+
+        JudgeDisplayInfo judgeDisplayInfo = room.resolveJudgeEvent(daytimeEvent);
+        RoomStateData stateData = repository.loadRoomStateData(roomCode);
+
+        NightRecord nightRecord = judgeDisplayInfo.getNightRecord();
+        assertEquals(Integer.valueOf(seat), nightRecord.getDiedNumber().get(0));
+        assertEquals(Integer.valueOf(seat), stateData.getLastNightRecord().getDiedNumber().get(0));
+
+        for (int i = 1; i < 13; i++) {
+            PlayerDisplayInfo displayInfo = room.getPlayerDisplayResult(i);
+            PlayerSeatInfo seatInfo = stateData.getPlaySeatInfoBySeatNumber(i);
+            assertEquals(Integer.valueOf(seat), displayInfo.getNightRecord().getDiedNumber().get(0));
+            if (i == seat) {
+                assertFalse(seatInfo.isAlive());
+            }
+        }
+    }
+
+    @Test
+    public void testDaytimeComingNobodyDie() {
+        Room room = roomManager.loadRoom(roomCode);
+        JudgeEvent nightComingEvent = new JudgeEvent(roomCode, JudgeEventType.NIGHT_COMING);
+        room.resolveJudgeEvent(nightComingEvent);
+        JudgeEvent wolfKillEvent = new JudgeEvent(roomCode, JudgeEventType.WOLF_KILL);
+        //杀个民
+        int seat = getAliveSeatByRole(Roles.VILLAGER);
+        wolfKillEvent.setWolfKillNumber(seat);
+        room.resolveJudgeEvent(wolfKillEvent);
+        JudgeEvent seerVerifyEvent = new JudgeEvent(roomCode, JudgeEventType.SEER_VERIFY);
+        //验个狼
+        int wolfSeat = getAliveSeatByRole(Roles.WEREWOLVES);
+        seerVerifyEvent.setSeerVerifyNumber(wolfSeat);
+        room.resolveJudgeEvent(seerVerifyEvent);
+        //救人了
+        JudgeEvent witchSaveEvent = new JudgeEvent(roomCode, JudgeEventType.WITCH_SAVE);
+        witchSaveEvent.setWitchSave(true);
+        room.resolveJudgeEvent(witchSaveEvent);
+        //不允许毒人了,fake
+        JudgeEvent witchPoisonEvent = new JudgeEvent(roomCode, JudgeEventType.FAKE_WITCH_POISON);
+        witchPoisonEvent.setWitchPoisonNumber(0);
+        room.resolveJudgeEvent(witchPoisonEvent);
+
+        JudgeEvent daytimeEvent = new JudgeEvent(roomCode, JudgeEventType.DAYTIME_COMING);
+
+        JudgeDisplayInfo judgeDisplayInfo = room.resolveJudgeEvent(daytimeEvent);
+        RoomStateData stateData = repository.loadRoomStateData(roomCode);
+
+        NightRecord nightRecord = judgeDisplayInfo.getNightRecord();
+        //女巫没药了
+        assertFalse(stateData.getWitchState().isAntidoteAvailable());
+        //没人死亡
+        assertEquals(0, nightRecord.getDiedNumber().size());
+        //没人死亡
+        assertEquals(0, stateData.getLastNightRecord().getDiedNumber().size());
+        for (int i = 1; i < 13; i++) {
+            PlayerDisplayInfo displayInfo = room.getPlayerDisplayResult(i);
+            PlayerSeatInfo seatInfo = stateData.getPlaySeatInfoBySeatNumber(i);
+            assertEquals(0, displayInfo.getNightRecord().getDiedNumber().size());
+            //所有人都alive
+            assertTrue(seatInfo.isAlive());
+        }
+    }
+
+
+    public void testDaytimeComingHunterDie() {
+
+    }
+
+    public void testFirstDaytimeComingWithSheriff() {
+
+    }
+
+    public void testDaytimeComingGameEnd() {
+
+    }
+
 
     private int getAliveSeatByRole(Roles role) {
         RoomStateData stateData = repository.loadRoomStateData(roomCode);

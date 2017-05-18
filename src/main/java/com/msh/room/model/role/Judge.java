@@ -32,6 +32,10 @@ public class Judge {
     }
 
     public RoomStateData resolveEvent(JudgeEvent event) throws RoomBusinessException {
+        JudgeDisplayInfo judgeDisplayInfo = displayInfo();
+        if (!judgeDisplayInfo.getAcceptableEventTypes().contains(event.getEventType())) {
+            throw new RoomBusinessException("此时无法接受该事件类型:" + event.getEventType());
+        }
         switch (event.getEventType()) {
             case CREATE_ROOM:
                 resolveCreateRoomEvent(event);
@@ -63,6 +67,7 @@ public class Judge {
                 resolveFakeWitchPoison(event);
                 break;
             case DAYTIME_COMING:
+                resolveDaytimeComing(event);
                 break;
             case RESTART_GAME:
                 resolveRestartGameEvent(event);
@@ -72,6 +77,49 @@ public class Judge {
                 break;
         }
         return roomState;
+    }
+
+    /**
+     * 天亮了事件
+     *
+     * @param event
+     */
+    private void resolveDaytimeComing(JudgeEvent event) {
+        //判断是否需要竞选警长
+        RoomStatus roomStatus = sheriffCompetitionStatus();
+        //如果不需要竞选
+        if (RoomStatus.DAYTIME.equals(roomStatus)) {
+            //直接公布夜晚信息
+            calculateNightInfo();
+        }
+        roomState.setStatus(roomStatus);
+    }
+
+    public void calculateNightInfo() {
+        NightRecord lastNightRecord = roomState.getLastNightRecord();
+        List<Integer> dieList = new ArrayList();
+        Integer wolfKilledSeat = lastNightRecord.getWolfKilledSeat();
+        Integer witchSaved = lastNightRecord.getWitchSaved();
+        if (wolfKilledSeat != 0 && wolfKilledSeat != witchSaved) {
+            dieList.add(wolfKilledSeat);
+        }
+        if (lastNightRecord.getWitchPoisoned() != 0) {
+            dieList.add(lastNightRecord.getWitchPoisoned());
+        }
+        lastNightRecord.setDiedNumber(dieList);
+        for (Integer number : dieList) {
+            CommonPlayer commonPlayer = PlayerRoleFactory.createPlayerInstance(roomState, number);
+            commonPlayer.killed();
+        }
+    }
+
+    /**
+     * 判断是否需要上警
+     *
+     * @return
+     */
+    private RoomStatus sheriffCompetitionStatus() {
+        return RoomStatus.DAYTIME;
     }
 
     private void resolveFakeWitchSave(JudgeEvent event) {
@@ -95,9 +143,9 @@ public class Judge {
     }
 
     private Witch getWitch() {
-        int witchNumber = roomState.getAliveSeatByRole(Roles.WITCH);
-        if (witchNumber <= 0) {
-            throw new RoomBusinessException("女巫已死或不存在，无法救人");
+        int witchNumber = roomState.getFirstSeatByRole(Roles.WITCH);
+        if (witchNumber == 0) {
+            throw new RoomBusinessException("女巫不存在，无法救人");
         }
         return (Witch) PlayerRoleFactory.createPlayerInstance(roomState, witchNumber);
     }
@@ -257,9 +305,9 @@ public class Judge {
         if (RoomStatus.CRATED.equals(roomState.getStatus())) {
             displayInfo.addAcceptableEventType(JudgeEventType.NIGHT_COMING);
         }
+        NightRecord nightRecord = roomState.getLastNightRecord();
+        displayInfo.setNightRecord(nightRecord);
         if (RoomStatus.NIGHT.equals(roomState.getStatus())) {
-            NightRecord nightRecord = roomState.getLastNightRecord();
-            displayInfo.setNightRecord(nightRecord);
             /**
              * 夜晚法官需要的动作
              * //TODO 逻辑不应该放在此处. 应该是拿到各个角色的acceptableEventType，然后来判断法官这边下一步应该的事件.
@@ -279,7 +327,7 @@ public class Judge {
                 } else {
                     int witchNumber = roomState.getAliveSeatByRole(Roles.WITCH);
                     //女巫已死
-                    if (witchNumber <= 0) {
+                    if (witchNumber < 0) {
                         if (nightRecord.getWitchSaved() == null)
                             displayInfo.addAcceptableEventType(JudgeEventType.FAKE_WITCH_SAVE);
                         else if (nightRecord.getWitchPoisoned() == null)

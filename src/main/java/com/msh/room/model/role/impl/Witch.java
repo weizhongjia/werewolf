@@ -1,15 +1,13 @@
 package com.msh.room.model.role.impl;
 
-import com.msh.room.dto.event.JudgeEvent;
 import com.msh.room.dto.event.PlayerEvent;
 import com.msh.room.dto.event.PlayerEventType;
 import com.msh.room.dto.response.PlayerDisplayInfo;
+import com.msh.room.dto.room.RoomStateData;
 import com.msh.room.dto.room.RoomStatus;
 import com.msh.room.dto.room.record.NightRecord;
 import com.msh.room.dto.room.seat.PlayerSeatInfo;
-import com.msh.room.dto.room.RoomStateData;
 import com.msh.room.exception.RoomBusinessException;
-import com.msh.room.model.role.CommonPlayer;
 import com.msh.room.model.role.util.PlayerRoleMask;
 
 import java.util.ArrayList;
@@ -19,17 +17,12 @@ import java.util.List;
 /**
  * Created by zhangruiqian on 2017/5/7.
  */
-public class Witch extends CommonPlayer {
+public class Witch extends AssignedPlayer{
     private boolean alive;
 
     public Witch(RoomStateData roomState, int number) {
         super(roomState, number);
         alive = roomState.getPlaySeatInfoBySeatNumber(number).isAlive();
-    }
-
-    @Override
-    public RoomStateData killed() {
-        return null;
     }
 
     @Override
@@ -45,11 +38,7 @@ public class Witch extends CommonPlayer {
     @Override
     public PlayerDisplayInfo displayInfo() {
         PlayerDisplayInfo displayInfo = new PlayerDisplayInfo();
-        displayInfo.setPlayerInfo(roomState.getPlayerSeatInfo().get(number - 1));
-        List<PlayerSeatInfo> playerSeatInfos = PlayerRoleMask.maskPlayerRole(roomState.getPlayerSeatInfo(), Arrays.asList(number));
-        displayInfo.setPlayerSeatInfoList(playerSeatInfos);
-        displayInfo.setAcceptableEventTypeList(new ArrayList<>());
-
+        resolveCommonDisplayInfo(displayInfo);
         if (alive) {
             if (RoomStatus.NIGHT.equals(roomState.getStatus())) {
                 NightRecord nightRecord = roomState.getLastNightRecord();

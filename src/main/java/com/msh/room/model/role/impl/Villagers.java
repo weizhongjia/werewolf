@@ -14,14 +14,9 @@ import java.util.List;
 /**
  * Created by zhangruiqian on 2017/5/7.
  */
-public class Villagers extends CommonPlayer {
+public class Villagers extends AssignedPlayer{
     public Villagers(RoomStateData roomState, int number) {
         super(roomState, number);
-    }
-
-    @Override
-    public RoomStateData killed() {
-        return null;
     }
 
     @Override
@@ -37,10 +32,7 @@ public class Villagers extends CommonPlayer {
     @Override
     public PlayerDisplayInfo displayInfo() {
         PlayerDisplayInfo displayInfo = new PlayerDisplayInfo();
-        displayInfo.setPlayerInfo(roomState.getPlayerSeatInfo().get(number - 1));
-        List<PlayerSeatInfo> playerSeatInfos = PlayerRoleMask.maskPlayerRole(roomState.getPlayerSeatInfo(), Arrays.asList(number));
-        displayInfo.setPlayerSeatInfoList(playerSeatInfos);
-        displayInfo.setAcceptableEventTypeList(new ArrayList<>());
+        resolveCommonDisplayInfo(displayInfo);
         return displayInfo;
     }
 

@@ -114,6 +114,9 @@ public class RoomStateData {
     }
 
     public NightRecord getLastNightRecord() {
+        if (this.nightRecordList == null || this.nightRecordList.size() == 0) {
+            return null;
+        }
         int size = this.nightRecordList.size();
         return this.nightRecordList.get(size - 1);
     }
@@ -127,6 +130,15 @@ public class RoomStateData {
                 else {
                     return -1;
                 }
+            }
+        }
+        return 0;
+    }
+
+    public int getFirstSeatByRole(Roles role) {
+        for (PlayerSeatInfo seatInfo : playerSeatInfo) {
+            if (seatInfo.getRole().equals(role)) {
+                return seatInfo.getSeatNumber();
             }
         }
         return 0;

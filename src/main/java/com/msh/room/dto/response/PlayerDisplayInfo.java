@@ -1,6 +1,7 @@
 package com.msh.room.dto.response;
 
 import com.msh.room.dto.event.PlayerEventType;
+import com.msh.room.dto.room.record.NightRecord;
 import com.msh.room.dto.room.seat.PlayerSeatInfo;
 
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ public class PlayerDisplayInfo {
 
     private PlayerSeatInfo playerInfo;
     private List<PlayerSeatInfo> playerSeatInfoList;
+    private NightRecord nightRecord;
 
     public PlayerDisplayInfo() {
     }
@@ -54,5 +56,13 @@ public class PlayerDisplayInfo {
             this.acceptableEventTypeList = new ArrayList<>();
         }
         acceptableEventTypeList.add(type);
+    }
+
+    public NightRecord getNightRecord() {
+        return nightRecord;
+    }
+
+    public void setNightRecord(NightRecord nightRecord) {
+        this.nightRecord = nightRecord;
     }
 }

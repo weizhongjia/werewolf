@@ -4,6 +4,7 @@ import com.msh.room.dto.event.PlayerEvent;
 import com.msh.room.dto.event.PlayerEventType;
 import com.msh.room.dto.response.PlayerDisplayInfo;
 import com.msh.room.dto.room.RoomStatus;
+import com.msh.room.dto.room.record.NightRecord;
 import com.msh.room.dto.room.seat.PlayerSeatInfo;
 import com.msh.room.dto.room.RoomStateData;
 import com.msh.room.model.role.CommonPlayer;
@@ -17,17 +18,12 @@ import java.util.stream.Collectors;
 /**
  * Created by zhangruiqian on 2017/5/5.
  */
-public class Werewolves extends CommonPlayer {
+public class Werewolves extends AssignedPlayer {
     private boolean alive;
 
     public Werewolves(RoomStateData state, int number) {
         super(state, number);
         this.alive = state.getPlaySeatInfoBySeatNumber(number).isAlive();
-    }
-
-    @Override
-    public RoomStateData killed() {
-        return null;
     }
 
     @Override
@@ -43,8 +39,9 @@ public class Werewolves extends CommonPlayer {
     @Override
     public PlayerDisplayInfo displayInfo() {
         PlayerDisplayInfo displayInfo = new PlayerDisplayInfo();
-        displayInfo.setPlayerInfo(roomState.getPlayerSeatInfo().get(number - 1));
+        resolveCommonDisplayInfo(displayInfo);
         setOtherPlayersInfo(displayInfo);
+
         displayInfo.setAcceptableEventTypeList(new ArrayList<>());
         if (alive) {
             if (RoomStatus.NIGHT.equals(roomState.getStatus()) && roomState.getLastNightRecord().getWolfKilledSeat() == null) {
