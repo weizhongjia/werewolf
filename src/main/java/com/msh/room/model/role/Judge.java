@@ -310,8 +310,8 @@ public class Judge {
         if (RoomStatus.NIGHT.equals(roomState.getStatus())) {
             /**
              * 夜晚法官需要的动作
-             * //TODO 逻辑不应该放在此处. 应该是拿到各个角色的acceptableEventType，然后来判断法官这边下一步应该的事件.
-             * 角色按GameConfig中顺序来逐个检查
+             * TODO 逻辑不应该放在此处. 应该是拿到各个角色的acceptableEventType，然后来判断法官这边下一步应该的事件. 角色按GameConfig中顺序来逐个检查
+             * TODO 后续前端将夜晚事件做成一体，允许法官整体一次提交。不需要这样做
              */
 
             if (nightRecord.getWolfKilledSeat() == null) {
