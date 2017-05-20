@@ -294,6 +294,10 @@ public class Judge {
     }
 
     private JudgeDisplayInfo acceptableEventCalculate(JudgeDisplayInfo displayInfo) {
+        //夜晚信息拿到无论是否为null
+        NightRecord nightRecord = roomState.getLastNightRecord();
+        displayInfo.setNightRecord(nightRecord);
+
         if (RoomStatus.VACANCY.equals(roomState.getStatus())) {
             displayInfo.addAcceptableEventType(JudgeEventType.CREATE_ROOM);
         }
@@ -305,8 +309,6 @@ public class Judge {
         if (RoomStatus.CRATED.equals(roomState.getStatus())) {
             displayInfo.addAcceptableEventType(JudgeEventType.NIGHT_COMING);
         }
-        NightRecord nightRecord = roomState.getLastNightRecord();
-        displayInfo.setNightRecord(nightRecord);
         if (RoomStatus.NIGHT.equals(roomState.getStatus())) {
             /**
              * 夜晚法官需要的动作
@@ -349,6 +351,10 @@ public class Judge {
                     && nightRecord.getWitchSaved() != null && nightRecord.getWitchPoisoned() != null) {
                 displayInfo.addAcceptableEventType(JudgeEventType.DAYTIME_COMING);
             }
+        }
+        //白天发言时间
+        if (RoomStatus.DAYTIME.equals(roomState.getStatus())) {
+            displayInfo.addAcceptableEventType(JudgeEventType.DAYTIME_VOTING);
         }
         displayInfo.addAcceptableEventType(JudgeEventType.RESTART_GAME);
         displayInfo.addAcceptableEventType(JudgeEventType.DISBAND_GAME);

@@ -27,9 +27,10 @@ public abstract class AssignedPlayer extends CommonPlayer {
     }
 
     public void resolveCommonDisplayInfo(PlayerDisplayInfo displayInfo) {
+        //注入昨夜信息
         NightRecord lastNightRecord = this.roomState.getLastNightRecord();
         displayInfo.setNightRecord(lastNightRecord);
-
+        //除自己以外的玩家均覆盖身份
         displayInfo.setPlayerInfo(roomState.getPlayerSeatInfo().get(number - 1));
         List<PlayerSeatInfo> playerSeatInfos = PlayerRoleMask.maskPlayerRole(roomState.getPlayerSeatInfo(), Arrays.asList(number));
         displayInfo.setPlayerSeatInfoList(playerSeatInfos);

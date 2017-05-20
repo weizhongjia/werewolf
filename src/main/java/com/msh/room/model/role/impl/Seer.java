@@ -41,8 +41,18 @@ public class Seer extends AssignedPlayer{
     public PlayerDisplayInfo displayInfo() {
         PlayerDisplayInfo displayInfo = new PlayerDisplayInfo();
         resolveCommonDisplayInfo(displayInfo);
-        //TODO 预言家要看到曾经验到的人
 
+        //预言家要看到曾经验到的人
+        roomState.getNightRecordList().stream().forEach(
+               nightRecord -> {
+                   Integer seerVerify = nightRecord.getSeerVerify();
+                   if(Roles.WEREWOLVES.equals(roomState.getPlaySeatInfoBySeatNumber(seerVerify).getRole())){
+                       displayInfo.getPlayerSeatInfoList().get(seerVerify-1).setRole(Roles.WEREWOLVES);
+                   }else{
+                       displayInfo.getPlayerSeatInfoList().get(seerVerify-1).setRole(Roles.VILLAGER);
+                   }
+               }
+        );
         if (isVerifyEnable()) {
             displayInfo.addAcceptableEventType(PlayerEventType.SEER_VERIFY);
         }

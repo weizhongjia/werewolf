@@ -21,7 +21,6 @@ public enum Roles {
     HUNTER,
     //白痴
     MORON,
-
     /**
      * 未使用
      */

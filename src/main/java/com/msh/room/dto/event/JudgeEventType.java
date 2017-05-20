@@ -26,7 +26,8 @@ public enum JudgeEventType {
 
     //天亮了
     DAYTIME_COMING,
-
+    //开始投票
+    DAYTIME_VOTING,
 
     //重开游戏
     RESTART_GAME,

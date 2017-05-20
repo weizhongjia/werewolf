@@ -303,7 +303,7 @@ public class NightTest {
 
         JudgeDisplayInfo judgeDisplayInfo = room.resolveJudgeEvent(daytimeEvent);
         RoomStateData stateData = repository.loadRoomStateData(roomCode);
-
+        assertEquals(RoomStatus.DAYTIME, judgeDisplayInfo.getStatus());
         NightRecord nightRecord = judgeDisplayInfo.getNightRecord();
         assertEquals(Integer.valueOf(seat), nightRecord.getDiedNumber().get(0));
         assertEquals(Integer.valueOf(seat), stateData.getLastNightRecord().getDiedNumber().get(0));
@@ -347,6 +347,7 @@ public class NightTest {
         JudgeDisplayInfo judgeDisplayInfo = room.resolveJudgeEvent(daytimeEvent);
         RoomStateData stateData = repository.loadRoomStateData(roomCode);
 
+        assertEquals(RoomStatus.DAYTIME, judgeDisplayInfo.getStatus());
         NightRecord nightRecord = judgeDisplayInfo.getNightRecord();
         //女巫没药了
         assertFalse(stateData.getWitchState().isAntidoteAvailable());
@@ -372,7 +373,7 @@ public class NightTest {
 
     }
 
-    public void testDaytimeComingGameEnd() {
+    public void testDaytimeComingGameOver() {
 
     }
 
