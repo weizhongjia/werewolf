@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * Created by zhangruiqian on 2017/5/7.
  */
-public class Seer extends AssignedPlayer{
+public class Seer extends AssignedPlayer {
     private boolean alive;
 
     public Seer(RoomStateData roomState, int number) {
@@ -33,16 +33,20 @@ public class Seer extends AssignedPlayer{
         resolveCommonDisplayInfo(displayInfo);
 
         //预言家要看到曾经验到的人
-        roomState.getNightRecordList().stream().forEach(
-               nightRecord -> {
-                   Integer seerVerify = nightRecord.getSeerVerify();
-                   if(Roles.WEREWOLVES.equals(roomState.getPlaySeatInfoBySeatNumber(seerVerify).getRole())){
-                       displayInfo.getPlayerSeatInfoList().get(seerVerify-1).setRole(Roles.WEREWOLVES);
-                   }else{
-                       displayInfo.getPlayerSeatInfoList().get(seerVerify-1).setRole(Roles.VILLAGER);
-                   }
-               }
-        );
+        if(roomState.getLastDaytimeRecord()!=null){
+            roomState.getNightRecordList().stream().forEach(
+                    nightRecord -> {
+                        Integer seerVerify = nightRecord.getSeerVerify();
+                        if (seerVerify != null) {
+                            if (Roles.WEREWOLVES.equals(roomState.getPlaySeatInfoBySeatNumber(seerVerify).getRole())) {
+                                displayInfo.getPlayerSeatInfoList().get(seerVerify - 1).setRole(Roles.WEREWOLVES);
+                            } else {
+                                displayInfo.getPlayerSeatInfoList().get(seerVerify - 1).setRole(Roles.VILLAGER);
+                            }
+                        }
+                    }
+            );
+        }
         if (isVerifyEnable()) {
             displayInfo.addAcceptableEventType(PlayerEventType.SEER_VERIFY);
         }
@@ -59,12 +63,12 @@ public class Seer extends AssignedPlayer{
     }
 
     public void verify(Integer seerVerifyNumber) {
-        if(isVerifyEnable()){
+        if (isVerifyEnable()) {
             NightRecord lastNightRecord = roomState.getLastNightRecord();
             lastNightRecord.setSeerVerify(seerVerifyNumber);
 
             PlayerSeatInfo seatInfo = roomState.getPlaySeatInfoBySeatNumber(seerVerifyNumber);
             lastNightRecord.setSeerVerifyResult(Roles.WEREWOLVES.equals(seatInfo.getRole()));
-        }else throw new RoomBusinessException("目前预言家无法验人");
+        } else throw new RoomBusinessException("目前预言家无法验人");
     }
 }

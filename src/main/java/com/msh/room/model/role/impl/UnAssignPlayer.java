@@ -44,4 +44,9 @@ public class UnAssignPlayer extends CommonPlayer {
         displayInfo.addAcceptableEventType(PlayerEventType.Exit_ROOM);
         return displayInfo;
     }
+
+    @Override
+    public RoomStateData voted() {
+        return roomState;
+    }
 }
