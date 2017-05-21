@@ -1,6 +1,7 @@
 package com.msh.room.dto.response;
 
 import com.msh.room.dto.event.JudgeEventType;
+import com.msh.room.dto.room.record.DaytimeRecord;
 import com.msh.room.dto.room.record.NightRecord;
 import com.msh.room.dto.room.seat.PlayerSeatInfo;
 import com.msh.room.dto.room.RoomStatus;
@@ -18,7 +19,8 @@ public class JudgeDisplayInfo {
     private List<JudgeEventType> acceptableEventTypes;
     //当夜结果
     private NightRecord nightRecord;
-
+    //白天情况
+    private DaytimeRecord daytimeRecord;
     public JudgeDisplayInfo() {
     }
 
@@ -78,5 +80,13 @@ public class JudgeDisplayInfo {
 
     public void setNightRecord(NightRecord nightRecord) {
         this.nightRecord = nightRecord;
+    }
+
+    public DaytimeRecord getDaytimeRecord() {
+        return daytimeRecord;
+    }
+
+    public void setDaytimeRecord(DaytimeRecord daytimeRecord) {
+        this.daytimeRecord = daytimeRecord;
     }
 }

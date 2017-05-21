@@ -85,6 +85,7 @@ public class Judge {
 
     /**
      * 开始投票事件
+     *
      * @param event
      */
     private void resolveDaytimeVoting(JudgeEvent event) {
@@ -374,10 +375,11 @@ public class Judge {
         if (RoomStatus.VOTING.equals(roomState.getStatus())) {
             //投票完成,有结果
             if (roomState.getLastDaytimeRecord().getDiedNumber() != null) {
+                displayInfo.setDaytimeRecord(roomState.getLastDaytimeRecord());
                 displayInfo.addAcceptableEventType(JudgeEventType.NIGHT_COMING);
             }
         }
-
+        //TODO PK环节
         displayInfo.addAcceptableEventType(JudgeEventType.RESTART_GAME);
         displayInfo.addAcceptableEventType(JudgeEventType.DISBAND_GAME);
         return displayInfo;

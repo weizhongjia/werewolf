@@ -1,6 +1,7 @@
 package com.msh.room.dto.response;
 
 import com.msh.room.dto.event.PlayerEventType;
+import com.msh.room.dto.room.record.DaytimeRecord;
 import com.msh.room.dto.room.record.NightRecord;
 import com.msh.room.dto.room.seat.PlayerSeatInfo;
 
@@ -16,6 +17,7 @@ public class PlayerDisplayInfo {
     private PlayerSeatInfo playerInfo;
     private List<PlayerSeatInfo> playerSeatInfoList;
     private NightRecord nightRecord;
+    private DaytimeRecord daytimeRecord;
 
     public PlayerDisplayInfo() {
     }
@@ -64,5 +66,13 @@ public class PlayerDisplayInfo {
 
     public void setNightRecord(NightRecord nightRecord) {
         this.nightRecord = nightRecord;
+    }
+
+    public DaytimeRecord getDaytimeRecord() {
+        return daytimeRecord;
+    }
+
+    public void setDaytimeRecord(DaytimeRecord daytimeRecord) {
+        this.daytimeRecord = daytimeRecord;
     }
 }

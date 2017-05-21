@@ -101,8 +101,12 @@ public abstract class AssignedPlayer extends CommonPlayer {
             if (RoomStatus.VOTING.equals(roomState.getStatus())) {
                 if (!roomState.getLastDaytimeRecord().isDaytimeVoted(number)) {
                     displayInfo.addAcceptableEventType(PlayerEventType.DAYTIME_VOTE);
+                }else if(roomState.getLastDaytimeRecord().getDiedNumber()!=null){
+                    //如果已经投票死人，说明投票有结果了.公布白天投票信息
+                    displayInfo.setDaytimeRecord(roomState.getLastDaytimeRecord());
                 }
             }
+            //TODO PK环节
         }
     }
 }
