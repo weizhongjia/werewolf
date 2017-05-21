@@ -72,6 +72,7 @@ public class Judge {
                 break;
             case DAYTIME_VOTING:
                 resolveDaytimeVoting(event);
+                break;
             case RESTART_GAME:
                 resolveRestartGameEvent(event);
                 break;

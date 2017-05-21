@@ -150,6 +150,22 @@ public class DaytimeTest {
 
     @Test
     public void testDaytimeVoting() {
+        Room room = roomManager.loadRoom(roomCode);
+        simpleKillVillagerNight(room);
+        JudgeEvent daytimeEvent = new JudgeEvent(roomCode, JudgeEventType.DAYTIME_COMING);
+        room.resolveJudgeEvent(daytimeEvent);
+        JudgeEvent daytimeVotingEvent = new JudgeEvent(roomCode, JudgeEventType.DAYTIME_VOTING);
+        JudgeDisplayInfo judgeDisplayInfo = room.resolveJudgeEvent(daytimeVotingEvent);
 
+        RoomStateData stateData = repository.loadRoomStateData(roomCode);
+
+        for (int i = 1; i < 13; i++) {
+            PlayerDisplayInfo displayInfo = room.getPlayerDisplayResult(i);
+            if (displayInfo.getPlayerInfo().isAlive()) {
+                assertEquals(PlayerEventType.DAYTIME_VOTE, displayInfo.getAcceptableEventTypeList().get(0));
+            } else {
+                assertEquals(0, displayInfo.getAcceptableEventTypeList().size());
+            }
+        }
     }
 }

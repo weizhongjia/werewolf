@@ -33,7 +33,6 @@ public class Werewolves extends AssignedPlayer {
         resolveCommonDisplayInfo(displayInfo);
         setOtherPlayersInfo(displayInfo);
 
-        displayInfo.setAcceptableEventTypeList(new ArrayList<>());
         if (alive) {
             if (RoomStatus.NIGHT.equals(roomState.getStatus()) && roomState.getLastNightRecord().getWolfKilledSeat() == null) {
                 displayInfo.addAcceptableEventType(PlayerEventType.WOLF_KILL);

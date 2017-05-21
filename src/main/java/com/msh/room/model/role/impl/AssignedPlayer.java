@@ -92,15 +92,17 @@ public abstract class AssignedPlayer extends CommonPlayer {
         //注入昨夜信息
         NightRecord lastNightRecord = this.roomState.getLastNightRecord();
         displayInfo.setNightRecord(lastNightRecord);
-        if (RoomStatus.VOTING.equals(roomState.getStatus())) {
-            if (!roomState.getLastDaytimeRecord().isDaytimeVoted(number)) {
-                displayInfo.addAcceptableEventType(PlayerEventType.DAYTIME_VOTE);
-            }
-        }
         //除自己以外的玩家均覆盖身份
         displayInfo.setPlayerInfo(roomState.getPlayerSeatInfo().get(number - 1));
         List<PlayerSeatInfo> playerSeatInfos = PlayerRoleMask.maskPlayerRole(roomState.getPlayerSeatInfo(), Arrays.asList(number));
         displayInfo.setPlayerSeatInfoList(playerSeatInfos);
         displayInfo.setAcceptableEventTypeList(new ArrayList<>());
+        if(this.roomState.getPlaySeatInfoBySeatNumber(number).isAlive()){
+            if (RoomStatus.VOTING.equals(roomState.getStatus())) {
+                if (!roomState.getLastDaytimeRecord().isDaytimeVoted(number)) {
+                    displayInfo.addAcceptableEventType(PlayerEventType.DAYTIME_VOTE);
+                }
+            }
+        }
     }
 }
