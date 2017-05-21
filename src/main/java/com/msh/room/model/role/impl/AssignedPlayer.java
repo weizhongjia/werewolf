@@ -1,5 +1,6 @@
 package com.msh.room.model.role.impl;
 
+import com.google.gson.Gson;
 import com.msh.room.dto.event.PlayerEvent;
 import com.msh.room.dto.event.PlayerEventType;
 import com.msh.room.dto.response.PlayerDisplayInfo;
@@ -57,17 +58,17 @@ public abstract class AssignedPlayer extends CommonPlayer {
 
     protected RoomStateData daytimeVoteResult(DaytimeRecord lastDaytimeRecord) {
         DaytimeRecord daytimeRecord = roomState.getLastDaytimeRecord();
-        Map<Integer, List<Integer>> votingRecord = lastDaytimeRecord.getVotingRecord();
+        List<Integer> voteResult = lastDaytimeRecord.getVoteResult();
         //如果有平票
-        if (votingRecord.size() > 1) {
-            for (Integer number : votingRecord.keySet()) {
+        if (voteResult.size() > 1) {
+            for (Integer number : voteResult) {
                 daytimeRecord.addNewPk();
                 daytimeRecord.addPkNumber(number);
                 roomState.setStatus(RoomStatus.PK);
             }
             return roomState;
         } else {
-            Integer number = votingRecord.keySet().iterator().next();
+            Integer number = voteResult.get(0);
             daytimeRecord.setDiedNumber(number);
             CommonPlayer player = PlayerRoleFactory.createPlayerInstance(roomState, number);
             return player.voted();
@@ -97,11 +98,11 @@ public abstract class AssignedPlayer extends CommonPlayer {
         List<PlayerSeatInfo> playerSeatInfos = PlayerRoleMask.maskPlayerRole(roomState.getPlayerSeatInfo(), Arrays.asList(number));
         displayInfo.setPlayerSeatInfoList(playerSeatInfos);
         displayInfo.setAcceptableEventTypeList(new ArrayList<>());
-        if(this.roomState.getPlaySeatInfoBySeatNumber(number).isAlive()){
+        if (this.roomState.getPlaySeatInfoBySeatNumber(number).isAlive()) {
             if (RoomStatus.VOTING.equals(roomState.getStatus())) {
                 if (!roomState.getLastDaytimeRecord().isDaytimeVoted(number)) {
                     displayInfo.addAcceptableEventType(PlayerEventType.DAYTIME_VOTE);
-                }else if(roomState.getLastDaytimeRecord().getDiedNumber()!=null){
+                } else if (roomState.getLastDaytimeRecord().getDiedNumber() != null) {
                     //如果已经投票死人，说明投票有结果了.公布白天投票信息
                     displayInfo.setDaytimeRecord(roomState.getLastDaytimeRecord());
                 }

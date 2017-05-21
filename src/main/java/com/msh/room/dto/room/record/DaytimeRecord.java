@@ -83,8 +83,11 @@ public class DaytimeRecord {
         int biggestNumber = 0;
         for (Integer key : votingRecord.keySet()) {
             int number = votingRecord.get(key).size();
-            if (number >= biggestNumber && key != 0) {
+            if (number > biggestNumber && key != 0) {
                 biggestNumber = number;
+                result = new ArrayList<>();
+                result.add(key);
+            } else if (number == biggestNumber && key != 0) {
                 result.add(key);
             }
         }

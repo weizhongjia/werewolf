@@ -1,5 +1,6 @@
 package com.msh.room;
 
+import com.google.gson.Gson;
 import com.msh.room.cache.RoomStateDataRepository;
 import com.msh.room.dto.event.JudgeEvent;
 import com.msh.room.dto.event.JudgeEventType;
@@ -169,7 +170,7 @@ public class DaytimeTest {
         }
     }
 
-//    @Test
+    @Test
     public void testDaytimeVoteSomeone() {
         Room room = roomManager.loadRoom(roomCode);
         simpleKillVillagerNight(room);
@@ -178,9 +179,27 @@ public class DaytimeTest {
         JudgeEvent daytimeVotingEvent = new JudgeEvent(roomCode, JudgeEventType.DAYTIME_VOTING);
         room.resolveJudgeEvent(daytimeVotingEvent);
 
-        PlayerEvent playerEvent = new PlayerEvent(PlayerEventType.DAYTIME_VOTE, 1, "Richard_1");
-        playerEvent.setDaytimeVoteNumber(2);
-        PlayerDisplayInfo displayInfo = room.resolvePlayerEvent(playerEvent);
-        displayInfo.getPlayerInfo();
+        RoomStateData stateData = repository.loadRoomStateData(roomCode);
+        int wolf = stateData.getAliveSeatByRole(Roles.WEREWOLVES);
+        int seer = stateData.getAliveSeatByRole(Roles.SEER);
+        for (int i = 1; i <13;i++) {
+            PlayerDisplayInfo displayInfo = room.getPlayerDisplayResult(i);
+            PlayerSeatInfo playerInfo = displayInfo.getPlayerInfo();
+            if (playerInfo.isAlive()) {
+                PlayerEvent playerEvent = new PlayerEvent(PlayerEventType.DAYTIME_VOTE, i,playerInfo.getUserID());
+                if (Roles.WEREWOLVES.equals(playerInfo.getRole())) {
+                    //狼投预言家
+                    playerEvent.setDaytimeVoteNumber(seer);
+                }else{
+                    //其他投狼
+                    playerEvent.setDaytimeVoteNumber(wolf);
+                }
+                room.resolvePlayerEvent(playerEvent);
+            }
+        }
+
+        JudgeDisplayInfo judgeDisplayResult = room.getJudgeDisplayResult();
+        assertNotNull(judgeDisplayResult.getDaytimeRecord());
+
     }
 }
