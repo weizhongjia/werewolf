@@ -188,7 +188,7 @@ public class Judge {
 
     private void resolveWolfKill(JudgeEvent event) {
         Integer wolfKillNumber = event.getWolfKillNumber();
-        if (roomState.getPlaySeatInfoBySeatNumber(wolfKillNumber).isAlive()) {
+        if (wolfKillNumber ==0 || roomState.getPlaySeatInfoBySeatNumber(wolfKillNumber).isAlive()) {
             roomState.getLastNightRecord().setWolfKilledSeat(wolfKillNumber);
         } else {
             throw new RoomBusinessException("无法杀掉一个死人");

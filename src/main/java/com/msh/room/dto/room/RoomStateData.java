@@ -66,6 +66,7 @@ public class RoomStateData {
 
     public PlayerSeatInfo getPlaySeatInfoBySeatNumber(int number) {
         if (number < 1 || number > getPlayerSeatInfo().size()) {
+            System.out.printf(String.valueOf(number));
             throw new RoomBusinessException("座位号非法，无法获取玩家信息");
         }
         return getPlayerSeatInfo().get(number - 1);
@@ -133,7 +134,7 @@ public class RoomStateData {
                 if (seatInfo.isAlive())
                     return seatInfo.getSeatNumber();
                 else {
-                    return -1;
+                    continue;
                 }
             }
         }

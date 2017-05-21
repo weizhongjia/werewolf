@@ -1,23 +1,16 @@
 package com.msh.room.model.role.impl;
 
-import com.msh.room.dto.event.PlayerEvent;
 import com.msh.room.dto.event.PlayerEventType;
 import com.msh.room.dto.response.PlayerDisplayInfo;
 import com.msh.room.dto.room.RoomStateData;
 import com.msh.room.dto.room.RoomStatus;
 import com.msh.room.dto.room.record.NightRecord;
-import com.msh.room.dto.room.seat.PlayerSeatInfo;
 import com.msh.room.exception.RoomBusinessException;
-import com.msh.room.model.role.util.PlayerRoleMask;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Created by zhangruiqian on 2017/5/7.
  */
-public class Witch extends AssignedPlayer{
+public class Witch extends AssignedPlayer {
     private boolean alive;
 
     public Witch(RoomStateData roomState, int number) {
@@ -73,8 +66,9 @@ public class Witch extends AssignedPlayer{
 
     public void save(boolean witchSave) {
         if (roomState.getWitchState().isAntidoteAvailable()) {
-            if (witchSave) {
-                Integer killedSeat = roomState.getLastNightRecord().getWolfKilledSeat();
+            Integer killedSeat = roomState.getLastNightRecord().getWolfKilledSeat();
+            //空刀时相当于没救
+            if (witchSave && killedSeat!=0) {
                 roomState.getLastNightRecord().setWitchSaved(killedSeat);
                 roomState.getWitchState().setAntidoteAvailable(false);
             } else {
