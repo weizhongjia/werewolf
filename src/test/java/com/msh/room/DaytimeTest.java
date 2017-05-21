@@ -168,4 +168,19 @@ public class DaytimeTest {
             }
         }
     }
+
+    @Test
+    public void testDaytimeVoteSomeone() {
+        Room room = roomManager.loadRoom(roomCode);
+        simpleKillVillagerNight(room);
+        JudgeEvent daytimeEvent = new JudgeEvent(roomCode, JudgeEventType.DAYTIME_COMING);
+        room.resolveJudgeEvent(daytimeEvent);
+        JudgeEvent daytimeVotingEvent = new JudgeEvent(roomCode, JudgeEventType.DAYTIME_VOTING);
+        room.resolveJudgeEvent(daytimeVotingEvent);
+
+        PlayerEvent playerEvent = new PlayerEvent(PlayerEventType.DAYTIME_VOTE, 1, "Richard_1");
+        playerEvent.setDaytimeVoteNumber(2);
+        PlayerDisplayInfo displayInfo = room.resolvePlayerEvent(playerEvent);
+        displayInfo.getPlayerInfo();
+    }
 }
