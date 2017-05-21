@@ -32,6 +32,7 @@ public class Judge {
         this.roomState = roomState;
     }
 
+    //TODO roomStatus要用状态机，不然逻辑太乱.以后重构
     public RoomStateData resolveEvent(JudgeEvent event) throws RoomBusinessException {
         JudgeDisplayInfo judgeDisplayInfo = displayInfo();
         if (!judgeDisplayInfo.getAcceptableEventTypes().contains(event.getEventType())) {
@@ -73,6 +74,10 @@ public class Judge {
             case DAYTIME_VOTING:
                 resolveDaytimeVoting(event);
                 break;
+
+            case GAME_ENDING:
+                resolveGameEnding(event);
+                break;
             case RESTART_GAME:
                 resolveRestartGameEvent(event);
                 break;
@@ -83,6 +88,10 @@ public class Judge {
         return roomState;
     }
 
+    private void resolveGameEnding(JudgeEvent event) {
+        this.roomState.setStatus(RoomStatus.GAME_OVER);
+    }
+
     /**
      * 开始投票事件
      *
@@ -90,7 +99,6 @@ public class Judge {
      */
     private void resolveDaytimeVoting(JudgeEvent event) {
         //开始投票
-        roomState.addDaytimeRecord(new DaytimeRecord());
         this.roomState.setStatus(RoomStatus.VOTING);
     }
 
@@ -100,6 +108,7 @@ public class Judge {
      * @param event
      */
     private void resolveDaytimeComing(JudgeEvent event) {
+        roomState.addDaytimeRecord(new DaytimeRecord());
         //判断是否需要竞选警长
         RoomStatus roomStatus = sheriffCompetitionStatus();
         //如果不需要竞选
@@ -379,9 +388,19 @@ public class Judge {
                 displayInfo.addAcceptableEventType(JudgeEventType.NIGHT_COMING);
             }
         }
-        //TODO PK环节
+        if (RoomStatus.PK.equals(roomState.getStatus())) {
+            //TODO PK环节
+            displayInfo.addAcceptableEventType(JudgeEventType.DAYTIME_PK_VOTING);
+        }
+
+        //游戏可以结束，所有仅留游戏结束事件
+        if (roomState.getGameResult() != null) {
+            displayInfo.setAcceptableEventTypes(new ArrayList<>());
+            displayInfo.addAcceptableEventType(JudgeEventType.GAME_ENDING);
+        }
         displayInfo.addAcceptableEventType(JudgeEventType.RESTART_GAME);
         displayInfo.addAcceptableEventType(JudgeEventType.DISBAND_GAME);
+
         return displayInfo;
     }
 }

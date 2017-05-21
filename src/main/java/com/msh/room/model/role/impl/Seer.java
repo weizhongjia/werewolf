@@ -33,7 +33,8 @@ public class Seer extends AssignedPlayer {
         resolveCommonDisplayInfo(displayInfo);
 
         //预言家要看到曾经验到的人
-        if (roomState.getNightRecordList() != null) {
+        if (roomState.getNightRecordList() != null
+                && !RoomStatus.GAME_OVER.equals(roomState.getStatus())) {
             roomState.getNightRecordList().stream().forEach(
                     nightRecord -> {
                         Integer seerVerify = nightRecord.getSeerVerify();

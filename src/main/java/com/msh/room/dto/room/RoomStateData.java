@@ -30,6 +30,9 @@ public class RoomStateData {
 
     private List<DaytimeRecord> daytimeRecordList;
 
+    private String gameResult;
+
+
     public String getRoomCode() {
         return roomCode;
     }
@@ -171,5 +174,13 @@ public class RoomStateData {
 
     public int getAliveCount() {
         return (int) this.playerSeatInfo.stream().filter(seatInfo -> seatInfo.isAlive()).count();
+    }
+
+    public String getGameResult() {
+        return gameResult;
+    }
+
+    public void setGameResult(String gameResult) {
+        this.gameResult = gameResult;
     }
 }

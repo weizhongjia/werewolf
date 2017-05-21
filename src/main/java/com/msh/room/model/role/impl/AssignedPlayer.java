@@ -1,6 +1,5 @@
 package com.msh.room.model.role.impl;
 
-import com.google.gson.Gson;
 import com.msh.room.dto.event.PlayerEvent;
 import com.msh.room.dto.event.PlayerEventType;
 import com.msh.room.dto.response.PlayerDisplayInfo;
@@ -8,16 +7,17 @@ import com.msh.room.dto.room.RoomStateData;
 import com.msh.room.dto.room.RoomStatus;
 import com.msh.room.dto.room.record.DaytimeRecord;
 import com.msh.room.dto.room.record.NightRecord;
+import com.msh.room.dto.room.result.GameResult;
 import com.msh.room.dto.room.seat.PlayerSeatInfo;
 import com.msh.room.exception.RoomBusinessException;
 import com.msh.room.model.role.CommonPlayer;
 import com.msh.room.model.role.PlayerRoleFactory;
+import com.msh.room.model.role.Roles;
 import com.msh.room.model.role.util.PlayerRoleMask;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by zhangruiqian on 2017/5/18.
@@ -75,10 +75,31 @@ public abstract class AssignedPlayer extends CommonPlayer {
         }
     }
 
+    protected void gameEndingCalculate() {
+        long wolfCount = roomState.getPlayerSeatInfo().parallelStream()
+                .filter(playerSeatInfo -> Roles.WEREWOLVES.equals(playerSeatInfo.getRole()))
+                .filter(playerSeatInfo -> playerSeatInfo.isAlive()).count();
+        long villagerCount = roomState.getPlayerSeatInfo().parallelStream()
+                .filter(playerSeatInfo -> Roles.VILLAGER.equals(playerSeatInfo.getRole()))
+                .filter(playerSeatInfo -> playerSeatInfo.isAlive()).count();
+        long unCommonCount = roomState.getPlayerSeatInfo().parallelStream()
+                .filter(playerSeatInfo -> (!Roles.WEREWOLVES.equals(playerSeatInfo.getRole()) &&
+                        !Roles.VILLAGER.equals(playerSeatInfo.getRole())))
+                .filter(playerSeatInfo -> playerSeatInfo.isAlive()).count();
+        if (wolfCount == 0) {
+            roomState.setGameResult(GameResult.VILLAGERS_WIN);
+        }
+        if (villagerCount == 0 || unCommonCount == 0) {
+            roomState.setGameResult(GameResult.WEREWOLVES_WIN);
+        }
+    }
+
+
     @Override
     public RoomStateData voted() {
         PlayerSeatInfo seatInfo = roomState.getPlaySeatInfoBySeatNumber(number);
         seatInfo.setAlive(false);
+        gameEndingCalculate();
         return roomState;
     }
 
@@ -86,6 +107,7 @@ public abstract class AssignedPlayer extends CommonPlayer {
     public RoomStateData killed() {
         PlayerSeatInfo seatInfo = roomState.getPlaySeatInfoBySeatNumber(number);
         seatInfo.setAlive(false);
+        gameEndingCalculate();
         return roomState;
     }
 
@@ -96,6 +118,10 @@ public abstract class AssignedPlayer extends CommonPlayer {
         //除自己以外的玩家均覆盖身份
         displayInfo.setPlayerInfo(roomState.getPlayerSeatInfo().get(number - 1));
         List<PlayerSeatInfo> playerSeatInfos = PlayerRoleMask.maskPlayerRole(roomState.getPlayerSeatInfo(), Arrays.asList(number));
+        //游戏结束则不需要隐藏
+        if(RoomStatus.GAME_OVER.equals(roomState.getStatus())){
+            playerSeatInfos = roomState.getPlayerSeatInfo();
+        }
         displayInfo.setPlayerSeatInfoList(playerSeatInfos);
         displayInfo.setAcceptableEventTypeList(new ArrayList<>());
         if (this.roomState.getPlaySeatInfoBySeatNumber(number).isAlive()) {

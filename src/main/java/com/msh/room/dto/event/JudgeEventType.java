@@ -29,8 +29,14 @@ public enum JudgeEventType {
     //开始投票
     DAYTIME_VOTING,
 
+    //PK投票
+    DAYTIME_PK_VOTING,
+
+    //游戏结束
+    GAME_ENDING,
     //重开游戏
     RESTART_GAME,
     //解散游戏
     DISBAND_GAME
+
 }

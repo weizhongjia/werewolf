@@ -1,6 +1,5 @@
 package com.msh.room;
 
-import com.google.gson.Gson;
 import com.msh.room.cache.RoomStateDataRepository;
 import com.msh.room.dto.event.JudgeEvent;
 import com.msh.room.dto.event.JudgeEventType;
