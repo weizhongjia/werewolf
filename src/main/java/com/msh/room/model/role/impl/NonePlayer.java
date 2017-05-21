@@ -24,11 +24,6 @@ public class NonePlayer extends CommonPlayer {
     }
 
     @Override
-    public RoomStateData vote() {
-        throw new RoomBusinessException("该用户角色不接受此类型事件");
-    }
-
-    @Override
     public RoomStateData resolveEvent(PlayerEvent event) {
         if (PlayerEventType.JOIN_ROOM.equals(event.getEventType())) {
             resolveJoinEvent(event);
@@ -64,5 +59,10 @@ public class NonePlayer extends CommonPlayer {
             displayInfo.addAcceptableEventType(PlayerEventType.JOIN_ROOM);
         }
         return displayInfo;
+    }
+
+    @Override
+    public RoomStateData voted() {
+        return roomState;
     }
 }

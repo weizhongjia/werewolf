@@ -1,5 +1,6 @@
 package com.msh.room.dto.room;
 
+import com.msh.room.dto.room.record.DaytimeRecord;
 import com.msh.room.dto.room.record.NightRecord;
 import com.msh.room.dto.room.seat.PlayerSeatInfo;
 import com.msh.room.dto.room.state.HunterState;
@@ -27,6 +28,7 @@ public class RoomStateData {
     private MoronState moronState;
     private HunterState hunterState;
 
+    private List<DaytimeRecord> daytimeRecordList;
 
     public String getRoomCode() {
         return roomCode;
@@ -142,5 +144,32 @@ public class RoomStateData {
             }
         }
         return 0;
+    }
+
+    public List<DaytimeRecord> getDaytimeRecordList() {
+        return daytimeRecordList;
+    }
+
+    public void setDaytimeRecordList(List<DaytimeRecord> daytimeRecordList) {
+        this.daytimeRecordList = daytimeRecordList;
+    }
+
+    public void addDaytimeRecord(DaytimeRecord daytimeRecord) {
+        if (this.daytimeRecordList == null) {
+            this.daytimeRecordList = new ArrayList<>();
+        }
+        this.daytimeRecordList.add(daytimeRecord);
+    }
+
+    public DaytimeRecord getLastDaytimeRecord() {
+        if (this.daytimeRecordList == null || this.daytimeRecordList.size() == 0) {
+            return null;
+        }
+        int size = this.daytimeRecordList.size();
+        return this.daytimeRecordList.get(size - 1);
+    }
+
+    public int getAliveCount() {
+        return (int) this.playerSeatInfo.stream().filter(seatInfo -> seatInfo.isAlive()).count();
     }
 }

@@ -17,5 +17,9 @@ public enum PlayerEventType {
     //女巫毒人
     WITCH_POISON,
     //假装女巫毒人
-    FAKE_WITCH_POISON
+    FAKE_WITCH_POISON,
+
+    //玩家白天投票
+    DAYTIME_VOTE,
+    ;
 }

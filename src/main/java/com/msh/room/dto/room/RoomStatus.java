@@ -17,7 +17,6 @@ public enum RoomStatus {
     NIGHT,
     //白天发言
     DAYTIME,
-
     //投票
     VOTING,
     //PK发言

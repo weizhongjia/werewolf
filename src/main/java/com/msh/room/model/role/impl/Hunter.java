@@ -1,15 +1,7 @@
 package com.msh.room.model.role.impl;
 
-import com.msh.room.dto.event.PlayerEvent;
 import com.msh.room.dto.response.PlayerDisplayInfo;
-import com.msh.room.dto.room.seat.PlayerSeatInfo;
 import com.msh.room.dto.room.RoomStateData;
-import com.msh.room.model.role.CommonPlayer;
-import com.msh.room.model.role.util.PlayerRoleMask;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Created by zhangruiqian on 2017/5/7.
@@ -19,21 +11,13 @@ public class Hunter extends AssignedPlayer {
         super(roomState, number);
     }
 
+//TODO 猎人需要单独处理kill和vote事件,并且需要接受shoot事件
+
     @Override
     public RoomStateData killed() {
         super.killed();
         //判断是否可以触发动作
         return roomState;
-    }
-
-    @Override
-    public RoomStateData vote() {
-        return null;
-    }
-
-    @Override
-    public RoomStateData resolveEvent(PlayerEvent event) {
-        return null;
     }
 
     @Override

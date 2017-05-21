@@ -147,4 +147,9 @@ public class DaytimeTest {
         room.resolveJudgeEvent(witchPoisonEvent);
         return;
     }
+
+    @Test
+    public void testDaytimeVoting() {
+
+    }
 }

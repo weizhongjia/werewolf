@@ -26,15 +26,6 @@ public class Werewolves extends AssignedPlayer {
         this.alive = state.getPlaySeatInfoBySeatNumber(number).isAlive();
     }
 
-    @Override
-    public RoomStateData vote() {
-        return null;
-    }
-
-    @Override
-    public RoomStateData resolveEvent(PlayerEvent event) {
-        return null;
-    }
 
     @Override
     public PlayerDisplayInfo displayInfo() {

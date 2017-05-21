@@ -19,15 +19,6 @@ public class Villagers extends AssignedPlayer{
         super(roomState, number);
     }
 
-    @Override
-    public RoomStateData vote() {
-        return null;
-    }
-
-    @Override
-    public RoomStateData resolveEvent(PlayerEvent event) {
-        return null;
-    }
 
     @Override
     public PlayerDisplayInfo displayInfo() {

@@ -19,9 +19,10 @@ public abstract class CommonPlayer {
 
     public abstract RoomStateData killed();
 
-    public abstract RoomStateData vote();
-
     public abstract RoomStateData resolveEvent(PlayerEvent event);
 
     public abstract PlayerDisplayInfo displayInfo();
+
+    //被投票
+    public abstract RoomStateData voted();
 }

@@ -7,6 +7,7 @@ import com.msh.room.dto.response.JudgeDisplayInfo;
 import com.msh.room.dto.response.PlayerDisplayInfo;
 import com.msh.room.dto.room.RoomStateData;
 import com.msh.room.dto.room.RoomStatus;
+import com.msh.room.dto.room.record.DaytimeRecord;
 import com.msh.room.dto.room.record.NightRecord;
 import com.msh.room.dto.room.seat.PlayerSeatInfo;
 import com.msh.room.dto.room.state.HunterState;
@@ -69,6 +70,8 @@ public class Judge {
             case DAYTIME_COMING:
                 resolveDaytimeComing(event);
                 break;
+            case DAYTIME_VOTING:
+                resolveDaytimeVoting(event);
             case RESTART_GAME:
                 resolveRestartGameEvent(event);
                 break;
@@ -77,6 +80,16 @@ public class Judge {
                 break;
         }
         return roomState;
+    }
+
+    /**
+     * 开始投票事件
+     * @param event
+     */
+    private void resolveDaytimeVoting(JudgeEvent event) {
+        //开始投票
+        roomState.addDaytimeRecord(new DaytimeRecord());
+        this.roomState.setStatus(RoomStatus.VOTING);
     }
 
     /**
@@ -91,6 +104,7 @@ public class Judge {
         if (RoomStatus.DAYTIME.equals(roomStatus)) {
             //直接公布夜晚信息
             calculateNightInfo();
+            //游戏结束逻辑
         }
         roomState.setStatus(roomStatus);
     }
@@ -356,6 +370,13 @@ public class Judge {
         if (RoomStatus.DAYTIME.equals(roomState.getStatus())) {
             displayInfo.addAcceptableEventType(JudgeEventType.DAYTIME_VOTING);
         }
+        if (RoomStatus.VOTING.equals(roomState.getStatus())) {
+            //投票完成,有结果
+            if (roomState.getLastDaytimeRecord().getDiedNumber() != null) {
+                displayInfo.addAcceptableEventType(JudgeEventType.NIGHT_COMING);
+            }
+        }
+
         displayInfo.addAcceptableEventType(JudgeEventType.RESTART_GAME);
         displayInfo.addAcceptableEventType(JudgeEventType.DISBAND_GAME);
         return displayInfo;

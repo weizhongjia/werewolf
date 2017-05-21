@@ -28,16 +28,6 @@ public class Seer extends AssignedPlayer{
     }
 
     @Override
-    public RoomStateData vote() {
-        return null;
-    }
-
-    @Override
-    public RoomStateData resolveEvent(PlayerEvent event) {
-        return null;
-    }
-
-    @Override
     public PlayerDisplayInfo displayInfo() {
         PlayerDisplayInfo displayInfo = new PlayerDisplayInfo();
         resolveCommonDisplayInfo(displayInfo);

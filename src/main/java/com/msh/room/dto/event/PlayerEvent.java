@@ -16,6 +16,10 @@ public class PlayerEvent {
     //女巫毒人号码
     private Integer witchPoisonNumber;
 
+
+    private Integer daytimeVoteNumber;
+
+
     public PlayerEvent() {
     }
 
@@ -71,5 +75,13 @@ public class PlayerEvent {
 
     public void setWitchPoisonNumber(Integer witchPoisonNumber) {
         this.witchPoisonNumber = witchPoisonNumber;
+    }
+
+    public Integer getDaytimeVoteNumber() {
+        return daytimeVoteNumber;
+    }
+
+    public void setDaytimeVoteNumber(Integer daytimeVoteNumber) {
+        this.daytimeVoteNumber = daytimeVoteNumber;
     }
 }
