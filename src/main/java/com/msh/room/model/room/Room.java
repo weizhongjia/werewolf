@@ -50,10 +50,8 @@ public class Room {
 
     public JudgeDisplayInfo resolveJudgeEvent(JudgeEvent event) throws RoomBusinessException {
         Judge judge = generateJudgeUser();
-
         RoomStateData newData = judge.resolveEvent(event);
         dataRepository.putRoomStateData(roomCode, newData);
-
         return judge.displayInfo();
     }
 

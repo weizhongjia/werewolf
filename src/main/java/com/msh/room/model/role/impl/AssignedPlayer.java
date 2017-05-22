@@ -18,6 +18,7 @@ import com.msh.room.model.role.util.PlayerRoleMask;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by zhangruiqian on 2017/5/18.
@@ -40,7 +41,7 @@ public abstract class AssignedPlayer extends CommonPlayer {
         if (!roomState.getPlaySeatInfoBySeatNumber(this.number).isAlive()) {
             throw new RoomBusinessException("您已死亡，无法投票");
         }
-        if (!roomState.getPlaySeatInfoBySeatNumber(voteNumber).isAlive()) {
+        if (voteNumber != 0 && !roomState.getPlaySeatInfoBySeatNumber(voteNumber).isAlive()) {
             throw new RoomBusinessException("该玩家已死亡，无法投票");
         }
         DaytimeRecord lastDaytimeRecord = roomState.getLastDaytimeRecord();
@@ -61,8 +62,8 @@ public abstract class AssignedPlayer extends CommonPlayer {
         List<Integer> voteResult = lastDaytimeRecord.getVoteResult();
         //如果有平票
         if (voteResult.size() > 1) {
+            daytimeRecord.addNewPk();
             for (Integer number : voteResult) {
-                daytimeRecord.addNewPk();
                 daytimeRecord.addPkNumber(number);
                 roomState.setStatus(RoomStatus.PK);
             }
@@ -118,22 +119,31 @@ public abstract class AssignedPlayer extends CommonPlayer {
         //除自己以外的玩家均覆盖身份
         displayInfo.setPlayerInfo(roomState.getPlayerSeatInfo().get(number - 1));
         List<PlayerSeatInfo> playerSeatInfos = PlayerRoleMask.maskPlayerRole(roomState.getPlayerSeatInfo(), Arrays.asList(number));
-        //游戏结束则不需要隐藏
-        if(RoomStatus.GAME_OVER.equals(roomState.getStatus())){
-            playerSeatInfos = roomState.getPlayerSeatInfo();
-        }
         displayInfo.setPlayerSeatInfoList(playerSeatInfos);
+
         displayInfo.setAcceptableEventTypeList(new ArrayList<>());
-        if (this.roomState.getPlaySeatInfoBySeatNumber(number).isAlive()) {
-            if (RoomStatus.VOTING.equals(roomState.getStatus())) {
-                if (!roomState.getLastDaytimeRecord().isDaytimeVoted(number)) {
-                    displayInfo.addAcceptableEventType(PlayerEventType.DAYTIME_VOTE);
-                } else if (roomState.getLastDaytimeRecord().getDiedNumber() != null) {
-                    //如果已经投票死人，说明投票有结果了.公布白天投票信息
-                    displayInfo.setDaytimeRecord(roomState.getLastDaytimeRecord());
-                }
+        if (RoomStatus.VOTING.equals(roomState.getStatus())) {
+            if (!roomState.getLastDaytimeRecord().isDaytimeVoted(number)
+                    && this.roomState.getPlaySeatInfoBySeatNumber(number).isAlive()) {
+                displayInfo.addAcceptableEventType(PlayerEventType.DAYTIME_VOTE);
+            } else if (roomState.getLastDaytimeRecord().getDiedNumber() != null) {
+                //如果已经投票死人，说明投票有结果了.公布白天投票信息
+                displayInfo.setDaytimeRecord(roomState.getLastDaytimeRecord());
             }
-            //TODO PK环节
+        }
+        if (RoomStatus.PK.equals(roomState.getStatus())) {
+            //PK环节说明投票结束，也公布白天信息
+            displayInfo.setDaytimeRecord(roomState.getLastDaytimeRecord());
+        }
+        if (RoomStatus.PK_VOTING.equals(roomState.getStatus())) {
+            Map<Integer, List<Integer>> pkRecord = roomState.getLastDaytimeRecord().getLastPKRecord();
+            if(!pkRecord.containsKey(number)){
+                displayInfo.addAcceptableEventType(PlayerEventType.PK_VOTE);
+            }
+        }
+        //游戏结束则不需要隐藏
+        if (RoomStatus.GAME_OVER.equals(roomState.getStatus())) {
+            displayInfo.setPlayerSeatInfoList(roomState.getPlayerSeatInfo());
         }
     }
 }

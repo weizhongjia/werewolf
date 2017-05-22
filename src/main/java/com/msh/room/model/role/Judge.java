@@ -55,6 +55,7 @@ public class Judge {
                 resolveSeerVerify(event);
                 break;
             case FAKE_SEER_VERIFY:
+                resolveFakeSeerVerify(event);
                 break;
             case WITCH_SAVE:
                 resolveWitchSave(event);
@@ -74,7 +75,9 @@ public class Judge {
             case DAYTIME_VOTING:
                 resolveDaytimeVoting(event);
                 break;
-
+            case DAYTIME_PK_VOTING:
+                resolvePKVoting(event);
+                break;
             case GAME_ENDING:
                 resolveGameEnding(event);
                 break;
@@ -86,6 +89,12 @@ public class Judge {
                 break;
         }
         return roomState;
+    }
+
+    private void resolvePKVoting(JudgeEvent event) {
+        if (this.roomState.getLastDaytimeRecord().getPkVotingRecord().size() < 2) {
+            this.roomState.setStatus(RoomStatus.PK_VOTING);
+        }
     }
 
     private void resolveGameEnding(JudgeEvent event) {
@@ -186,9 +195,15 @@ public class Judge {
         }
     }
 
+    private void resolveFakeSeerVerify(JudgeEvent event) {
+        int seerNumber = roomState.getFirstSeatByRole(Roles.SEER);
+        Seer seer = (Seer) PlayerRoleFactory.createPlayerInstance(roomState, seerNumber);
+        seer.fakeVerify();
+    }
+
     private void resolveWolfKill(JudgeEvent event) {
         Integer wolfKillNumber = event.getWolfKillNumber();
-        if (wolfKillNumber ==0 || roomState.getPlaySeatInfoBySeatNumber(wolfKillNumber).isAlive()) {
+        if (wolfKillNumber == 0 || roomState.getPlaySeatInfoBySeatNumber(wolfKillNumber).isAlive()) {
             roomState.getLastNightRecord().setWolfKilledSeat(wolfKillNumber);
         } else {
             throw new RoomBusinessException("无法杀掉一个死人");
@@ -377,6 +392,7 @@ public class Judge {
                 displayInfo.addAcceptableEventType(JudgeEventType.DAYTIME_COMING);
             }
         }
+        displayInfo.setDaytimeRecord(roomState.getLastDaytimeRecord());
         //白天发言时间
         if (RoomStatus.DAYTIME.equals(roomState.getStatus())) {
             displayInfo.addAcceptableEventType(JudgeEventType.DAYTIME_VOTING);
@@ -384,12 +400,10 @@ public class Judge {
         if (RoomStatus.VOTING.equals(roomState.getStatus())) {
             //投票完成,有结果
             if (roomState.getLastDaytimeRecord().getDiedNumber() != null) {
-                displayInfo.setDaytimeRecord(roomState.getLastDaytimeRecord());
                 displayInfo.addAcceptableEventType(JudgeEventType.NIGHT_COMING);
             }
         }
         if (RoomStatus.PK.equals(roomState.getStatus())) {
-            //TODO PK环节
             displayInfo.addAcceptableEventType(JudgeEventType.DAYTIME_PK_VOTING);
         }
 

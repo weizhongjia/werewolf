@@ -60,6 +60,13 @@ public class DaytimeRecord {
         voteMap.put(number, new ArrayList<>());
     }
 
+    public Map<Integer, List<Integer>> getLastPKRecord() {
+        if (pkVotingRecord == null) {
+            return null;
+        }
+        int size = pkVotingRecord.size();
+        return pkVotingRecord.get(size - 1);
+    }
 
     public boolean isDaytimeVoteComplete(int aliveNumber) {
         int count = 0;

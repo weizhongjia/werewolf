@@ -72,4 +72,11 @@ public class Seer extends AssignedPlayer {
             lastNightRecord.setSeerVerifyResult(Roles.WEREWOLVES.equals(seatInfo.getRole()));
         } else throw new RoomBusinessException("目前预言家无法验人");
     }
+
+    public void fakeVerify(){
+        NightRecord lastNightRecord = roomState.getLastNightRecord();
+        lastNightRecord.setSeerVerify(0);
+        lastNightRecord.setSeerVerifyResult(false);
+    }
 }
+
