@@ -406,7 +406,12 @@ public class Judge {
         if (RoomStatus.PK.equals(roomState.getStatus())) {
             displayInfo.addAcceptableEventType(JudgeEventType.DAYTIME_PK_VOTING);
         }
-
+        if (RoomStatus.PK_VOTING.equals(roomState.getStatus())) {
+            //投票完成,有结果
+            if (roomState.getLastDaytimeRecord().getDiedNumber() != null) {
+                displayInfo.addAcceptableEventType(JudgeEventType.NIGHT_COMING);
+            }
+        }
         //游戏可以结束，所有仅留游戏结束事件
         if (roomState.getGameResult() != null) {
             displayInfo.setAcceptableEventTypes(new ArrayList<>());

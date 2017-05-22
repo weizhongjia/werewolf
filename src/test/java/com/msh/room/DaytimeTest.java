@@ -212,6 +212,7 @@ public class DaytimeTest {
         }
     }
 
+
     @Test
     public void testDaytimeVotePK() {
         Room room = roomManager.loadRoom(roomCode);
@@ -224,24 +225,7 @@ public class DaytimeTest {
         RoomStateData stateData = repository.loadRoomStateData(roomCode);
         int wolf = stateData.getAliveSeatByRole(Roles.WEREWOLVES);
         int seer = stateData.getAliveSeatByRole(Roles.SEER);
-        for (int i = 1; i < 13; i++) {
-            PlayerDisplayInfo displayInfo = room.getPlayerDisplayResult(i);
-            PlayerSeatInfo playerInfo = displayInfo.getPlayerInfo();
-            if (playerInfo.isAlive()) {
-                PlayerEvent playerEvent = new PlayerEvent(PlayerEventType.DAYTIME_VOTE, i, playerInfo.getUserID());
-                if (Roles.WEREWOLVES.equals(playerInfo.getRole())) {
-                    //狼投预言家
-                    playerEvent.setDaytimeVoteNumber(seer);
-                } else if (Roles.VILLAGER.equals(playerInfo.getRole())) {
-                    //民弃票
-                    playerEvent.setDaytimeVoteNumber(0);
-                } else {
-                    //其他投狼
-                    playerEvent.setDaytimeVoteNumber(wolf);
-                }
-                room.resolvePlayerEvent(playerEvent);
-            }
-        }
+        simpleVoteWolfAndSeer(room, wolf, seer);
         JudgeDisplayInfo judgeDisplayResult = room.getJudgeDisplayResult();
         assertEquals(RoomStatus.PK, judgeDisplayResult.getStatus());
         assertNull(judgeDisplayResult.getDaytimeRecord().getDiedNumber());
@@ -267,10 +251,72 @@ public class DaytimeTest {
                 judgeDisplayInfo.getAcceptableEventTypes());
         for (int i = 1; i < 13; i++) {
             PlayerDisplayInfo displayInfo = room.getPlayerDisplayResult(i);
-            if (!pkVotingResult.containsKey(i)) {
+            PlayerSeatInfo playerInfo = displayInfo.getPlayerInfo();
+            if (!pkVotingResult.containsKey(i) && playerInfo.isAlive()) {
                 assertEquals(Arrays.asList(PlayerEventType.PK_VOTE), displayInfo.getAcceptableEventTypeList());
+                PlayerEvent playerPKVoteEvent = new PlayerEvent(PlayerEventType.PK_VOTE, i, playerInfo.getUserID());
+                playerPKVoteEvent.setPkVoteNumber(wolf);
+                PlayerDisplayInfo votedDisplayInfo = room.resolvePlayerEvent(playerPKVoteEvent);
+                assertEquals(0, votedDisplayInfo.getAcceptableEventTypeList().size());
             } else {
                 assertEquals(0, displayInfo.getAcceptableEventTypeList().size());
+            }
+        }
+        JudgeDisplayInfo result = room.getJudgeDisplayResult();
+        assertEquals(Arrays.asList(JudgeEventType.NIGHT_COMING, JudgeEventType.RESTART_GAME, JudgeEventType.DISBAND_GAME),
+                result.getAcceptableEventTypes());
+        assertEquals(Integer.valueOf(wolf), result.getDaytimeRecord().getDiedNumber());
+        assertFalse(result.getPlayerSeatInfoList().get(wolf - 1).isAlive());
+    }
+
+    public void testTwoTimesPK() {
+        Room room = roomManager.loadRoom(roomCode);
+        simpleKillVillagerNight(room);
+        JudgeEvent daytimeEvent = new JudgeEvent(roomCode, JudgeEventType.DAYTIME_COMING);
+        room.resolveJudgeEvent(daytimeEvent);
+        JudgeEvent daytimeVotingEvent = new JudgeEvent(roomCode, JudgeEventType.DAYTIME_VOTING);
+        room.resolveJudgeEvent(daytimeVotingEvent);
+
+        RoomStateData stateData = repository.loadRoomStateData(roomCode);
+        int wolf = stateData.getAliveSeatByRole(Roles.WEREWOLVES);
+        int seer = stateData.getAliveSeatByRole(Roles.SEER);
+        simpleVoteWolfAndSeer(room, wolf, seer);
+
+        JudgeDisplayInfo judgeDisplayResult = room.getJudgeDisplayResult();
+        Map<Integer, List<Integer>> pkVotingResult = judgeDisplayResult.getDaytimeRecord().getPkVotingRecord().get(0);
+
+        JudgeEvent pkVoteEvent = new JudgeEvent(roomCode, JudgeEventType.DAYTIME_PK_VOTING);
+        room.resolveJudgeEvent(pkVoteEvent);
+
+        for (int i = 1; i < 13; i++) {
+            PlayerDisplayInfo displayInfo = room.getPlayerDisplayResult(i);
+            PlayerSeatInfo playerInfo = displayInfo.getPlayerInfo();
+            if (!pkVotingResult.containsKey(i) && playerInfo.isAlive()) {
+                PlayerEvent playerPKVoteEvent = new PlayerEvent(PlayerEventType.PK_VOTE, i, playerInfo.getUserID());
+                //TODO 处理PK投票人需要平票,人不够，需要女巫开毒
+                playerPKVoteEvent.setPkVoteNumber(wolf);
+                room.resolvePlayerEvent(playerPKVoteEvent);
+            }
+        }
+
+    }
+    public void simpleVoteWolfAndSeer(Room room, int wolf, int seer) {
+        for (int i = 1; i < 13; i++) {
+            PlayerDisplayInfo displayInfo = room.getPlayerDisplayResult(i);
+            PlayerSeatInfo playerInfo = displayInfo.getPlayerInfo();
+            if (playerInfo.isAlive()) {
+                PlayerEvent playerEvent = new PlayerEvent(PlayerEventType.DAYTIME_VOTE, i, playerInfo.getUserID());
+                if (Roles.WEREWOLVES.equals(playerInfo.getRole())) {
+                    //狼投预言家
+                    playerEvent.setDaytimeVoteNumber(seer);
+                } else if (Roles.VILLAGER.equals(playerInfo.getRole())) {
+                    //民弃票
+                    playerEvent.setDaytimeVoteNumber(0);
+                } else {
+                    //其他投狼
+                    playerEvent.setDaytimeVoteNumber(wolf);
+                }
+                room.resolvePlayerEvent(playerEvent);
             }
         }
     }

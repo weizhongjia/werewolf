@@ -18,7 +18,7 @@ public class PlayerEvent {
 
 
     private Integer daytimeVoteNumber;
-
+    private Integer pkVoteNumber;
 
     public PlayerEvent() {
     }
@@ -83,5 +83,13 @@ public class PlayerEvent {
 
     public void setDaytimeVoteNumber(Integer daytimeVoteNumber) {
         this.daytimeVoteNumber = daytimeVoteNumber;
+    }
+
+    public Integer getPkVoteNumber() {
+        return pkVoteNumber;
+    }
+
+    public void setPkVoteNumber(Integer pkVoteNumber) {
+        this.pkVoteNumber = pkVoteNumber;
     }
 }

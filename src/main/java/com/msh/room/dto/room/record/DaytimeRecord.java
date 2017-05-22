@@ -1,5 +1,7 @@
 package com.msh.room.dto.room.record;
 
+import com.msh.room.exception.RoomBusinessException;
+
 import java.util.*;
 
 /**
@@ -68,6 +70,55 @@ public class DaytimeRecord {
         return pkVotingRecord.get(size - 1);
     }
 
+    public void addPKVote(Integer seatNumber, Integer voteNumber) {
+        if (voteNumber == 0) {
+            throw new RoomBusinessException("PK环节不能弃票");
+        }
+        List<Integer> voteRecord = getLastPKRecord().get(voteNumber);
+        if (voteRecord == null) {
+            throw new RoomBusinessException("该玩家非PK玩家，无法投票");
+        }
+        voteRecord.add(seatNumber);
+    }
+
+    public boolean isPKVoteComplete(int aliveNumber) {
+        int count = 0;
+        for (Integer key : getLastPKRecord().keySet()) {
+            count += getLastPKRecord().get(key).size();
+        }
+        if (count == aliveNumber) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isPKVoted(int seatNumber) {
+        long count = getLastPKRecord().keySet().parallelStream()
+                .filter(key -> getLastPKRecord().get(key).contains(seatNumber)).count();
+        return count != 0;
+    }
+
+    public List<Integer> getPKVoteResult() {
+        Map<Integer, List<Integer>> voteRecord= getLastPKRecord();
+        return calculateVoteResult(voteRecord);
+    }
+
+    public List<Integer> calculateVoteResult(Map<Integer, List<Integer>> voteRecord) {
+        List<Integer> result = new ArrayList<>();
+        int biggestNumber = 0;
+        for (Integer key : voteRecord.keySet()) {
+            int number = voteRecord.get(key).size();
+            if (number > biggestNumber && key != 0) {
+                biggestNumber = number;
+                result = new ArrayList<>();
+                result.add(key);
+            } else if (number == biggestNumber && key != 0) {
+                result.add(key);
+            }
+        }
+        return result;
+    }
+
     public boolean isDaytimeVoteComplete(int aliveNumber) {
         int count = 0;
         for (Integer key : votingRecord.keySet()) {
@@ -86,18 +137,6 @@ public class DaytimeRecord {
     }
 
     public List<Integer> getVoteResult() {
-        List<Integer> result = new ArrayList<>();
-        int biggestNumber = 0;
-        for (Integer key : votingRecord.keySet()) {
-            int number = votingRecord.get(key).size();
-            if (number > biggestNumber && key != 0) {
-                biggestNumber = number;
-                result = new ArrayList<>();
-                result.add(key);
-            } else if (number == biggestNumber && key != 0) {
-                result.add(key);
-            }
-        }
-        return result;
+        return calculateVoteResult(votingRecord);
     }
 }
