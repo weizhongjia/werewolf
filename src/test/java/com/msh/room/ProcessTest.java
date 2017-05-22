@@ -16,8 +16,11 @@ import com.msh.room.model.room.RoomManager;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.junit.Assert.*;
 
 /**
  * Created by zhangruiqian on 2017/5/21.
@@ -95,35 +98,13 @@ public class ProcessTest {
         daytimeVote(room);
         simpleKillVillagerNight(room);
         daytimeVote(room);
-        //天黑
-        JudgeEvent nightComingEvent = new JudgeEvent(roomCode, JudgeEventType.NIGHT_COMING);
-        room.resolveJudgeEvent(nightComingEvent);
-
-        JudgeEvent wolfKillEvent = new JudgeEvent(roomCode, JudgeEventType.WOLF_KILL);
-        //不杀
-        RoomStateData roomStateData = repository.loadRoomStateData(roomCode);
-        int seat = 0;
-        wolfKillEvent.setWolfKillNumber(seat);
-        room.resolveJudgeEvent(wolfKillEvent);
-        JudgeEvent seerVerifyEvent = new JudgeEvent(roomCode, JudgeEventType.SEER_VERIFY);
-        //验第一个狼
-        int wolfSeat = roomStateData.getAliveSeatByRole(Roles.WEREWOLVES);
-        seerVerifyEvent.setSeerVerifyNumber(wolfSeat);
-        room.resolveJudgeEvent(seerVerifyEvent);
-        //没救
-        JudgeEvent witchSaveEvent = new JudgeEvent(roomCode, JudgeEventType.WITCH_SAVE);
-        witchSaveEvent.setWitchSave(false);
-        room.resolveJudgeEvent(witchSaveEvent);
-        JudgeEvent witchPoisonEvent = new JudgeEvent(roomCode, JudgeEventType.WITCH_POISON);
-        //也没毒
-        witchPoisonEvent.setWitchPoisonNumber(0);
-        room.resolveJudgeEvent(witchPoisonEvent);
-//        simpleKillVillagerNight(room);
-        daytimeVote(room);
-//        JudgeEvent daytimeEvent = new JudgeEvent(roomCode, JudgeEventType.DAYTIME_COMING);
-//        room.resolveJudgeEvent(daytimeEvent);
+        simpleKillVillagerNight(room);
+//        daytimeVote(room);
+        JudgeEvent daytimeEvent = new JudgeEvent(roomCode, JudgeEventType.DAYTIME_COMING);
+        room.resolveJudgeEvent(daytimeEvent);
         JudgeDisplayInfo judgeDisplayResult = room.getJudgeDisplayResult();
-        judgeDisplayResult.getAcceptableEventTypes();
+        assertEquals(Arrays.asList(JudgeEventType.GAME_ENDING, JudgeEventType.RESTART_GAME, JudgeEventType.DISBAND_GAME),
+                judgeDisplayResult.getAcceptableEventTypes());
     }
 
     private void daytimeVote(Room room) {
