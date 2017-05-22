@@ -68,6 +68,7 @@ public abstract class AssignedPlayer extends CommonPlayer {
         List<Integer> voteResult = lastDaytimeRecord.getPKVoteResult();
         //如果有平票
         if (voteResult.size() > 1) {
+            //没到两轮
             if (daytimeRecord.getPkVotingRecord().size() < 2) {
                 daytimeRecord.addNewPk();
                 for (Integer number : voteResult) {
@@ -75,7 +76,7 @@ public abstract class AssignedPlayer extends CommonPlayer {
                     roomState.setStatus(RoomStatus.PK);
                 }
             } else {
-                //无人死亡
+                //两轮pk平票 无人死亡
                 daytimeRecord.setDiedNumber(0);
             }
             return roomState;
