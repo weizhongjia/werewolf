@@ -99,7 +99,7 @@ public class DaytimeRecord {
         return count != 0;
     }
 
-    public List<Integer> getPKVoteResult() {
+    public List<Integer> resolvePKVoteResult() {
         Map<Integer, List<Integer>> voteRecord= lastPKRecord();
         return calculateVoteResult(voteRecord);
     }
@@ -137,7 +137,7 @@ public class DaytimeRecord {
         return count != 0;
     }
 
-    public List<Integer> getVoteResult() {
+    public List<Integer> resolveVoteResult() {
         return calculateVoteResult(votingRecord);
     }
 }

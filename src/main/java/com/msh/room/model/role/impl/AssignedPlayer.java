@@ -65,7 +65,7 @@ public abstract class AssignedPlayer extends CommonPlayer {
 
     private RoomStateData pkVoteResult(DaytimeRecord lastDaytimeRecord) {
         DaytimeRecord daytimeRecord = roomState.getLastDaytimeRecord();
-        List<Integer> voteResult = lastDaytimeRecord.getPKVoteResult();
+        List<Integer> voteResult = lastDaytimeRecord.resolvePKVoteResult();
         //如果有平票
         if (voteResult.size() > 1) {
             //没到两轮
@@ -111,7 +111,7 @@ public abstract class AssignedPlayer extends CommonPlayer {
 
     protected RoomStateData daytimeVoteResult(DaytimeRecord lastDaytimeRecord) {
         DaytimeRecord daytimeRecord = roomState.getLastDaytimeRecord();
-        List<Integer> voteResult = lastDaytimeRecord.getVoteResult();
+        List<Integer> voteResult = lastDaytimeRecord.resolveVoteResult();
         //如果有平票
         if (voteResult.size() > 1) {
             daytimeRecord.addNewPk();
