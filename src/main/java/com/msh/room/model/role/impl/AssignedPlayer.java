@@ -210,6 +210,12 @@ public abstract class AssignedPlayer extends CommonPlayer {
                 displayInfo.setDaytimeRecord(roomState.getLastDaytimeRecord());
             }
         }
+        if (RoomStatus.HUNTER_SHOOT.equals(roomState.getStatus())) {
+            //进入猎人时间后，可以放开白天信息。猎人投票死亡需要公布票型，猎人夜晚死亡白天为空信息
+            displayInfo.setDaytimeRecord(roomState.getLastDaytimeRecord());
+        }
+
+
         //游戏结束则不需要隐藏
         if (RoomStatus.GAME_OVER.equals(roomState.getStatus())) {
             displayInfo.setPlayerSeatInfoList(roomState.getPlayerSeatInfo());
