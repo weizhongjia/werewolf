@@ -20,11 +20,11 @@
                         password="${druid.password}">
         </jdbcConnection>
 
-        <javaModelGenerator targetPackage="com.msh.model" targetProject="src/main/java"/>
+        <javaModelGenerator targetPackage="com.msh.common.model" targetProject="src/main/java"/>
 
         <sqlMapGenerator targetPackage="mapper" targetProject="src/main/resources"/>
 
-        <javaClientGenerator targetPackage="com.msh.mapper" targetProject="src/main/java"
+        <javaClientGenerator targetPackage="com.msh.common.mapper" targetProject="src/main/java"
                              type="XMLMAPPER"/>
 
         <table tableName="%">

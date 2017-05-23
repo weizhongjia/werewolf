@@ -1,7 +1,7 @@
 package com.msh.security;
 
-import com.msh.model.security.AuthorityName;
-import com.msh.model.security.User;
+import com.msh.common.model.security.AuthorityName;
+import com.msh.common.model.security.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
