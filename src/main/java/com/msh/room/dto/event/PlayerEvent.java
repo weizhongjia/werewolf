@@ -20,6 +20,8 @@ public class PlayerEvent {
     private Integer daytimeVoteNumber;
     private Integer pkVoteNumber;
 
+    private Integer shootNumber;
+
     public PlayerEvent() {
     }
 
@@ -91,5 +93,13 @@ public class PlayerEvent {
 
     public void setPkVoteNumber(Integer pkVoteNumber) {
         this.pkVoteNumber = pkVoteNumber;
+    }
+
+    public Integer getShootNumber() {
+        return shootNumber;
+    }
+
+    public void setShootNumber(Integer shootNumber) {
+        this.shootNumber = shootNumber;
     }
 }

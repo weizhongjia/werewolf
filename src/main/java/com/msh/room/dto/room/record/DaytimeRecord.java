@@ -100,7 +100,7 @@ public class DaytimeRecord {
     }
 
     public List<Integer> resolvePKVoteResult() {
-        Map<Integer, List<Integer>> voteRecord= lastPKRecord();
+        Map<Integer, List<Integer>> voteRecord = lastPKRecord();
         return calculateVoteResult(voteRecord);
     }
 

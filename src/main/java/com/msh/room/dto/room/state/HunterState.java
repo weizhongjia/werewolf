@@ -1,25 +1,28 @@
 package com.msh.room.dto.room.state;
 
+import com.msh.room.dto.room.RoomStatus;
+
 /**
  * Created by zhangruiqian on 2017/5/14.
  */
 public class HunterState {
-    private boolean alive;
-    private boolean shotAvailable;
+    private RoomStatus nextStatus;
+    private Integer shootNumber;
 
-    public boolean isAlive() {
-        return alive;
+
+    public RoomStatus getNextStatus() {
+        return nextStatus;
     }
 
-    public void setAlive(boolean alive) {
-        this.alive = alive;
+    public void setNextStatus(RoomStatus nextStatus) {
+        this.nextStatus = nextStatus;
     }
 
-    public boolean isShotAvailable() {
-        return shotAvailable;
+    public Integer getShootNumber() {
+        return shootNumber;
     }
 
-    public void setShotAvailable(boolean shotAvailable) {
-        this.shotAvailable = shotAvailable;
+    public void setShootNumber(Integer shootNumber) {
+        this.shootNumber = shootNumber;
     }
 }
