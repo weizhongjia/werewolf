@@ -55,7 +55,7 @@ public abstract class AssignedPlayer extends CommonPlayer {
         if (lastDaytimeRecord.isPKVoted(this.number)) {
             throw new RoomBusinessException("您已经投票，请勿重复投票");
         }
-        Map<Integer, List<Integer>> lastPKRecord = lastDaytimeRecord.getLastPKRecord();
+        Map<Integer, List<Integer>> lastPKRecord = lastDaytimeRecord.lastPKRecord();
         lastDaytimeRecord.addPKVote(this.number, voteNumber);
         if (lastDaytimeRecord.isPKVoteComplete(roomState.getAliveCount() - lastPKRecord.size())) {
             return pkVoteResult(lastDaytimeRecord);
@@ -188,7 +188,7 @@ public abstract class AssignedPlayer extends CommonPlayer {
             displayInfo.setDaytimeRecord(roomState.getLastDaytimeRecord());
         }
         if (RoomStatus.PK_VOTING.equals(roomState.getStatus())) {
-            Map<Integer, List<Integer>> pkRecord = roomState.getLastDaytimeRecord().getLastPKRecord();
+            Map<Integer, List<Integer>> pkRecord = roomState.getLastDaytimeRecord().lastPKRecord();
             if (!pkRecord.containsKey(number)
                     && this.roomState.getPlaySeatInfoBySeatNumber(number).isAlive()) {
                 if (!roomState.getLastDaytimeRecord().isPKVoted(number)) {
