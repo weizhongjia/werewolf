@@ -63,7 +63,7 @@ public class DaytimeRecord {
         voteMap.put(number, new ArrayList<>());
     }
 
-    public Map<Integer, List<Integer>> getLastPKRecord() {
+    public Map<Integer, List<Integer>> lastPKRecord() {
         if (pkVotingRecord == null) {
             return null;
         }
@@ -75,7 +75,7 @@ public class DaytimeRecord {
         if (voteNumber == 0) {
             throw new RoomBusinessException("PK环节不能弃票");
         }
-        List<Integer> voteRecord = getLastPKRecord().get(voteNumber);
+        List<Integer> voteRecord = lastPKRecord().get(voteNumber);
         if (voteRecord == null) {
             throw new RoomBusinessException("该玩家非PK玩家，无法投票");
         }
@@ -84,8 +84,8 @@ public class DaytimeRecord {
 
     public boolean isPKVoteComplete(int aliveNumber) {
         int count = 0;
-        for (Integer key : getLastPKRecord().keySet()) {
-            count += getLastPKRecord().get(key).size();
+        for (Integer key : lastPKRecord().keySet()) {
+            count += lastPKRecord().get(key).size();
         }
         if (count == aliveNumber) {
             return true;
@@ -94,13 +94,13 @@ public class DaytimeRecord {
     }
 
     public boolean isPKVoted(int seatNumber) {
-        long count = getLastPKRecord().keySet().parallelStream()
-                .filter(key -> getLastPKRecord().get(key).contains(seatNumber)).count();
+        long count = lastPKRecord().keySet().parallelStream()
+                .filter(key -> lastPKRecord().get(key).contains(seatNumber)).count();
         return count != 0;
     }
 
     public List<Integer> getPKVoteResult() {
-        Map<Integer, List<Integer>> voteRecord= getLastPKRecord();
+        Map<Integer, List<Integer>> voteRecord= lastPKRecord();
         return calculateVoteResult(voteRecord);
     }
 
