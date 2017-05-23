@@ -14,6 +14,7 @@ public class DaytimeRecord {
 
     public DaytimeRecord() {
         votingRecord = new LinkedHashMap<>();
+        pkVotingRecord = new ArrayList<>();
     }
 
     public Map<Integer, List<Integer>> getVotingRecord() {
