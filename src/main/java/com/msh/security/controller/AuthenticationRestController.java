@@ -1,28 +1,22 @@
 package com.msh.security.controller;
 
-import com.msh.mapper.UserMapper;
-import com.msh.model.security.User;
+import com.msh.common.mapper.UserMapper;
+import com.msh.common.model.security.User;
 import com.msh.security.*;
 import me.chanjar.weixin.common.exception.WxErrorException;
-import me.chanjar.weixin.mp.api.WxMpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mobile.device.Device;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import com.msh.security.service.JwtAuthenticationResponse;
-
-import javax.servlet.http.HttpServletRequest;
 
 @RestController
 public class AuthenticationRestController {
@@ -44,9 +38,7 @@ public class AuthenticationRestController {
 
         // Perform the security
         final Authentication authentication = authenticationManager.authenticate(
-                new WechatAuthenticationToken(
-                        authenticationRequest.getCode()
-                )
+            new WerewolfAuthenticationToken(authenticationRequest)
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
 

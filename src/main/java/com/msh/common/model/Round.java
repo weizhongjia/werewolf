@@ -1,4 +1,4 @@
-package com.msh.model;
+package com.msh.common.model;
 
 import javax.persistence.*;
 

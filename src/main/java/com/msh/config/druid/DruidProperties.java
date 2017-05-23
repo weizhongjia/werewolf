@@ -1,4 +1,4 @@
-package com.msh.druid;
+package com.msh.config.druid;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

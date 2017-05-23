@@ -7,7 +7,7 @@ import org.springframework.boot.context.embedded.ConfigurableEmbeddedServletCont
 import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
 
 @SpringBootApplication
-@MapperScan(basePackages = "com.msh.mapper")
+@MapperScan(basePackages = "com.msh.common.mapper")
 public class WerewolfApplication {
     public static void main(String[] args) {
         SpringApplication.run(WerewolfApplication.class, args);

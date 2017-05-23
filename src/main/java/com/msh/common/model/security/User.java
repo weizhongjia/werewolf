@@ -1,4 +1,4 @@
-package com.msh.model.security;
+package com.msh.common.model.security;
 
 import javax.persistence.*;
 
@@ -29,6 +29,38 @@ public class User {
     private String groupid;
 
     private String groupname;
+
+    @Column(name = "authority_name")
+    private AuthorityName authorityName;
+
+    @Column(name = "user_name")
+    private String userName;
+
+    private String password;
+
+    public AuthorityName getAuthorityName() {
+        return authorityName;
+    }
+
+    public void setAuthorityName(AuthorityName authorityName) {
+        this.authorityName = authorityName;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
     /**
      * @return id
