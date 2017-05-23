@@ -94,6 +94,7 @@ public class HunterTest {
         JudgeDisplayInfo judgeDisplayInfo = room.resolveJudgeEvent(daytimeEvent);
         //猎人时间
         assertEquals(RoomStatus.HUNTER_SHOOT, judgeDisplayInfo.getStatus());
+        //法官暂时没有办法操作
         assertEquals(Arrays.asList(JudgeEventType.RESTART_GAME, JudgeEventType.DISBAND_GAME), judgeDisplayInfo.getAcceptableEventTypes());
         String hunterUserName = "";
         for (int i = 1; i < 13; i++) {
@@ -101,8 +102,11 @@ public class HunterTest {
             PlayerSeatInfo playerInfo = displayResult.getPlayerInfo();
             if (Roles.HUNTER.equals(playerInfo.getRole())) {
                 hunterUserName = playerInfo.getUserID();
+                //猎人可以操作带人
                 assertEquals(Arrays.asList(PlayerEventType.HUNTER_SHOOT), displayResult.getAcceptableEventTypeList());
+                //猎人已死
                 assertFalse(playerInfo.isAlive());
+                //夜晚死人信息是猎人
                 assertEquals(Arrays.asList(i), displayResult.getNightRecord().getDiedNumber());
             }
         }
@@ -111,17 +115,24 @@ public class HunterTest {
         //把狼崩了
         hunterShoot.setShootNumber(wolfSeat);
         PlayerDisplayInfo playerDisplayInfo = room.resolvePlayerEvent(hunterShoot);
+        //猎人操作完成，没其他操作了
         assertEquals(0, playerDisplayInfo.getAcceptableEventTypeList().size());
 
         JudgeDisplayInfo judgeDisplayResult = room.getJudgeDisplayResult();
+        //进入白天
+        assertEquals(RoomStatus.DAYTIME, judgeDisplayResult.getStatus());
+        //法官可以发起投票
         assertEquals(Arrays.asList(JudgeEventType.DAYTIME_VOTING, JudgeEventType.RESTART_GAME, JudgeEventType.DISBAND_GAME),
                 judgeDisplayResult.getAcceptableEventTypes());
-        assertEquals(RoomStatus.DAYTIME, judgeDisplayResult.getStatus());
+
+        //法官看到狼死了
+        assertFalse(judgeDisplayResult.getPlayerSeatInfoList().get(wolfSeat - 1).isAlive());
 
         for (int i = 1; i < 13; i++) {
             PlayerDisplayInfo displayResult = room.getPlayerDisplayResult(i);
             PlayerSeatInfo playerInfo = displayResult.getPlayerInfo();
             if (i == wolfSeat) {
+                //玩家看到狼死了
                 assertFalse(playerInfo.isAlive());
             }
         }
@@ -238,13 +249,16 @@ public class HunterTest {
         assertEquals(0, playerDisplayInfo.getAcceptableEventTypeList().size());
 //
         JudgeDisplayInfo judgeDisplayInfo = room.getJudgeDisplayResult();
+        //投票阶段,投票已完成
+        assertEquals(RoomStatus.VOTING, judgeDisplayInfo.getStatus());
+        //可以进入黑夜
         assertEquals(Arrays.asList(JudgeEventType.NIGHT_COMING, JudgeEventType.RESTART_GAME, JudgeEventType.DISBAND_GAME),
                 judgeDisplayInfo.getAcceptableEventTypes());
-        assertEquals(RoomStatus.VOTING, judgeDisplayInfo.getStatus());
 //
         for (int i = 1; i < 13; i++) {
             PlayerDisplayInfo displayResult = room.getPlayerDisplayResult(i);
             if (i == wolfSeat) {
+                //狼死了
                 assertFalse(displayResult.getPlayerInfo().isAlive());
             }
         }
