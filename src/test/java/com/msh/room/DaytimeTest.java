@@ -30,7 +30,6 @@ public class DaytimeTest {
     private RoomManager roomManager;
     private RoomStateDataRepository repository;
     private String roomCode = "abc";
-
     @Before
     public void setup() {
         repository = new RoomStateDataRepository();
