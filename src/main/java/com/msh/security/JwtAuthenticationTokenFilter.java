@@ -1,15 +1,22 @@
 package com.msh.security;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.msh.common.model.security.AuthorityName;
+import com.msh.common.model.security.User;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -29,26 +36,34 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         String authToken = request.getHeader(this.tokenHeader);
         // authToken.startsWith("Bearer ")
         // String authToken = header.substring(7);
-        String username = jwtTokenUtil.getUsernameFromToken(authToken);
+        User user = jwtTokenUtil.getUserFromToken(authToken);
 
-        logger.info("checking authentication für user " + username);
+        logger.info("checking authentication für user " + user.getUserName() + " or " + user.getOpenid());
 
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+        WerewolfAuthenticationToken authentication = createToken(user);
+        if (authentication != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            // It is not compelling necessary to load the use details from the database. You could also store the information
-            // in the token and read it from it. It's up to you ;)
-//            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-
-            // For simple validation it is completely sufficient to just check the token integrity. You don't have to call
-            // the database compellingly. Again it's up to you ;)
             if (jwtTokenUtil.validateToken(authToken)) {
-                WerewolfAuthenticationToken authentication = new WerewolfAuthenticationToken(jwtTokenUtil.getUsernameFromToken(authToken), null);
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                logger.info("authenticated user " + username + ", setting security context");
+                logger.info("authenticated user " + user.getUserName() + "or" + user.getOpenid() + ", setting security context");
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }
 
         chain.doFilter(request, response);
+    }
+
+    private static WerewolfAuthenticationToken createToken (User user) {
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        if (StringUtils.isNotEmpty(user.getUserName())) {
+            authorities.add(new SimpleGrantedAuthority(AuthorityName.ROLE_ADMIN.name()));
+            return new WerewolfAuthenticationToken(user.getUserName(), authorities);
+        }else if (StringUtils.isNotEmpty(user.getOpenid())){
+            authorities.add(new SimpleGrantedAuthority(AuthorityName.ROLE_USER.name()));
+            return new WerewolfAuthenticationToken(user.getOpenid(), user.getHeadimgurl(), authorities);
+        }else {
+            return null;
+        }
+
     }
 }

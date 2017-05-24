@@ -43,8 +43,7 @@ public class AuthenticationRestController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         // Reload password post-security so we can generate token
-        final User user = userMapper.selectByPrimaryKey(authentication.getPrincipal());
-        final String token = jwtTokenUtil.generateToken(JwtUserFactory.create(user), device);
+        final String token = jwtTokenUtil.generateToken((WerewolfAuthenticationToken) authentication, device);
 
         // Return the token
         return ResponseEntity.ok(new JwtAuthenticationResponse(token));

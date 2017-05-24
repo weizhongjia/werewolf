@@ -22,6 +22,16 @@ public class WerewolfAuthenticationToken extends AbstractAuthenticationToken {
 
     private String password;
 
+    public String getHeadImgUrl() {
+        return headImgUrl;
+    }
+
+    public void setHeadImgUrl(String headImgUrl) {
+        this.headImgUrl = headImgUrl;
+    }
+
+    private String headImgUrl;
+
     public String getOpenId() {
         return openId;
     }
@@ -51,9 +61,10 @@ public class WerewolfAuthenticationToken extends AbstractAuthenticationToken {
         super(authorities);
     }
 
-    public WerewolfAuthenticationToken(String openId, Collection<? extends GrantedAuthority> authorities){
+    public WerewolfAuthenticationToken(String openId, String headImgUrl, Collection<? extends GrantedAuthority> authorities){
         super(authorities);
         this.openId = openId;
+        this.headImgUrl = headImgUrl;
     }
 
     public WerewolfAuthenticationToken(JwtAuthenticationRequest request) {
@@ -63,10 +74,9 @@ public class WerewolfAuthenticationToken extends AbstractAuthenticationToken {
         this.userName = request.getUsername();
     }
 
-    public WerewolfAuthenticationToken(String userName, String password, Collection<? extends GrantedAuthority> authorities) {
+    public WerewolfAuthenticationToken(String userName, Collection<? extends GrantedAuthority> authorities) {
         super(authorities);
         this.userName = userName;
-        this.password = password;
     }
 
     @Override
