@@ -41,9 +41,20 @@ public abstract class AssignedPlayer extends CommonPlayer {
                 return votePlayer(event);
             case PK_VOTE:
                 return pkVotePlayer(event);
+            case HUNTER_SHOOT:
+                return hunterShoot(event);
             default:
                 return roomState;
         }
+    }
+
+    private RoomStateData hunterShoot(PlayerEvent event) {
+        if (!Roles.HUNTER.equals(roomState.getPlaySeatInfoBySeatNumber(number).getRole())) {
+            throw new RoomBusinessException("你不是猎人无法开枪");
+        }
+        //重新构造自己(再次证明这里不应该由Player对象来处理逻辑)
+        Hunter hunter = (Hunter) PlayerRoleFactory.createPlayerInstance(roomState, number);
+        return hunter.shoot(event.getShootNumber());
     }
 
     protected RoomStateData pkVotePlayer(PlayerEvent event) {
@@ -168,6 +179,7 @@ public abstract class AssignedPlayer extends CommonPlayer {
         //注入昨夜信息
         NightRecord lastNightRecord = this.roomState.getLastNightRecord();
         displayInfo.setNightRecord(lastNightRecord);
+
         //除自己以外的玩家均覆盖身份
         displayInfo.setPlayerInfo(roomState.getPlayerSeatInfo().get(number - 1));
         List<PlayerSeatInfo> playerSeatInfos = PlayerRoleMask.maskPlayerRole(roomState.getPlayerSeatInfo(), Arrays.asList(number));
@@ -190,16 +202,20 @@ public abstract class AssignedPlayer extends CommonPlayer {
         if (RoomStatus.PK_VOTING.equals(roomState.getStatus())) {
             Map<Integer, List<Integer>> pkRecord = roomState.getLastDaytimeRecord().lastPKRecord();
             if (!pkRecord.containsKey(number)
-                    && this.roomState.getPlaySeatInfoBySeatNumber(number).isAlive()) {
-                if (!roomState.getLastDaytimeRecord().isPKVoted(number)) {
-                    displayInfo.addAcceptableEventType(PK_VOTE);
-                }
+                    && this.roomState.getPlaySeatInfoBySeatNumber(number).isAlive() && !roomState.getLastDaytimeRecord().isPKVoted(number)) {
+                displayInfo.addAcceptableEventType(PK_VOTE);
             }
             if (roomState.getLastDaytimeRecord().getDiedNumber() != null) {
                 //如果已经投票死人(无论是否无人死亡)，说明投票有结果了.公布白天投票信息
                 displayInfo.setDaytimeRecord(roomState.getLastDaytimeRecord());
             }
         }
+        if (RoomStatus.HUNTER_SHOOT.equals(roomState.getStatus())) {
+            //进入猎人时间后，可以放开白天信息。猎人投票死亡需要公布票型，猎人夜晚死亡白天为空信息
+            displayInfo.setDaytimeRecord(roomState.getLastDaytimeRecord());
+        }
+
+
         //游戏结束则不需要隐藏
         if (RoomStatus.GAME_OVER.equals(roomState.getStatus())) {
             displayInfo.setPlayerSeatInfoList(roomState.getPlayerSeatInfo());

@@ -22,6 +22,8 @@ public enum PlayerEventType {
     //玩家白天投票
     DAYTIME_VOTE,
     //玩家PK阶段投票
-    PK_VOTE;
+    PK_VOTE,
+    //猎人时间
+    HUNTER_SHOOT,
     ;
 }

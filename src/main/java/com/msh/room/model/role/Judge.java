@@ -120,13 +120,12 @@ public class Judge {
         roomState.addDaytimeRecord(new DaytimeRecord());
         //判断是否需要竞选警长
         RoomStatus roomStatus = sheriffCompetitionStatus();
+        roomState.setStatus(roomStatus);
         //如果不需要竞选
         if (RoomStatus.DAYTIME.equals(roomStatus)) {
             //直接公布夜晚信息
             calculateNightInfo();
-            //游戏结束逻辑
         }
-        roomState.setStatus(roomStatus);
     }
 
     public void calculateNightInfo() {
@@ -252,12 +251,6 @@ public class Judge {
             witchState.setAntidoteAvailable(true);
             witchState.setSaveBySelf(false);
             roomState.setWitchState(witchState);
-        }
-        if (roomState.getGameConfig().get(Roles.HUNTER) == 1) {
-            HunterState hunterState = new HunterState();
-            hunterState.setAlive(true);
-            hunterState.setShotAvailable(false);
-            roomState.setHunterState(hunterState);
         }
         if (roomState.getGameConfig().get(Roles.MORON) == 1) {
             MoronState moronState = new MoronState();

@@ -292,8 +292,6 @@ public class RoomTest {
         assertTrue(stateData.getWitchState().isPoisonAvailable());
         assertFalse(stateData.getWitchState().isSaveBySelf());
 
-        assertTrue(stateData.getHunterState().isAlive());
-        assertFalse(stateData.getHunterState().isShotAvailable());
 
         assertFalse(stateData.getMoronState().isBeanVoted());
     }
