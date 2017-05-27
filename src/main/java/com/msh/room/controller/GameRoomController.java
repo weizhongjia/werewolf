@@ -6,6 +6,7 @@ import com.msh.room.dto.response.JudgeDisplayInfo;
 import com.msh.room.dto.response.PlayerDisplayInfo;
 import com.msh.room.model.room.Room;
 import com.msh.room.model.room.RoomManager;
+import com.msh.room.service.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,11 +19,13 @@ import org.springframework.web.bind.annotation.*;
 public class GameRoomController {
     @Autowired
     private RoomManager roomManager;
+    @Autowired
+    private RoomService roomService;
+
 
     @RequestMapping(value = "room/{roomCode}/judge/event", method = RequestMethod.PUT)
     public JudgeDisplayInfo pushJudgeEvent(@PathVariable("roomCode") String roomCode, @RequestBody JudgeEvent event) {
-        Room room = roomManager.loadRoom(roomCode);
-        return room.resolveJudgeEvent(event);
+        return roomService.resolveJudgeEvent(event,roomCode);
     }
 
     @RequestMapping(value = "room/{roomCode}/player/{number}/event", method = RequestMethod.PUT)
@@ -39,8 +42,7 @@ public class GameRoomController {
 
     @RequestMapping(value = "room/{roomCode}/judge/info", method = RequestMethod.GET)
     public JudgeDisplayInfo getJudgeDisplayInfo(@PathVariable("roomCode") String roomCode) {
-        Room room = roomManager.loadRoom(roomCode);
-        return room.getJudgeDisplayResult();
+        return roomService.getJudgeDisplayResult(roomCode);
     }
 
 

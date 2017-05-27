@@ -13,6 +13,8 @@ import com.msh.room.dto.room.seat.PlayerSeatInfo;
 import com.msh.room.model.role.Roles;
 import com.msh.room.model.room.Room;
 import com.msh.room.model.room.RoomManager;
+import com.msh.room.model.room.RoomStateFactory;
+import com.msh.room.service.RoomService;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -29,6 +31,7 @@ public class ProcessTest {
     private RoomManager roomManager;
     private RoomStateDataRepository repository;
     private String roomCode = "abc";
+    private RoomService service = new RoomService();
 
     @Before
     public void setup() {
@@ -41,6 +44,9 @@ public class ProcessTest {
         data.setStatus(RoomStatus.VACANCY);
         repository.putRoomStateData(roomCode, data);
         Room room = roomManager.loadRoom(roomCode);
+        service.setDataRepository(repository);
+        service.setRoomFactory(new RoomStateFactory());
+
         //create
         JudgeEvent createRoomEvent = new JudgeEvent(roomCode, JudgeEventType.CREATE_ROOM);
         Map<Roles, Integer> gameConfig = new HashMap<>();
@@ -52,40 +58,40 @@ public class ProcessTest {
         gameConfig.put(Roles.MORON, 1);
         createRoomEvent.setGameConfig(gameConfig);
         //joinAll
-        room.resolveJudgeEvent(createRoomEvent);
+        service.resolveJudgeEvent(createRoomEvent, roomCode);
         for (int i = 1; i <= 12; i++) {
             String userId = "Richard_" + i;
             PlayerEvent event = new PlayerEvent(PlayerEventType.JOIN_ROOM, i, userId);
             room.resolvePlayerEvent(event);
         }
         JudgeEvent completeEvent = new JudgeEvent(roomCode, JudgeEventType.COMPLETE_CREATE);
-        room.resolveJudgeEvent(completeEvent);
+        service.resolveJudgeEvent(completeEvent, roomCode);
     }
 
     private void simpleKillVillagerNight(Room room) {
         //天黑
         JudgeEvent nightComingEvent = new JudgeEvent(roomCode, JudgeEventType.NIGHT_COMING);
-        room.resolveJudgeEvent(nightComingEvent);
+        service.resolveJudgeEvent(nightComingEvent, roomCode);
 
         JudgeEvent wolfKillEvent = new JudgeEvent(roomCode, JudgeEventType.WOLF_KILL);
         //杀第一个民
         RoomStateData roomStateData = repository.loadRoomStateData(roomCode);
         int seat = roomStateData.getAliveSeatByRole(Roles.VILLAGER);
         wolfKillEvent.setWolfKillNumber(seat);
-        room.resolveJudgeEvent(wolfKillEvent);
+        service.resolveJudgeEvent(wolfKillEvent, roomCode);
         JudgeEvent seerVerifyEvent = new JudgeEvent(roomCode, JudgeEventType.SEER_VERIFY);
         //验第一个狼
         int wolfSeat = roomStateData.getAliveSeatByRole(Roles.WEREWOLVES);
         seerVerifyEvent.setSeerVerifyNumber(wolfSeat);
-        room.resolveJudgeEvent(seerVerifyEvent);
+        service.resolveJudgeEvent(seerVerifyEvent, roomCode);
         //没救
         JudgeEvent witchSaveEvent = new JudgeEvent(roomCode, JudgeEventType.WITCH_SAVE);
         witchSaveEvent.setWitchSave(false);
-        room.resolveJudgeEvent(witchSaveEvent);
+        service.resolveJudgeEvent(witchSaveEvent, roomCode);
         JudgeEvent witchPoisonEvent = new JudgeEvent(roomCode, JudgeEventType.WITCH_POISON);
         //也没毒
         witchPoisonEvent.setWitchPoisonNumber(0);
-        room.resolveJudgeEvent(witchPoisonEvent);
+        service.resolveJudgeEvent(witchPoisonEvent, roomCode);
         return;
     }
 
@@ -101,8 +107,8 @@ public class ProcessTest {
         simpleKillVillagerNight(room);
 //        daytimeVote(room);
         JudgeEvent daytimeEvent = new JudgeEvent(roomCode, JudgeEventType.DAYTIME_COMING);
-        room.resolveJudgeEvent(daytimeEvent);
-        JudgeDisplayInfo judgeDisplayResult = room.getJudgeDisplayResult();
+        service.resolveJudgeEvent(daytimeEvent, roomCode);
+        JudgeDisplayInfo judgeDisplayResult = service.getJudgeDisplayResult(roomCode);
         assertEquals(Arrays.asList(JudgeEventType.GAME_ENDING, JudgeEventType.RESTART_GAME, JudgeEventType.DISBAND_GAME),
                 judgeDisplayResult.getAcceptableEventTypes());
     }
@@ -110,10 +116,10 @@ public class ProcessTest {
     private void daytimeVote(Room room) {
         //天亮
         JudgeEvent daytimeEvent = new JudgeEvent(roomCode, JudgeEventType.DAYTIME_COMING);
-        room.resolveJudgeEvent(daytimeEvent);
+        service.resolveJudgeEvent(daytimeEvent, roomCode);
         //开始投票
         JudgeEvent daytimeVotingEvent = new JudgeEvent(roomCode, JudgeEventType.DAYTIME_VOTING);
-        room.resolveJudgeEvent(daytimeVotingEvent);
+        service.resolveJudgeEvent(daytimeVotingEvent,roomCode);
 
         RoomStateData stateData = repository.loadRoomStateData(roomCode);
         //第一个狼

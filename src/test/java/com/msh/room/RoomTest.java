@@ -13,6 +13,8 @@ import com.msh.room.dto.room.RoomStatus;
 import com.msh.room.model.role.Roles;
 import com.msh.room.model.room.Room;
 import com.msh.room.model.room.RoomManager;
+import com.msh.room.model.room.RoomStateFactory;
+import com.msh.room.service.RoomService;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -29,17 +31,22 @@ public class RoomTest {
     private RoomManager roomManager;
     private MockRoomStateDataRepository repository;
     private String roomCode = "abc";
+    private RoomService service = new RoomService();
 
     @Before
     public void setup() {
-        repository = new MockRoomStateDataRepository();
         roomManager = new RoomManager();
+        repository = new MockRoomStateDataRepository();
         roomManager.setDataRepository(repository);
+
         //房间空闲
         RoomStateData data = new RoomStateData();
         data.setRoomCode(roomCode);
         data.setStatus(RoomStatus.VACANCY);
         repository.data = data;
+
+        service.setDataRepository(repository);
+        service.setRoomFactory(new RoomStateFactory());
     }
 
     @Test
@@ -53,7 +60,10 @@ public class RoomTest {
         JudgeEvent event = constructCreateRoomEvent(roomCode);
         Room room = roomManager.loadRoom(event.getRoomCode());
         //执行事件
-        JudgeDisplayInfo judgeDisplayInfo = room.resolveJudgeEvent(event);
+//        JudgeDisplayInfo judgeDisplayInfo = room.resolveJudgeEvent(event);
+
+
+        JudgeDisplayInfo judgeDisplayInfo = service.resolveJudgeEvent(event, roomCode);
         /**
          * 返回值校验
          */
@@ -182,9 +192,8 @@ public class RoomTest {
     private Room createRoom() {
         //创建房间
         JudgeEvent createRoomEvent = constructCreateRoomEvent(roomCode);
-        Room room = roomManager.loadRoom(createRoomEvent.getRoomCode());
-        room.resolveJudgeEvent(createRoomEvent);
-        return room;
+        service.resolveJudgeEvent(createRoomEvent, roomCode);
+        return roomManager.loadRoom(roomCode);
     }
 
     private PlayerEvent constructPlayerJoinEvent(int seatNumber, String userId) {
@@ -226,7 +235,7 @@ public class RoomTest {
     public void testJoinAllPlayers() {
         Room room = createRoom();
         joinAllPlayers(room);
-        JudgeDisplayInfo judgeDisplayResult = room.getJudgeDisplayResult();
+        JudgeDisplayInfo judgeDisplayResult = service.getJudgeDisplayResult(roomCode);
 
         assertEquals(JudgeEventType.COMPLETE_CREATE, judgeDisplayResult.getAcceptableEventTypes().get(0));
         judgeDisplayResult.getPlayerSeatInfoList().stream().forEach(seatInfo -> {
@@ -250,7 +259,7 @@ public class RoomTest {
         Room room = createRoom();
         joinAllPlayers(room);
         JudgeEvent event = generateCompleteCreateEvent();
-        JudgeDisplayInfo judgeDisplayInfo = room.resolveJudgeEvent(event);
+        JudgeDisplayInfo judgeDisplayInfo = service.resolveJudgeEvent(event, roomCode);
 
         assertEquals(RoomStatus.CRATED, judgeDisplayInfo.getStatus());
         assertEquals(JudgeEventType.NIGHT_COMING, judgeDisplayInfo.getAcceptableEventTypes().get(0));
@@ -305,10 +314,10 @@ public class RoomTest {
         Room room = createRoom();
         joinAllPlayers(room);
         JudgeEvent event = generateCompleteCreateEvent();
-        JudgeDisplayInfo judgeDisplayInfo = room.resolveJudgeEvent(event);
+        JudgeDisplayInfo judgeDisplayInfo = service.resolveJudgeEvent(event, roomCode);
 
         JudgeEvent restartEvent = generateRestartGame();
-        JudgeDisplayInfo judgeDisplayResult = room.resolveJudgeEvent(restartEvent);
+        JudgeDisplayInfo judgeDisplayResult = service.resolveJudgeEvent(restartEvent, roomCode);
         assertEquals(JudgeEventType.COMPLETE_CREATE, judgeDisplayResult.getAcceptableEventTypes().get(0));
         judgeDisplayResult.getPlayerSeatInfoList().stream().forEach(seatInfo -> {
             assertTrue(seatInfo.isAlive());
@@ -322,10 +331,10 @@ public class RoomTest {
         Room room = createRoom();
         joinAllPlayers(room);
         JudgeEvent event = generateCompleteCreateEvent();
-        room.resolveJudgeEvent(event);
+        service.resolveJudgeEvent(event, roomCode);
 
         JudgeEvent disbandEvent = generateDisbandGame();
-        JudgeDisplayInfo judgeDisplayResult = room.resolveJudgeEvent(disbandEvent);
+        JudgeDisplayInfo judgeDisplayResult = service.resolveJudgeEvent(disbandEvent, roomCode);
         assertEquals(JudgeEventType.CREATE_ROOM, judgeDisplayResult.getAcceptableEventTypes().get(0));
         assertEquals(RoomStatus.VACANCY, judgeDisplayResult.getStatus());
         assertNull(judgeDisplayResult.getPlayerSeatInfoList());

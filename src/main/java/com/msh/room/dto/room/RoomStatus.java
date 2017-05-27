@@ -40,7 +40,7 @@ public enum RoomStatus {
     HUNTER_SHOOT,
 
     //白痴被票时间(白痴需要决定是否翻拍)
-    MORON,
+    MORON_TIME,
 
     //游戏结束
     GAME_OVER,

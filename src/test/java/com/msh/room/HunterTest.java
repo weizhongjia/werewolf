@@ -13,6 +13,8 @@ import com.msh.room.dto.room.seat.PlayerSeatInfo;
 import com.msh.room.model.role.Roles;
 import com.msh.room.model.room.Room;
 import com.msh.room.model.room.RoomManager;
+import com.msh.room.model.room.RoomStateFactory;
+import com.msh.room.service.RoomService;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -29,6 +31,7 @@ public class HunterTest {
     private RoomManager roomManager;
     private RoomStateDataRepository repository;
     private String roomCode = "abc";
+    private RoomService service = new RoomService();
 
     @Before
     public void setup() {
@@ -41,6 +44,8 @@ public class HunterTest {
         data.setStatus(RoomStatus.VACANCY);
         repository.putRoomStateData(roomCode, data);
         Room room = roomManager.loadRoom(roomCode);
+        service.setDataRepository(repository);
+        service.setRoomFactory(new RoomStateFactory());
 
         //create
         JudgeEvent createRoomEvent = new JudgeEvent(roomCode, JudgeEventType.CREATE_ROOM);
@@ -52,7 +57,7 @@ public class HunterTest {
         gameConfig.put(Roles.SEER, 1);
         gameConfig.put(Roles.MORON, 1);
         createRoomEvent.setGameConfig(gameConfig);
-        room.resolveJudgeEvent(createRoomEvent);
+        service.resolveJudgeEvent(createRoomEvent, roomCode);
         //joinAll
         for (int i = 1; i < 13; i++) {
             int seatNumber = i;
@@ -61,37 +66,37 @@ public class HunterTest {
             room.resolvePlayerEvent(event);
         }
         JudgeEvent completeEvent = new JudgeEvent(roomCode, JudgeEventType.COMPLETE_CREATE);
-        room.resolveJudgeEvent(completeEvent);
+        service.resolveJudgeEvent(completeEvent, roomCode);
     }
 
     @Test
     public void wolfKillHunter() {
         Room room = roomManager.loadRoom(roomCode);
         JudgeEvent nightComingEvent = new JudgeEvent(roomCode, JudgeEventType.NIGHT_COMING);
-        room.resolveJudgeEvent(nightComingEvent);
+        service.resolveJudgeEvent(nightComingEvent, roomCode);
 
         JudgeEvent wolfKillEvent = new JudgeEvent(roomCode, JudgeEventType.WOLF_KILL);
         RoomStateData stateData = repository.loadRoomStateData(roomCode);
         //杀个猎人
         int hunter = stateData.getAliveSeatByRole(Roles.HUNTER);
         wolfKillEvent.setWolfKillNumber(hunter);
-        room.resolveJudgeEvent(wolfKillEvent);
+        service.resolveJudgeEvent(wolfKillEvent, roomCode);
         JudgeEvent seerVerifyEvent = new JudgeEvent(roomCode, JudgeEventType.SEER_VERIFY);
         //验个狼
         int wolfSeat = stateData.getAliveSeatByRole(Roles.WEREWOLVES);
         seerVerifyEvent.setSeerVerifyNumber(wolfSeat);
-        room.resolveJudgeEvent(seerVerifyEvent);
+        service.resolveJudgeEvent(seerVerifyEvent, roomCode);
         //没救
         JudgeEvent witchSaveEvent = new JudgeEvent(roomCode, JudgeEventType.WITCH_SAVE);
         witchSaveEvent.setWitchSave(false);
-        room.resolveJudgeEvent(witchSaveEvent);
+        service.resolveJudgeEvent(witchSaveEvent, roomCode);
         JudgeEvent witchPoisonEvent = new JudgeEvent(roomCode, JudgeEventType.WITCH_POISON);
         //也没毒
         witchPoisonEvent.setWitchPoisonNumber(0);
-        room.resolveJudgeEvent(witchPoisonEvent);
+        service.resolveJudgeEvent(witchPoisonEvent, roomCode);
 
         JudgeEvent daytimeEvent = new JudgeEvent(roomCode, JudgeEventType.DAYTIME_COMING);
-        JudgeDisplayInfo judgeDisplayInfo = room.resolveJudgeEvent(daytimeEvent);
+        JudgeDisplayInfo judgeDisplayInfo = service.resolveJudgeEvent(daytimeEvent, roomCode);
         //猎人时间
         assertEquals(RoomStatus.HUNTER_SHOOT, judgeDisplayInfo.getStatus());
         //法官暂时没有办法操作
@@ -118,7 +123,7 @@ public class HunterTest {
         //猎人操作完成，没其他操作了
         assertEquals(0, playerDisplayInfo.getAcceptableEventTypeList().size());
 
-        JudgeDisplayInfo judgeDisplayResult = room.getJudgeDisplayResult();
+        JudgeDisplayInfo judgeDisplayResult = service.getJudgeDisplayResult(roomCode);
         //进入白天
         assertEquals(RoomStatus.DAYTIME, judgeDisplayResult.getStatus());
         //法官可以发起投票
@@ -144,31 +149,31 @@ public class HunterTest {
     public void witchPoisonHunter() {
         Room room = roomManager.loadRoom(roomCode);
         JudgeEvent nightComingEvent = new JudgeEvent(roomCode, JudgeEventType.NIGHT_COMING);
-        room.resolveJudgeEvent(nightComingEvent);
+        service.resolveJudgeEvent(nightComingEvent, roomCode);
 
         JudgeEvent wolfKillEvent = new JudgeEvent(roomCode, JudgeEventType.WOLF_KILL);
         RoomStateData stateData = repository.loadRoomStateData(roomCode);
         //杀个猎人
         int seat = stateData.getAliveSeatByRole(Roles.VILLAGER);
         wolfKillEvent.setWolfKillNumber(seat);
-        room.resolveJudgeEvent(wolfKillEvent);
+        service.resolveJudgeEvent(wolfKillEvent, roomCode);
         JudgeEvent seerVerifyEvent = new JudgeEvent(roomCode, JudgeEventType.SEER_VERIFY);
         //验个狼
         int wolfSeat = stateData.getAliveSeatByRole(Roles.WEREWOLVES);
         seerVerifyEvent.setSeerVerifyNumber(wolfSeat);
-        room.resolveJudgeEvent(seerVerifyEvent);
+        service.resolveJudgeEvent(seerVerifyEvent, roomCode);
         //没救
         JudgeEvent witchSaveEvent = new JudgeEvent(roomCode, JudgeEventType.WITCH_SAVE);
         witchSaveEvent.setWitchSave(false);
-        room.resolveJudgeEvent(witchSaveEvent);
+        service.resolveJudgeEvent(witchSaveEvent, roomCode);
         JudgeEvent witchPoisonEvent = new JudgeEvent(roomCode, JudgeEventType.WITCH_POISON);
         //毒猎人
         int hunterSeat = stateData.getAliveSeatByRole(Roles.HUNTER);
         witchPoisonEvent.setWitchPoisonNumber(hunterSeat);
-        room.resolveJudgeEvent(witchPoisonEvent);
+        service.resolveJudgeEvent(witchPoisonEvent, roomCode);
 
         JudgeEvent daytimeEvent = new JudgeEvent(roomCode, JudgeEventType.DAYTIME_COMING);
-        JudgeDisplayInfo judgeDisplayInfo = room.resolveJudgeEvent(daytimeEvent);
+        JudgeDisplayInfo judgeDisplayInfo = service.resolveJudgeEvent(daytimeEvent, roomCode);
         //正常天亮
         assertEquals(RoomStatus.DAYTIME, judgeDisplayInfo.getStatus());
         //正常发言
@@ -187,32 +192,32 @@ public class HunterTest {
     public void testVoteHunter() {
         Room room = roomManager.loadRoom(roomCode);
         JudgeEvent nightComingEvent = new JudgeEvent(roomCode, JudgeEventType.NIGHT_COMING);
-        room.resolveJudgeEvent(nightComingEvent);
+        service.resolveJudgeEvent(nightComingEvent, roomCode);
 
         JudgeEvent wolfKillEvent = new JudgeEvent(roomCode, JudgeEventType.WOLF_KILL);
         RoomStateData stateData = repository.loadRoomStateData(roomCode);
         //杀个猎人
         int villager = stateData.getAliveSeatByRole(Roles.VILLAGER);
         wolfKillEvent.setWolfKillNumber(villager);
-        room.resolveJudgeEvent(wolfKillEvent);
+        service.resolveJudgeEvent(wolfKillEvent, roomCode);
         JudgeEvent seerVerifyEvent = new JudgeEvent(roomCode, JudgeEventType.SEER_VERIFY);
         //验个狼
         int wolfSeat = stateData.getAliveSeatByRole(Roles.WEREWOLVES);
         seerVerifyEvent.setSeerVerifyNumber(wolfSeat);
-        room.resolveJudgeEvent(seerVerifyEvent);
+        service.resolveJudgeEvent(seerVerifyEvent, roomCode);
         //没救
         JudgeEvent witchSaveEvent = new JudgeEvent(roomCode, JudgeEventType.WITCH_SAVE);
         witchSaveEvent.setWitchSave(false);
-        room.resolveJudgeEvent(witchSaveEvent);
+        service.resolveJudgeEvent(witchSaveEvent, roomCode);
         JudgeEvent witchPoisonEvent = new JudgeEvent(roomCode, JudgeEventType.WITCH_POISON);
         //也没毒
         witchPoisonEvent.setWitchPoisonNumber(0);
-        room.resolveJudgeEvent(witchPoisonEvent);
+        service.resolveJudgeEvent(witchPoisonEvent, roomCode);
 
         JudgeEvent daytimeEvent = new JudgeEvent(roomCode, JudgeEventType.DAYTIME_COMING);
-        room.resolveJudgeEvent(daytimeEvent);
+        service.resolveJudgeEvent(daytimeEvent, roomCode);
         JudgeEvent daytimeVoteEvent = new JudgeEvent(roomCode, JudgeEventType.DAYTIME_VOTING);
-        room.resolveJudgeEvent(daytimeVoteEvent);
+        service.resolveJudgeEvent(daytimeVoteEvent, roomCode);
 
         int hunter = stateData.getAliveSeatByRole(Roles.HUNTER);
         for (int i = 1; i < 13; i++) {
@@ -226,7 +231,7 @@ public class HunterTest {
             room.resolvePlayerEvent(voteEvent);
         }
 
-        JudgeDisplayInfo judgeDisplayResult = room.getJudgeDisplayResult();
+        JudgeDisplayInfo judgeDisplayResult = service.getJudgeDisplayResult(roomCode);
 
         //猎人时间
         assertEquals(RoomStatus.HUNTER_SHOOT, judgeDisplayResult.getStatus());
@@ -248,7 +253,7 @@ public class HunterTest {
         PlayerDisplayInfo playerDisplayInfo = room.resolvePlayerEvent(hunterShoot);
         assertEquals(0, playerDisplayInfo.getAcceptableEventTypeList().size());
 //
-        JudgeDisplayInfo judgeDisplayInfo = room.getJudgeDisplayResult();
+        JudgeDisplayInfo judgeDisplayInfo = service.getJudgeDisplayResult(roomCode);
         //投票阶段,投票已完成
         assertEquals(RoomStatus.VOTING, judgeDisplayInfo.getStatus());
         //可以进入黑夜

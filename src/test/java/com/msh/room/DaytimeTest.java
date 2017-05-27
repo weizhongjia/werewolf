@@ -13,6 +13,8 @@ import com.msh.room.dto.room.seat.PlayerSeatInfo;
 import com.msh.room.model.role.Roles;
 import com.msh.room.model.room.Room;
 import com.msh.room.model.room.RoomManager;
+import com.msh.room.model.room.RoomStateFactory;
+import com.msh.room.service.RoomService;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -30,6 +32,8 @@ public class DaytimeTest {
     private RoomManager roomManager;
     private RoomStateDataRepository repository;
     private String roomCode = "abc";
+    private RoomService service = new RoomService();
+
     @Before
     public void setup() {
         repository = new RoomStateDataRepository();
@@ -41,6 +45,8 @@ public class DaytimeTest {
         data.setStatus(RoomStatus.VACANCY);
         repository.putRoomStateData(roomCode, data);
         Room room = roomManager.loadRoom(roomCode);
+        service.setDataRepository(repository);
+        service.setRoomFactory(new RoomStateFactory());
         //create
         createRoom(room);
         //joinAll
@@ -54,7 +60,7 @@ public class DaytimeTest {
             room.resolvePlayerEvent(event);
         }
         JudgeEvent completeEvent = new JudgeEvent(roomCode, JudgeEventType.COMPLETE_CREATE);
-        room.resolveJudgeEvent(completeEvent);
+        service.resolveJudgeEvent(completeEvent, roomCode);
     }
 
     private void createRoom(Room room) {
@@ -67,7 +73,7 @@ public class DaytimeTest {
         gameConfig.put(Roles.SEER, 1);
         gameConfig.put(Roles.MORON, 1);
         createRoomEvent.setGameConfig(gameConfig);
-        room.resolveJudgeEvent(createRoomEvent);
+        service.resolveJudgeEvent(createRoomEvent, roomCode);
     }
 
     @Test
@@ -75,7 +81,7 @@ public class DaytimeTest {
         Room room = roomManager.loadRoom(roomCode);
         simpleKillVillagerNight(room);
         JudgeEvent daytimeEvent = new JudgeEvent(roomCode, JudgeEventType.DAYTIME_COMING);
-        JudgeDisplayInfo judgeDisplayInfo = room.resolveJudgeEvent(daytimeEvent);
+        JudgeDisplayInfo judgeDisplayInfo = service.resolveJudgeEvent(daytimeEvent, roomCode);
         RoomStateData stateData = repository.loadRoomStateData(roomCode);
         //支持进入投票事件
         assertEquals(JudgeEventType.DAYTIME_VOTING, judgeDisplayInfo.getAcceptableEventTypes().get(0));
@@ -126,25 +132,25 @@ public class DaytimeTest {
 
     private void simpleKillVillagerNight(Room room) {
         JudgeEvent nightComingEvent = new JudgeEvent(roomCode, JudgeEventType.NIGHT_COMING);
-        room.resolveJudgeEvent(nightComingEvent);
+        service.resolveJudgeEvent(nightComingEvent, roomCode);
         JudgeEvent wolfKillEvent = new JudgeEvent(roomCode, JudgeEventType.WOLF_KILL);
         //杀个民
         int seat = repository.loadRoomStateData(roomCode).getAliveSeatByRole(Roles.VILLAGER);
         wolfKillEvent.setWolfKillNumber(seat);
-        room.resolveJudgeEvent(wolfKillEvent);
+        service.resolveJudgeEvent(wolfKillEvent, roomCode);
         JudgeEvent seerVerifyEvent = new JudgeEvent(roomCode, JudgeEventType.SEER_VERIFY);
         //验个狼
         int wolfSeat = repository.loadRoomStateData(roomCode).getAliveSeatByRole(Roles.WEREWOLVES);
         seerVerifyEvent.setSeerVerifyNumber(wolfSeat);
-        room.resolveJudgeEvent(seerVerifyEvent);
+        service.resolveJudgeEvent(seerVerifyEvent, roomCode);
         //没救
         JudgeEvent witchSaveEvent = new JudgeEvent(roomCode, JudgeEventType.WITCH_SAVE);
         witchSaveEvent.setWitchSave(false);
-        room.resolveJudgeEvent(witchSaveEvent);
+        service.resolveJudgeEvent(witchSaveEvent, roomCode);
         JudgeEvent witchPoisonEvent = new JudgeEvent(roomCode, JudgeEventType.WITCH_POISON);
         //也没毒
         witchPoisonEvent.setWitchPoisonNumber(0);
-        room.resolveJudgeEvent(witchPoisonEvent);
+        service.resolveJudgeEvent(witchPoisonEvent, roomCode);
         return;
     }
 
@@ -153,9 +159,9 @@ public class DaytimeTest {
         Room room = roomManager.loadRoom(roomCode);
         simpleKillVillagerNight(room);
         JudgeEvent daytimeEvent = new JudgeEvent(roomCode, JudgeEventType.DAYTIME_COMING);
-        room.resolveJudgeEvent(daytimeEvent);
+        service.resolveJudgeEvent(daytimeEvent, roomCode);
         JudgeEvent daytimeVotingEvent = new JudgeEvent(roomCode, JudgeEventType.DAYTIME_VOTING);
-        JudgeDisplayInfo judgeDisplayInfo = room.resolveJudgeEvent(daytimeVotingEvent);
+        JudgeDisplayInfo judgeDisplayInfo = service.resolveJudgeEvent(daytimeVotingEvent, roomCode);
 
         RoomStateData stateData = repository.loadRoomStateData(roomCode);
 
@@ -174,9 +180,9 @@ public class DaytimeTest {
         Room room = roomManager.loadRoom(roomCode);
         simpleKillVillagerNight(room);
         JudgeEvent daytimeEvent = new JudgeEvent(roomCode, JudgeEventType.DAYTIME_COMING);
-        room.resolveJudgeEvent(daytimeEvent);
+        service.resolveJudgeEvent(daytimeEvent, roomCode);
         JudgeEvent daytimeVotingEvent = new JudgeEvent(roomCode, JudgeEventType.DAYTIME_VOTING);
-        room.resolveJudgeEvent(daytimeVotingEvent);
+        service.resolveJudgeEvent(daytimeVotingEvent, roomCode);
 
         RoomStateData stateData = repository.loadRoomStateData(roomCode);
         int wolf = stateData.getAliveSeatByRole(Roles.WEREWOLVES);
@@ -217,15 +223,15 @@ public class DaytimeTest {
         Room room = roomManager.loadRoom(roomCode);
         simpleKillVillagerNight(room);
         JudgeEvent daytimeEvent = new JudgeEvent(roomCode, JudgeEventType.DAYTIME_COMING);
-        room.resolveJudgeEvent(daytimeEvent);
+        service.resolveJudgeEvent(daytimeEvent, roomCode);
         JudgeEvent daytimeVotingEvent = new JudgeEvent(roomCode, JudgeEventType.DAYTIME_VOTING);
-        room.resolveJudgeEvent(daytimeVotingEvent);
+        service.resolveJudgeEvent(daytimeVotingEvent, roomCode);
 
         RoomStateData stateData = repository.loadRoomStateData(roomCode);
         int wolf = stateData.getAliveSeatByRole(Roles.WEREWOLVES);
         int seer = stateData.getAliveSeatByRole(Roles.SEER);
         simpleVoteWolfAndSeer(room, wolf, seer);
-        JudgeDisplayInfo judgeDisplayResult = room.getJudgeDisplayResult();
+        JudgeDisplayInfo judgeDisplayResult = service.getJudgeDisplayResult(roomCode);
         assertEquals(RoomStatus.PK, judgeDisplayResult.getStatus());
         assertNull(judgeDisplayResult.getDaytimeRecord().getDiedNumber());
         assertEquals(JudgeEventType.DAYTIME_PK_VOTING, judgeDisplayResult.getAcceptableEventTypes().get(0));
@@ -244,7 +250,7 @@ public class DaytimeTest {
             assertTrue(pkVotingRecord.containsKey(seer));
         }
         JudgeEvent pkVoteEvent = new JudgeEvent(roomCode, JudgeEventType.DAYTIME_PK_VOTING);
-        JudgeDisplayInfo judgeDisplayInfo = room.resolveJudgeEvent(pkVoteEvent);
+        JudgeDisplayInfo judgeDisplayInfo = service.resolveJudgeEvent(pkVoteEvent, roomCode);
 
         assertEquals(Arrays.asList(JudgeEventType.RESTART_GAME, JudgeEventType.DISBAND_GAME),
                 judgeDisplayInfo.getAcceptableEventTypes());
@@ -261,31 +267,32 @@ public class DaytimeTest {
                 assertEquals(0, displayInfo.getAcceptableEventTypeList().size());
             }
         }
-        JudgeDisplayInfo result = room.getJudgeDisplayResult();
+        JudgeDisplayInfo result = service.getJudgeDisplayResult(roomCode);
         assertEquals(Arrays.asList(JudgeEventType.NIGHT_COMING, JudgeEventType.RESTART_GAME, JudgeEventType.DISBAND_GAME),
                 result.getAcceptableEventTypes());
         assertEquals(Integer.valueOf(wolf), result.getDaytimeRecord().getDiedNumber());
         assertFalse(result.getPlayerSeatInfoList().get(wolf - 1).isAlive());
     }
 
+    @Test
     public void testTwoTimesPK() {
         Room room = roomManager.loadRoom(roomCode);
         simpleKillVillagerNight(room);
         JudgeEvent daytimeEvent = new JudgeEvent(roomCode, JudgeEventType.DAYTIME_COMING);
-        room.resolveJudgeEvent(daytimeEvent);
+        service.resolveJudgeEvent(daytimeEvent, roomCode);
         JudgeEvent daytimeVotingEvent = new JudgeEvent(roomCode, JudgeEventType.DAYTIME_VOTING);
-        room.resolveJudgeEvent(daytimeVotingEvent);
+        service.resolveJudgeEvent(daytimeVotingEvent, roomCode);
 
         RoomStateData stateData = repository.loadRoomStateData(roomCode);
         int wolf = stateData.getAliveSeatByRole(Roles.WEREWOLVES);
         int seer = stateData.getAliveSeatByRole(Roles.SEER);
         simpleVoteWolfAndSeer(room, wolf, seer);
 
-        JudgeDisplayInfo judgeDisplayResult = room.getJudgeDisplayResult();
+        JudgeDisplayInfo judgeDisplayResult = service.getJudgeDisplayResult(roomCode);
         Map<Integer, List<Integer>> pkVotingResult = judgeDisplayResult.getDaytimeRecord().getPkVotingRecord().get(0);
 
         JudgeEvent pkVoteEvent = new JudgeEvent(roomCode, JudgeEventType.DAYTIME_PK_VOTING);
-        room.resolveJudgeEvent(pkVoteEvent);
+        service.resolveJudgeEvent(pkVoteEvent, roomCode);
 
         for (int i = 1; i < 13; i++) {
             PlayerDisplayInfo displayInfo = room.getPlayerDisplayResult(i);
@@ -299,6 +306,7 @@ public class DaytimeTest {
         }
 
     }
+
     public void simpleVoteWolfAndSeer(Room room, int wolf, int seer) {
         for (int i = 1; i < 13; i++) {
             PlayerDisplayInfo displayInfo = room.getPlayerDisplayResult(i);
