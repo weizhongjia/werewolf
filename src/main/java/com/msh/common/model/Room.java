@@ -1,169 +1,72 @@
 package com.msh.common.model;
 
-import javax.persistence.*;
 
-public class Room {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+import javax.persistence.Column;
+import java.io.Serializable;
 
-    @Column(name = "room_id")
-    private Integer roomId;
+public class Room implements Serializable {
 
-    private Integer state;
+    private static final long serialVersionUID = 2136991678011998629L;
+    private int id;
 
-    private Integer size;
+    private int club;
 
-    private Integer judge;
+    @Column(name = "create_date")
+    private long createDate;
 
-    @Column(name = "wereworf_victory")
-    private Integer wereworfVictory;
+    @Column(name = "expiration_date")
+    private long expirationDate;
 
-    private Integer roundnum;
+    @Column(name = "max_player_number")
+    private int maxPlayerNumber;
 
-    private Integer insettime;
+    private int status;
 
-    private Integer starttime;
+    public int getStatus() {
+        return status;
+    }
 
-    private Integer endtime;
+    public void setStatus(int status) {
+        this.status = status;
+    }
 
-    /**
-     * @return id
-     */
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
-    /**
-     * @param id
-     */
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 
-    /**
-     * @return room_id
-     */
-    public Integer getRoomId() {
-        return roomId;
+    public int getClub() {
+        return club;
     }
 
-    /**
-     * @param roomId
-     */
-    public void setRoomId(Integer roomId) {
-        this.roomId = roomId;
+    public void setClub(int club) {
+        this.club = club;
     }
 
-    /**
-     * @return state
-     */
-    public Integer getState() {
-        return state;
+    public long getCreateDate() {
+        return createDate;
     }
 
-    /**
-     * @param state
-     */
-    public void setState(Integer state) {
-        this.state = state;
+    public void setCreateDate(long createDate) {
+        this.createDate = createDate;
     }
 
-    /**
-     * @return size
-     */
-    public Integer getSize() {
-        return size;
+    public long getExpirationDate() {
+        return expirationDate;
     }
 
-    /**
-     * @param size
-     */
-    public void setSize(Integer size) {
-        this.size = size;
+    public void setExpirationDate(long expirationDate) {
+        this.expirationDate = expirationDate;
     }
 
-    /**
-     * @return judge
-     */
-    public Integer getJudge() {
-        return judge;
+    public int getMaxPlayerNumber() {
+        return maxPlayerNumber;
     }
 
-    /**
-     * @param judge
-     */
-    public void setJudge(Integer judge) {
-        this.judge = judge;
-    }
-
-    /**
-     * @return wereworf_victory
-     */
-    public Integer getWereworfVictory() {
-        return wereworfVictory;
-    }
-
-    /**
-     * @param wereworfVictory
-     */
-    public void setWereworfVictory(Integer wereworfVictory) {
-        this.wereworfVictory = wereworfVictory;
-    }
-
-    /**
-     * @return roundnum
-     */
-    public Integer getRoundnum() {
-        return roundnum;
-    }
-
-    /**
-     * @param roundnum
-     */
-    public void setRoundnum(Integer roundnum) {
-        this.roundnum = roundnum;
-    }
-
-    /**
-     * @return insettime
-     */
-    public Integer getInsettime() {
-        return insettime;
-    }
-
-    /**
-     * @param insettime
-     */
-    public void setInsettime(Integer insettime) {
-        this.insettime = insettime;
-    }
-
-    /**
-     * @return starttime
-     */
-    public Integer getStarttime() {
-        return starttime;
-    }
-
-    /**
-     * @param starttime
-     */
-    public void setStarttime(Integer starttime) {
-        this.starttime = starttime;
-    }
-
-    /**
-     * @return endtime
-     */
-    public Integer getEndtime() {
-        return endtime;
-    }
-
-    /**
-     * @param endtime
-     */
-    public void setEndtime(Integer endtime) {
-        this.endtime = endtime;
+    public void setMaxPlayerNumber(int maxPlayerNumber) {
+        this.maxPlayerNumber = maxPlayerNumber;
     }
 }

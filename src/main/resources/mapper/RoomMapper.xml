@@ -6,14 +6,11 @@
       WARNING - @mbg.generated
     -->
     <id column="id" property="id" jdbcType="INTEGER" />
-    <result column="room_id" property="roomId" jdbcType="INTEGER" />
-    <result column="state" property="state" jdbcType="INTEGER" />
-    <result column="size" property="size" jdbcType="INTEGER" />
-    <result column="judge" property="judge" jdbcType="INTEGER" />
+    <result column="club" property="club" jdbcType="INTEGER" />
+    <result column="create_date" property="createDate" jdbcType="INTEGER" />
+    <result column="expiration_date" property="expirationDate" jdbcType="INTEGER" />
+    <result column="max_player_number" property="maxPlayerNumber" jdbcType="INTEGER" />
     <result column="wereworf_victory" property="wereworfVictory" jdbcType="INTEGER" />
-    <result column="roundnum" property="roundnum" jdbcType="INTEGER" />
-    <result column="insettime" property="insettime" jdbcType="INTEGER" />
-    <result column="starttime" property="starttime" jdbcType="INTEGER" />
-    <result column="endtime" property="endtime" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="INTEGER" />
   </resultMap>
 </mapper>

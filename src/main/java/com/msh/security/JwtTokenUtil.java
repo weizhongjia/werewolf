@@ -1,5 +1,6 @@
 package com.msh.security;
 
+import com.msh.common.model.security.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -20,6 +21,8 @@ public class JwtTokenUtil implements Serializable {
     static final String CLAIM_KEY_USERNAME = "sub";
     static final String CLAIM_KEY_AUDIENCE = "audience";
     static final String CLAIM_KEY_CREATED = "created";
+    static final String CLAIM_KEY_OPENID = "openid";
+    static final String CLAIM_KEY_HEADIMG = "headimg";
 
     private static final String AUDIENCE_UNKNOWN = "unknown";
     private static final String AUDIENCE_WEB = "web";
@@ -32,6 +35,19 @@ public class JwtTokenUtil implements Serializable {
     @Value("${jwt.expiration}")
     private Long expiration;
 
+    public User getUserFromToken(String token){
+        User user = new User();
+        try {
+            final Claims claims = getClaimsFromToken(token);
+            user.setOpenid((String)claims.get(CLAIM_KEY_OPENID));
+            user.setUserName((String)claims.get(CLAIM_KEY_USERNAME));
+            user.setHeadimgurl((String)claims.get(CLAIM_KEY_HEADIMG));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return user;
+    }
+
     public String getUsernameFromToken(String token) {
         String username;
         try {
@@ -41,6 +57,28 @@ public class JwtTokenUtil implements Serializable {
             username = null;
         }
         return username;
+    }
+
+    public String getOpenIdFromToken(String token) {
+        String openId;
+        try {
+            final Claims claims = getClaimsFromToken(token);
+            openId = (String) claims.get(CLAIM_KEY_OPENID);
+        } catch (Exception e) {
+            openId = null;
+        }
+        return openId;
+    }
+
+    public String getHeadImgFromToken(String token) {
+        String headImg;
+        try {
+            final Claims claims = getClaimsFromToken(token);
+            headImg = (String) claims.get(CLAIM_KEY_HEADIMG);
+        } catch (Exception e) {
+            headImg = null;
+        }
+        return headImg;
     }
 
     public Date getCreatedDateFromToken(String token) {
@@ -119,9 +157,11 @@ public class JwtTokenUtil implements Serializable {
         return (AUDIENCE_TABLET.equals(audience) || AUDIENCE_MOBILE.equals(audience));
     }
 
-    public String generateToken(JwtUser userDetails, Device device) {
+    public String generateToken(WerewolfAuthenticationToken userDetails, Device device) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put(CLAIM_KEY_USERNAME, userDetails.getOpenId());
+        claims.put(CLAIM_KEY_OPENID, userDetails.getOpenId());
+        claims.put(CLAIM_KEY_USERNAME, userDetails.getUserName());
+        claims.put(CLAIM_KEY_HEADIMG, userDetails.getHeadImgUrl());
         claims.put(CLAIM_KEY_AUDIENCE, generateAudience(device));
         claims.put(CLAIM_KEY_CREATED, new Date());
         return generateToken(claims);
