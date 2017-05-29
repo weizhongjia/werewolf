@@ -26,27 +26,27 @@ public class NonePlayer extends CommonPlayer {
     @Override
     public RoomStateData resolveEvent(PlayerEvent event) {
         if (PlayerEventType.JOIN_ROOM.equals(event.getEventType())) {
-            resolveJoinEvent(event);
+//            resolveJoinEvent(event);
             return roomState;
         } else {
             throw new RoomBusinessException("该用户类型不接受此类型事件");
         }
     }
 
-    private void resolveJoinEvent(PlayerEvent event) {
-        if (event.getSeatNumber() < 0 || event.getSeatNumber() > roomState.getPlayerSeatInfo().size()) {
-            throw new RoomBusinessException("该房间无法容纳该座位号玩家,请检查游戏配置");
-        }
-        PlayerSeatInfo seatInfo = roomState.getPlayerSeatInfo().get(event.getSeatNumber() - 1);
-        if (seatInfo.isSeatAvailable() && seatInfo.getSeatNumber() == number) {
-            seatInfo.setRole(Roles.UNASSIGN);
-            seatInfo.setSeatAvailable(false);
-            seatInfo.setAlive(true);
-            seatInfo.setUserID(event.getUserID());
-        } else {
-            throw new RoomBusinessException("该座位已被占用，请联系法官");
-        }
-    }
+//    private void joinRoom(PlayerEvent event) {
+//        if (event.getSeatNumber() < 0 || event.getSeatNumber() > roomState.getPlayerSeatInfo().size()) {
+//            throw new RoomBusinessException("该房间无法容纳该座位号玩家,请检查游戏配置");
+//        }
+//        PlayerSeatInfo seatInfo = roomState.getPlayerSeatInfo().get(event.getSeatNumber() - 1);
+//        if (seatInfo.isSeatAvailable() && seatInfo.getSeatNumber() == number) {
+//            seatInfo.setRole(Roles.UNASSIGN);
+//            seatInfo.setSeatAvailable(false);
+//            seatInfo.setAlive(true);
+//            seatInfo.setUserID(event.getUserID());
+//        } else {
+//            throw new RoomBusinessException("该座位已被占用，请联系法官");
+//        }
+//    }
 
     @Override
     public PlayerDisplayInfo displayInfo() {

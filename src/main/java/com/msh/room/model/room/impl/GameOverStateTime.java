@@ -16,7 +16,16 @@ public class GameOverStateTime extends AbstractStateRoom {
 
     @Override
     public RoomStateData resolveJudgeEvent(JudgeEvent event) {
-        return null;
+        filterJudgeEventType(event);
+        switch (event.getEventType()) {
+            case RESTART_GAME:
+                resolveRestartGameEvent(event);
+                break;
+            case DISBAND_GAME:
+                resolveDisbandGameEvent(event);
+                break;
+        }
+        return roomState;
     }
 
     @Override
@@ -31,6 +40,9 @@ public class GameOverStateTime extends AbstractStateRoom {
 
     @Override
     public PlayerDisplayInfo displayPlayerInfo(int seatNumber) {
-        return null;
+        PlayerDisplayInfo displayInfo = playerCommonDisplayInfo(seatNumber);
+        //游戏结束，无需隐藏
+        displayInfo.setPlayerSeatInfoList(roomState.getPlayerSeatInfo());
+        return displayInfo;
     }
 }

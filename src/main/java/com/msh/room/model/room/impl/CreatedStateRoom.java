@@ -8,6 +8,9 @@ import com.msh.room.dto.response.PlayerDisplayInfo;
 import com.msh.room.dto.room.RoomStateData;
 import com.msh.room.dto.room.RoomStatus;
 import com.msh.room.dto.room.record.NightRecord;
+import com.msh.room.dto.room.seat.PlayerSeatInfo;
+import com.msh.room.exception.RoomBusinessException;
+import com.msh.room.model.role.Roles;
 
 /**
  * Created by zhangruiqian on 2017/5/25.
@@ -48,11 +51,13 @@ public class CreatedStateRoom extends AbstractStateRoom {
 
     @Override
     public RoomStateData resolvePlayerEvent(PlayerEvent event) {
-        return null;
+        return roomState;
     }
+
 
     @Override
     public PlayerDisplayInfo displayPlayerInfo(int seatNumber) {
-        return null;
+        PlayerDisplayInfo displayInfo = playerCommonDisplayInfo(seatNumber);
+        return displayInfo;
     }
 }

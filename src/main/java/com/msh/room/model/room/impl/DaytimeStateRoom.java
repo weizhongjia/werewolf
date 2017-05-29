@@ -13,7 +13,7 @@ import java.util.ArrayList;
 /**
  * Created by zhangruiqian on 2017/5/25.
  */
-public class DaytimeStateRoom extends AbstractStateRoom{
+public class DaytimeStateRoom extends AbstractStateRoom {
     public DaytimeStateRoom(RoomStateData data) {
         super(data);
     }
@@ -70,6 +70,6 @@ public class DaytimeStateRoom extends AbstractStateRoom{
 
     @Override
     public PlayerDisplayInfo displayPlayerInfo(int seatNumber) {
-        return null;
+        return playerCommonDisplayInfo(seatNumber);
     }
 }

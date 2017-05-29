@@ -24,13 +24,6 @@ public class UnAssignPlayer extends CommonPlayer {
 
     @Override
     public RoomStateData resolveEvent(PlayerEvent event) {
-        if (PlayerEventType.Exit_ROOM.equals(event.getEventType())) {
-            PlayerSeatInfo seatInfo = roomState.getPlayerSeatInfo().get(event.getSeatNumber() - 1);
-            seatInfo.setRole(Roles.NONE);
-            seatInfo.setUserID(null);
-            seatInfo.setAlive(false);
-            seatInfo.setSeatAvailable(true);
-        }
         return roomState;
     }
 

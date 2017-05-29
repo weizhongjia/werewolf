@@ -7,6 +7,7 @@ import com.msh.room.dto.response.JudgeDisplayInfo;
 import com.msh.room.dto.response.PlayerDisplayInfo;
 import com.msh.room.dto.room.RoomStateData;
 import com.msh.room.dto.room.RoomStatus;
+import com.msh.room.dto.room.seat.PlayerSeatInfo;
 import com.msh.room.dto.room.state.MoronState;
 import com.msh.room.dto.room.state.WitchState;
 import com.msh.room.exception.RoomBusinessException;
@@ -115,11 +116,44 @@ public class CreatingStateRoom extends AbstractStateRoom {
 
     @Override
     public RoomStateData resolvePlayerEvent(PlayerEvent event) {
-        return null;
+        filterPlayerEventType(event);
+        switch (event.getEventType()) {
+            case JOIN_ROOM:
+                resolveJoinRoom(event);
+                break;
+            case Exit_ROOM:
+                resolveExitRoom(event);
+                break;
+        }
+        return roomState;
+    }
+
+    private void resolveExitRoom(PlayerEvent event) {
+        PlayerSeatInfo seatInfo = roomState.getPlayerSeatInfo().get(event.getSeatNumber() - 1);
+        seatInfo.setRole(Roles.NONE);
+        seatInfo.setUserID(null);
+        seatInfo.setAlive(false);
+        seatInfo.setSeatAvailable(true);
+    }
+
+    private void resolveJoinRoom(PlayerEvent event) {
+        if (event.getSeatNumber() < 0 || event.getSeatNumber() > roomState.getPlayerSeatInfo().size()) {
+            throw new RoomBusinessException("该房间无法容纳该座位号玩家,请检查游戏配置");
+        }
+        PlayerSeatInfo seatInfo = roomState.getPlayerSeatInfo().get(event.getSeatNumber() - 1);
+        if (seatInfo.isSeatAvailable() && seatInfo.getSeatNumber() == event.getSeatNumber()) {
+            seatInfo.setRole(Roles.UNASSIGN);
+            seatInfo.setSeatAvailable(false);
+            seatInfo.setAlive(true);
+            seatInfo.setUserID(event.getUserID());
+        } else {
+            throw new RoomBusinessException("该座位已被占用，请联系法官");
+        }
     }
 
     @Override
     public PlayerDisplayInfo displayPlayerInfo(int seatNumber) {
-        return null;
+        PlayerDisplayInfo displayInfo = playerCommonDisplayInfo(seatNumber);
+        return displayInfo;
     }
 }

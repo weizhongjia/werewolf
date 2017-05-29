@@ -12,8 +12,6 @@ import com.msh.room.dto.room.RoomStatus;
 import com.msh.room.dto.room.record.NightRecord;
 import com.msh.room.dto.room.seat.PlayerSeatInfo;
 import com.msh.room.model.role.Roles;
-import com.msh.room.model.room.Room;
-import com.msh.room.model.room.RoomManager;
 import com.msh.room.model.room.RoomStateFactory;
 import com.msh.room.service.RoomService;
 import org.junit.Before;
@@ -29,7 +27,6 @@ import static org.junit.Assert.*;
  * Created by zhangruiqian on 2017/5/14.
  */
 public class NightTest {
-    private RoomManager roomManager;
     private RoomStateDataRepository repository;
     private String roomCode = "abc";
     private RoomService service = new RoomService();
@@ -37,8 +34,6 @@ public class NightTest {
     @Before
     public void setup() {
         repository = new RoomStateDataRepository();
-        roomManager = new RoomManager();
-        roomManager.setDataRepository(repository);
         //房间空闲
         RoomStateData data = new RoomStateData();
         data.setRoomCode(roomCode);
@@ -46,8 +41,6 @@ public class NightTest {
         repository.putRoomStateData(roomCode, data);
         service.setDataRepository(repository);
         service.setRoomFactory(new RoomStateFactory());
-
-        Room room = roomManager.loadRoom(roomCode);
         //create
         JudgeEvent createRoomEvent = new JudgeEvent(roomCode, JudgeEventType.CREATE_ROOM);
         Map<Roles, Integer> gameConfig = new HashMap<>();
@@ -64,7 +57,7 @@ public class NightTest {
             int seatNumber = i;
             String userId = "Richard_" + i;
             PlayerEvent event = new PlayerEvent(PlayerEventType.JOIN_ROOM, seatNumber, userId);
-            room.resolvePlayerEvent(event);
+            service.resolvePlayerEvent(event, roomCode);
         }
 
         JudgeEvent completeEvent = new JudgeEvent(roomCode, JudgeEventType.COMPLETE_CREATE);
@@ -79,9 +72,8 @@ public class NightTest {
         JudgeEventType firstAcceptableJudgeEvent = acceptableEventTypes.get(0);
         assertEquals(JudgeEventType.WOLF_KILL, firstAcceptableJudgeEvent);
         RoomStateData stateData = repository.loadRoomStateData(roomCode);
-        Room room = roomManager.loadRoom(roomCode);
         for (int i = 1; i < 13; i++) {
-            PlayerDisplayInfo displayInfo = room.getPlayerDisplayResult(i);
+            PlayerDisplayInfo displayInfo = service.getPlayerDisplayResult(roomCode, i);
             PlayerSeatInfo seatInfo = stateData.getPlaySeatInfoBySeatNumber(i);
             if (Roles.WEREWOLVES.equals(seatInfo.getRole())) {
                 //睁眼状态
@@ -112,9 +104,8 @@ public class NightTest {
 
         JudgeEventType eventType = judgeDisplayInfo.getAcceptableEventTypes().get(0);
         assertEquals(JudgeEventType.SEER_VERIFY, eventType);
-        Room room = roomManager.loadRoom(roomCode);
         for (int i = 1; i < 13; i++) {
-            PlayerDisplayInfo displayInfo = room.getPlayerDisplayResult(i);
+            PlayerDisplayInfo displayInfo = service.getPlayerDisplayResult(roomCode, i);
             PlayerSeatInfo seatInfo = stateData.getPlaySeatInfoBySeatNumber(i);
             if (Roles.WEREWOLVES.equals(seatInfo.getRole())) {
                 //闭眼了
@@ -156,9 +147,8 @@ public class NightTest {
         assertTrue(judgeDisplayInfo.getNightRecord().isSeerVerifyResult());
         assertEquals(Integer.valueOf(wolfSeat), stateData.getLastNightRecord().getSeerVerify());
         assertTrue(stateData.getLastNightRecord().isSeerVerifyResult());
-        Room room = roomManager.loadRoom(roomCode);
         for (int i = 1; i < 13; i++) {
-            PlayerDisplayInfo displayInfo = room.getPlayerDisplayResult(i);
+            PlayerDisplayInfo displayInfo = service.getPlayerDisplayResult(roomCode, i);
             PlayerSeatInfo seatInfo = stateData.getPlaySeatInfoBySeatNumber(i);
             if (Roles.WEREWOLVES.equals(seatInfo.getRole())) {
                 //闭眼了
@@ -202,10 +192,8 @@ public class NightTest {
         assertEquals(JudgeEventType.FAKE_WITCH_POISON, judgeDisplayInfo.getAcceptableEventTypes().get(0));
         assertEquals(Integer.valueOf(seat), stateData.getLastNightRecord().getWitchSaved());
 
-
-        Room room = roomManager.loadRoom(roomCode);
         for (int i = 1; i < 13; i++) {
-            PlayerDisplayInfo displayInfo = room.getPlayerDisplayResult(i);
+            PlayerDisplayInfo displayInfo = service.getPlayerDisplayResult(roomCode, i);
             PlayerSeatInfo seatInfo = stateData.getPlaySeatInfoBySeatNumber(i);
             if (Roles.WEREWOLVES.equals(seatInfo.getRole())) {
                 //闭眼了
@@ -260,9 +248,8 @@ public class NightTest {
         //狼被毒了
         assertEquals(Integer.valueOf(wolfSeat), stateData.getLastNightRecord().getWitchPoisoned());
 
-        Room room = roomManager.loadRoom(roomCode);
         for (int i = 1; i < 13; i++) {
-            PlayerDisplayInfo displayInfo = room.getPlayerDisplayResult(i);
+            PlayerDisplayInfo displayInfo = service.getPlayerDisplayResult(roomCode, i);
             PlayerSeatInfo seatInfo = stateData.getPlaySeatInfoBySeatNumber(i);
             if (Roles.WEREWOLVES.equals(seatInfo.getRole())) {
                 //闭眼了
@@ -313,9 +300,8 @@ public class NightTest {
         assertEquals(Integer.valueOf(seat), nightRecord.getDiedNumber().get(0));
         assertEquals(Integer.valueOf(seat), stateData.getLastNightRecord().getDiedNumber().get(0));
 
-        Room room = roomManager.loadRoom(roomCode);
         for (int i = 1; i < 13; i++) {
-            PlayerDisplayInfo displayInfo = room.getPlayerDisplayResult(i);
+            PlayerDisplayInfo displayInfo = service.getPlayerDisplayResult(roomCode, i);
             PlayerSeatInfo seatInfo = stateData.getPlaySeatInfoBySeatNumber(i);
             assertEquals(Integer.valueOf(seat), displayInfo.getNightRecord().getDiedNumber().get(0));
             if (i == seat) {
@@ -326,7 +312,6 @@ public class NightTest {
 
     @Test
     public void testDaytimeComingNobodyDie() {
-        Room room = roomManager.loadRoom(roomCode);
         JudgeEvent nightComingEvent = new JudgeEvent(roomCode, JudgeEventType.NIGHT_COMING);
         service.resolveJudgeEvent(nightComingEvent, roomCode);
         JudgeEvent wolfKillEvent = new JudgeEvent(roomCode, JudgeEventType.WOLF_KILL);
@@ -362,7 +347,7 @@ public class NightTest {
         //没人死亡
         assertEquals(0, stateData.getLastNightRecord().getDiedNumber().size());
         for (int i = 1; i < 13; i++) {
-            PlayerDisplayInfo displayInfo = room.getPlayerDisplayResult(i);
+            PlayerDisplayInfo displayInfo = service.getPlayerDisplayResult(roomCode, i);
             PlayerSeatInfo seatInfo = stateData.getPlaySeatInfoBySeatNumber(i);
             assertEquals(0, displayInfo.getNightRecord().getDiedNumber().size());
             //所有人都alive

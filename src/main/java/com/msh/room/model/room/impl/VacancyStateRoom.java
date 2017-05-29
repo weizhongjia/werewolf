@@ -8,6 +8,7 @@ import com.msh.room.dto.response.PlayerDisplayInfo;
 import com.msh.room.dto.room.RoomStateData;
 import com.msh.room.dto.room.RoomStatus;
 import com.msh.room.dto.room.seat.PlayerSeatInfo;
+import com.msh.room.exception.RoomBusinessException;
 import com.msh.room.model.role.Roles;
 
 import java.util.ArrayList;
@@ -75,12 +76,13 @@ public class VacancyStateRoom extends AbstractStateRoom {
 
     @Override
     public RoomStateData resolvePlayerEvent(PlayerEvent event) {
-        return null;
+        filterPlayerEventType(event);
+        return roomState;
     }
 
     @Override
     public PlayerDisplayInfo displayPlayerInfo(int seatNumber) {
-        return null;
+        throw new RoomBusinessException("房间尚未创建，无法获取信息");
     }
 
 }

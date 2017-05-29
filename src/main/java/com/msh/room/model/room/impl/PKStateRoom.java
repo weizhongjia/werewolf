@@ -7,13 +7,15 @@ import com.msh.room.dto.response.JudgeDisplayInfo;
 import com.msh.room.dto.response.PlayerDisplayInfo;
 import com.msh.room.dto.room.RoomStateData;
 import com.msh.room.dto.room.RoomStatus;
+import com.msh.room.model.role.CommonPlayer;
+import com.msh.room.model.role.PlayerRoleFactory;
 
 import java.util.ArrayList;
 
 /**
  * Created by zhangruiqian on 2017/5/25.
  */
-public class PKStateRoom extends AbstractStateRoom{
+public class PKStateRoom extends AbstractStateRoom {
     public PKStateRoom(RoomStateData data) {
         super(data);
     }
@@ -52,11 +54,15 @@ public class PKStateRoom extends AbstractStateRoom{
 
     @Override
     public RoomStateData resolvePlayerEvent(PlayerEvent event) {
-        return null;
+        filterPlayerEventType(event);
+        return roomState;
     }
 
     @Override
     public PlayerDisplayInfo displayPlayerInfo(int seatNumber) {
-        return null;
+        PlayerDisplayInfo displayInfo = playerCommonDisplayInfo(seatNumber);
+        //PK环节说明投票结束(无论投票还是pk投票)，也公布白天信息
+        displayInfo.setDaytimeRecord(roomState.getLastDaytimeRecord());
+        return displayInfo;
     }
 }

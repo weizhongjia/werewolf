@@ -11,8 +11,6 @@ import com.msh.room.dto.room.RoomStateData;
 import com.msh.room.dto.room.RoomStatus;
 import com.msh.room.dto.room.seat.PlayerSeatInfo;
 import com.msh.room.model.role.Roles;
-import com.msh.room.model.room.Room;
-import com.msh.room.model.room.RoomManager;
 import com.msh.room.model.room.RoomStateFactory;
 import com.msh.room.service.RoomService;
 import org.junit.Before;
@@ -22,13 +20,14 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 /**
  * Created by zhangruiqian on 2017/5/23.
  */
 public class HunterTest {
-    private RoomManager roomManager;
+    //    private RoomManager roomManager;
     private RoomStateDataRepository repository;
     private String roomCode = "abc";
     private RoomService service = new RoomService();
@@ -36,14 +35,11 @@ public class HunterTest {
     @Before
     public void setup() {
         repository = new RoomStateDataRepository();
-        roomManager = new RoomManager();
-        roomManager.setDataRepository(repository);
         //房间空闲
         RoomStateData data = new RoomStateData();
         data.setRoomCode(roomCode);
         data.setStatus(RoomStatus.VACANCY);
         repository.putRoomStateData(roomCode, data);
-        Room room = roomManager.loadRoom(roomCode);
         service.setDataRepository(repository);
         service.setRoomFactory(new RoomStateFactory());
 
@@ -63,7 +59,7 @@ public class HunterTest {
             int seatNumber = i;
             String userId = "Richard_" + i;
             PlayerEvent event = new PlayerEvent(PlayerEventType.JOIN_ROOM, seatNumber, userId);
-            room.resolvePlayerEvent(event);
+            service.resolvePlayerEvent(event, roomCode);
         }
         JudgeEvent completeEvent = new JudgeEvent(roomCode, JudgeEventType.COMPLETE_CREATE);
         service.resolveJudgeEvent(completeEvent, roomCode);
@@ -71,7 +67,7 @@ public class HunterTest {
 
     @Test
     public void wolfKillHunter() {
-        Room room = roomManager.loadRoom(roomCode);
+//        Room room = roomManager.loadRoom(roomCode);
         JudgeEvent nightComingEvent = new JudgeEvent(roomCode, JudgeEventType.NIGHT_COMING);
         service.resolveJudgeEvent(nightComingEvent, roomCode);
 
@@ -103,12 +99,13 @@ public class HunterTest {
         assertEquals(Arrays.asList(JudgeEventType.RESTART_GAME, JudgeEventType.DISBAND_GAME), judgeDisplayInfo.getAcceptableEventTypes());
         String hunterUserName = "";
         for (int i = 1; i < 13; i++) {
-            PlayerDisplayInfo displayResult = room.getPlayerDisplayResult(i);
+            PlayerDisplayInfo displayResult = service.getPlayerDisplayResult(roomCode, i);
             PlayerSeatInfo playerInfo = displayResult.getPlayerInfo();
             if (Roles.HUNTER.equals(playerInfo.getRole())) {
                 hunterUserName = playerInfo.getUserID();
                 //猎人可以操作带人
-                assertEquals(Arrays.asList(PlayerEventType.HUNTER_SHOOT), displayResult.getAcceptableEventTypeList());
+                assertEquals(Arrays.asList(PlayerEventType.HUNTER_SHOOT),
+                        displayResult.getAcceptableEventTypeList());
                 //猎人已死
                 assertFalse(playerInfo.isAlive());
                 //夜晚死人信息是猎人
@@ -119,7 +116,7 @@ public class HunterTest {
         PlayerEvent hunterShoot = new PlayerEvent(PlayerEventType.HUNTER_SHOOT, hunter, hunterUserName);
         //把狼崩了
         hunterShoot.setShootNumber(wolfSeat);
-        PlayerDisplayInfo playerDisplayInfo = room.resolvePlayerEvent(hunterShoot);
+        PlayerDisplayInfo playerDisplayInfo = service.resolvePlayerEvent(hunterShoot, roomCode);
         //猎人操作完成，没其他操作了
         assertEquals(0, playerDisplayInfo.getAcceptableEventTypeList().size());
 
@@ -127,14 +124,15 @@ public class HunterTest {
         //进入白天
         assertEquals(RoomStatus.DAYTIME, judgeDisplayResult.getStatus());
         //法官可以发起投票
-        assertEquals(Arrays.asList(JudgeEventType.DAYTIME_VOTING, JudgeEventType.RESTART_GAME, JudgeEventType.DISBAND_GAME),
-                judgeDisplayResult.getAcceptableEventTypes());
+        assertEquals(Arrays.asList(JudgeEventType.DAYTIME_VOTING,
+                JudgeEventType.RESTART_GAME,
+                JudgeEventType.DISBAND_GAME), judgeDisplayResult.getAcceptableEventTypes());
 
         //法官看到狼死了
         assertFalse(judgeDisplayResult.getPlayerSeatInfoList().get(wolfSeat - 1).isAlive());
 
         for (int i = 1; i < 13; i++) {
-            PlayerDisplayInfo displayResult = room.getPlayerDisplayResult(i);
+            PlayerDisplayInfo displayResult = service.getPlayerDisplayResult(roomCode, i);
             PlayerSeatInfo playerInfo = displayResult.getPlayerInfo();
             if (i == wolfSeat) {
                 //玩家看到狼死了
@@ -147,7 +145,6 @@ public class HunterTest {
 
     @Test
     public void witchPoisonHunter() {
-        Room room = roomManager.loadRoom(roomCode);
         JudgeEvent nightComingEvent = new JudgeEvent(roomCode, JudgeEventType.NIGHT_COMING);
         service.resolveJudgeEvent(nightComingEvent, roomCode);
 
@@ -179,7 +176,7 @@ public class HunterTest {
         //正常发言
         assertEquals(Arrays.asList(JudgeEventType.DAYTIME_VOTING, JudgeEventType.RESTART_GAME, JudgeEventType.DISBAND_GAME), judgeDisplayInfo.getAcceptableEventTypes());
         for (int i = 1; i < 13; i++) {
-            PlayerDisplayInfo displayResult = room.getPlayerDisplayResult(i);
+            PlayerDisplayInfo displayResult = service.getPlayerDisplayResult(roomCode, i);
             PlayerSeatInfo playerInfo = displayResult.getPlayerInfo();
             if (Roles.HUNTER.equals(playerInfo.getRole())) {
                 //猎人死了
@@ -190,7 +187,6 @@ public class HunterTest {
 
     @Test
     public void testVoteHunter() {
-        Room room = roomManager.loadRoom(roomCode);
         JudgeEvent nightComingEvent = new JudgeEvent(roomCode, JudgeEventType.NIGHT_COMING);
         service.resolveJudgeEvent(nightComingEvent, roomCode);
 
@@ -221,14 +217,14 @@ public class HunterTest {
 
         int hunter = stateData.getAliveSeatByRole(Roles.HUNTER);
         for (int i = 1; i < 13; i++) {
-            PlayerDisplayInfo displayResult = room.getPlayerDisplayResult(i);
+            PlayerDisplayInfo displayResult = service.getPlayerDisplayResult(roomCode, i);
             PlayerSeatInfo playerInfo = displayResult.getPlayerInfo();
             if (!playerInfo.isAlive()) {
                 continue;
             }
             PlayerEvent voteEvent = new PlayerEvent(PlayerEventType.DAYTIME_VOTE, i, playerInfo.getUserID());
             voteEvent.setDaytimeVoteNumber(hunter);
-            room.resolvePlayerEvent(voteEvent);
+            service.resolvePlayerEvent(voteEvent, roomCode);
         }
 
         JudgeDisplayInfo judgeDisplayResult = service.getJudgeDisplayResult(roomCode);
@@ -238,7 +234,7 @@ public class HunterTest {
         assertEquals(Arrays.asList(JudgeEventType.RESTART_GAME, JudgeEventType.DISBAND_GAME), judgeDisplayResult.getAcceptableEventTypes());
         String hunterUserName = "";
         for (int i = 1; i < 13; i++) {
-            PlayerDisplayInfo displayResult = room.getPlayerDisplayResult(i);
+            PlayerDisplayInfo displayResult = service.getPlayerDisplayResult(roomCode, i);
             PlayerSeatInfo playerInfo = displayResult.getPlayerInfo();
             if (playerInfo.getRole().equals(Roles.HUNTER)) {
                 hunterUserName = playerInfo.getUserID();
@@ -250,7 +246,7 @@ public class HunterTest {
         PlayerEvent hunterShoot = new PlayerEvent(PlayerEventType.HUNTER_SHOOT, hunter, hunterUserName);
         //把狼崩了
         hunterShoot.setShootNumber(wolfSeat);
-        PlayerDisplayInfo playerDisplayInfo = room.resolvePlayerEvent(hunterShoot);
+        PlayerDisplayInfo playerDisplayInfo = service.resolvePlayerEvent(hunterShoot, roomCode);
         assertEquals(0, playerDisplayInfo.getAcceptableEventTypeList().size());
 //
         JudgeDisplayInfo judgeDisplayInfo = service.getJudgeDisplayResult(roomCode);
@@ -261,7 +257,7 @@ public class HunterTest {
                 judgeDisplayInfo.getAcceptableEventTypes());
 //
         for (int i = 1; i < 13; i++) {
-            PlayerDisplayInfo displayResult = room.getPlayerDisplayResult(i);
+            PlayerDisplayInfo displayResult = service.getPlayerDisplayResult(roomCode, i);
             if (i == wolfSeat) {
                 //狼死了
                 assertFalse(displayResult.getPlayerInfo().isAlive());

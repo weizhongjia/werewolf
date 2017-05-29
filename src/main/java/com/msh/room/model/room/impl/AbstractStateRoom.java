@@ -1,11 +1,15 @@
 package com.msh.room.model.room.impl;
 
 import com.msh.room.dto.event.JudgeEvent;
+import com.msh.room.dto.event.PlayerEvent;
 import com.msh.room.dto.response.JudgeDisplayInfo;
+import com.msh.room.dto.response.PlayerDisplayInfo;
 import com.msh.room.dto.room.RoomStateData;
 import com.msh.room.dto.room.RoomStatus;
 import com.msh.room.dto.room.record.NightRecord;
 import com.msh.room.exception.RoomBusinessException;
+import com.msh.room.model.role.CommonPlayer;
+import com.msh.room.model.role.PlayerRoleFactory;
 import com.msh.room.model.role.Roles;
 import com.msh.room.model.room.RoomState;
 
@@ -56,10 +60,31 @@ public abstract class AbstractStateRoom implements RoomState {
                 seatInfo.setAlive(true);
             }
         });
+        roomState.setDaytimeRecordList(null);
+        roomState.setNightRecordList(null);
+
+        roomState.setHunterState(null);
+        roomState.setMoronState(null);
+        roomState.setWitchState(null);
+        roomState.setGameResult(null);
+
         roomState.setStatus(RoomStatus.CRATING);
     }
 
     protected void resolveGameEnding(JudgeEvent event) {
         this.roomState.setStatus(RoomStatus.GAME_OVER);
+    }
+
+
+    protected void filterPlayerEventType(PlayerEvent event) {
+        PlayerDisplayInfo displayInfo = this.displayPlayerInfo(event.getSeatNumber());
+        if (!displayInfo.getAcceptableEventTypeList().contains(event.getEventType())) {
+            throw new RoomBusinessException("非法的事件类型");
+        }
+    }
+
+    protected PlayerDisplayInfo playerCommonDisplayInfo(int seatNumber) {
+        CommonPlayer player = PlayerRoleFactory.createPlayerInstance(roomState, seatNumber);
+        return player.displayInfo();
     }
 }

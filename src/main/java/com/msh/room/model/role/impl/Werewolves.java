@@ -1,17 +1,13 @@
 package com.msh.room.model.role.impl;
 
-import com.msh.room.dto.event.PlayerEvent;
 import com.msh.room.dto.event.PlayerEventType;
 import com.msh.room.dto.response.PlayerDisplayInfo;
-import com.msh.room.dto.room.RoomStatus;
-import com.msh.room.dto.room.record.NightRecord;
-import com.msh.room.dto.room.seat.PlayerSeatInfo;
 import com.msh.room.dto.room.RoomStateData;
-import com.msh.room.model.role.CommonPlayer;
+import com.msh.room.dto.room.RoomStatus;
+import com.msh.room.dto.room.seat.PlayerSeatInfo;
 import com.msh.room.model.role.Roles;
 import com.msh.room.model.role.util.PlayerRoleMask;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 

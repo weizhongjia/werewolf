@@ -7,12 +7,10 @@ import com.msh.room.dto.event.PlayerEvent;
 import com.msh.room.dto.event.PlayerEventType;
 import com.msh.room.dto.response.JudgeDisplayInfo;
 import com.msh.room.dto.response.PlayerDisplayInfo;
-import com.msh.room.dto.room.seat.PlayerSeatInfo;
 import com.msh.room.dto.room.RoomStateData;
 import com.msh.room.dto.room.RoomStatus;
+import com.msh.room.dto.room.seat.PlayerSeatInfo;
 import com.msh.room.model.role.Roles;
-import com.msh.room.model.room.Room;
-import com.msh.room.model.room.RoomManager;
 import com.msh.room.model.room.RoomStateFactory;
 import com.msh.room.service.RoomService;
 import org.junit.Before;
@@ -28,16 +26,13 @@ import static org.junit.Assert.*;
  * Created by zhangruiqian on 2017/5/5.
  */
 public class RoomTest {
-    private RoomManager roomManager;
     private MockRoomStateDataRepository repository;
     private String roomCode = "abc";
     private RoomService service = new RoomService();
 
     @Before
     public void setup() {
-        roomManager = new RoomManager();
         repository = new MockRoomStateDataRepository();
-        roomManager.setDataRepository(repository);
 
         //房间空闲
         RoomStateData data = new RoomStateData();
@@ -51,18 +46,12 @@ public class RoomTest {
 
     @Test
     public void testNone() {
-        Room room = roomManager.loadRoom("abc");
-        assertEquals("abc", room.getRoomCode());
     }
 
     @Test
     public void testCreateRoom() {
         JudgeEvent event = constructCreateRoomEvent(roomCode);
-        Room room = roomManager.loadRoom(event.getRoomCode());
         //执行事件
-//        JudgeDisplayInfo judgeDisplayInfo = room.resolveJudgeEvent(event);
-
-
         JudgeDisplayInfo judgeDisplayInfo = service.resolveJudgeEvent(event, roomCode);
         /**
          * 返回值校验
@@ -107,7 +96,7 @@ public class RoomTest {
          * 普通用户视角
          */
         for (int i = 1; i <= 12; i++) {
-            PlayerDisplayInfo playerDisplayResult = room.getPlayerDisplayResult(i);
+            PlayerDisplayInfo playerDisplayResult = service.getPlayerDisplayResult(roomCode, i);
             assertTrue(playerDisplayResult.getPlayerInfo().isSeatAvailable());
             assertEquals(PlayerEventType.JOIN_ROOM, playerDisplayResult.getAcceptableEventTypeList().get(0));
         }
@@ -128,12 +117,12 @@ public class RoomTest {
 
     @Test
     public void testJoinGame() {
-        Room room = createRoom();
         String userId = "Richard";
         int seatNumber = 1;
+        createRoom();
         PlayerEvent event = constructPlayerJoinEvent(seatNumber, userId);
         //处理事件
-        PlayerDisplayInfo playerDisplayInfo = room.resolvePlayerEvent(event);
+        PlayerDisplayInfo playerDisplayInfo = service.resolvePlayerEvent(event, roomCode);
         /**
          * 返回值校验
          */
@@ -182,18 +171,17 @@ public class RoomTest {
         /**
          * 法官界面校验
          */
-        JudgeDisplayInfo judgeResult = room.getJudgeDisplayResult();
+        JudgeDisplayInfo judgeResult = service.getJudgeDisplayResult(roomCode);
         PlayerSeatInfo seatInfo = judgeResult.getPlayerSeatInfoList().get(seatNumber - 1);
         assertEquals(Roles.UNASSIGN, seatInfo.getRole());
         assertEquals(userId, seatInfo.getUserID());
         assertFalse(seatInfo.isSeatAvailable());
     }
 
-    private Room createRoom() {
+    private void createRoom() {
         //创建房间
         JudgeEvent createRoomEvent = constructCreateRoomEvent(roomCode);
         service.resolveJudgeEvent(createRoomEvent, roomCode);
-        return roomManager.loadRoom(roomCode);
     }
 
     private PlayerEvent constructPlayerJoinEvent(int seatNumber, String userId) {
@@ -205,14 +193,14 @@ public class RoomTest {
     public void testExitRoom() {
         int seatNumber = 1;
         String userId = "Richard";
-        Room room = createRoom();
+        createRoom();
         PlayerEvent event = constructPlayerJoinEvent(seatNumber, userId);
         //加入
-        room.resolvePlayerEvent(event);
+        service.resolvePlayerEvent(event, roomCode);
 
         PlayerEvent exitEvent = constructPlayerExitEvent(seatNumber, userId);
         //处理离开事件
-        PlayerDisplayInfo playerDisplayInfo = room.resolvePlayerEvent(exitEvent);
+        PlayerDisplayInfo playerDisplayInfo = service.resolvePlayerEvent(exitEvent, roomCode);
 
         assertEquals(PlayerEventType.JOIN_ROOM, playerDisplayInfo.getAcceptableEventTypeList().get(0));
         assertTrue(playerDisplayInfo.getPlayerInfo().isSeatAvailable());
@@ -233,8 +221,8 @@ public class RoomTest {
 
     @Test
     public void testJoinAllPlayers() {
-        Room room = createRoom();
-        joinAllPlayers(room);
+        createRoom();
+        joinAllPlayers();
         JudgeDisplayInfo judgeDisplayResult = service.getJudgeDisplayResult(roomCode);
 
         assertEquals(JudgeEventType.COMPLETE_CREATE, judgeDisplayResult.getAcceptableEventTypes().get(0));
@@ -245,19 +233,19 @@ public class RoomTest {
         });
     }
 
-    private void joinAllPlayers(Room room) {
+    private void joinAllPlayers() {
         for (int i = 1; i <= 12; i++) {
             int seatNumber = i;
             String userId = "Richard_" + i;
             PlayerEvent event = constructPlayerJoinEvent(seatNumber, userId);
-            room.resolvePlayerEvent(event);
+            service.resolvePlayerEvent(event, roomCode);
         }
     }
 
     @Test
     public void testCompleteCreateEvent() {
-        Room room = createRoom();
-        joinAllPlayers(room);
+        createRoom();
+        joinAllPlayers();
         JudgeEvent event = generateCompleteCreateEvent();
         JudgeDisplayInfo judgeDisplayInfo = service.resolveJudgeEvent(event, roomCode);
 
@@ -283,7 +271,7 @@ public class RoomTest {
         assertEquals(1, moronCount);
 
         for (int i = 1; i <= 12; i++) {
-            PlayerDisplayInfo playerDisplayResult = room.getPlayerDisplayResult(i);
+            PlayerDisplayInfo playerDisplayResult = service.getPlayerDisplayResult(roomCode, i);
             assertEquals(playerSeatInfoList.get(i - 1).getRole(), playerDisplayResult.getPlayerInfo().getRole());
             assertEquals(playerSeatInfoList.get(i - 1).getRole(), playerDisplayResult.getPlayerSeatInfoList().get(i - 1).getRole());
             long unKnowCount = playerDisplayResult.getPlayerSeatInfoList().stream().filter(seatInfo -> seatInfo.getRole() == null).count();
@@ -311,10 +299,10 @@ public class RoomTest {
 
     @Test
     public void testRestartGameEvent() {
-        Room room = createRoom();
-        joinAllPlayers(room);
+        createRoom();
+        joinAllPlayers();
         JudgeEvent event = generateCompleteCreateEvent();
-        JudgeDisplayInfo judgeDisplayInfo = service.resolveJudgeEvent(event, roomCode);
+        service.resolveJudgeEvent(event, roomCode);
 
         JudgeEvent restartEvent = generateRestartGame();
         JudgeDisplayInfo judgeDisplayResult = service.resolveJudgeEvent(restartEvent, roomCode);
@@ -328,8 +316,8 @@ public class RoomTest {
 
     @Test
     public void testDisbandGameEvent() {
-        Room room = createRoom();
-        joinAllPlayers(room);
+        createRoom();
+        joinAllPlayers();
         JudgeEvent event = generateCompleteCreateEvent();
         service.resolveJudgeEvent(event, roomCode);
 

@@ -214,11 +214,12 @@ public class NightStateRoom extends AbstractStateRoom {
 
     @Override
     public RoomStateData resolvePlayerEvent(PlayerEvent event) {
-        return null;
+        filterPlayerEventType(event);
+        return roomState;
     }
 
     @Override
     public PlayerDisplayInfo displayPlayerInfo(int seatNumber) {
-        return null;
+        return playerCommonDisplayInfo(seatNumber);
     }
 }

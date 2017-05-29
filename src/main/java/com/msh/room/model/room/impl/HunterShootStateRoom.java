@@ -6,6 +6,11 @@ import com.msh.room.dto.event.PlayerEvent;
 import com.msh.room.dto.response.JudgeDisplayInfo;
 import com.msh.room.dto.response.PlayerDisplayInfo;
 import com.msh.room.dto.room.RoomStateData;
+import com.msh.room.exception.RoomBusinessException;
+import com.msh.room.model.role.CommonPlayer;
+import com.msh.room.model.role.PlayerRoleFactory;
+import com.msh.room.model.role.Roles;
+import com.msh.room.model.role.impl.Hunter;
 
 import java.util.ArrayList;
 
@@ -53,11 +58,28 @@ public class HunterShootStateRoom extends AbstractStateRoom {
 
     @Override
     public RoomStateData resolvePlayerEvent(PlayerEvent event) {
-        return null;
+        filterPlayerEventType(event);
+        switch (event.getEventType()) {
+            case HUNTER_SHOOT:
+                hunterShoot(event);
+                break;
+        }
+        return roomState;
+    }
+
+    private RoomStateData hunterShoot(PlayerEvent event) {
+        if (!Roles.HUNTER.equals(roomState.getPlaySeatInfoBySeatNumber(event.getSeatNumber()).getRole())) {
+            throw new RoomBusinessException("你不是猎人无法开枪");
+        }
+        Hunter hunter = (Hunter) PlayerRoleFactory.createPlayerInstance(roomState, event.getSeatNumber());
+        return hunter.shoot(event.getShootNumber());
     }
 
     @Override
     public PlayerDisplayInfo displayPlayerInfo(int seatNumber) {
-        return null;
+        PlayerDisplayInfo displayInfo = playerCommonDisplayInfo(seatNumber);
+        //进入猎人时间后，可以放开白天信息。猎人投票死亡需要公布票型，猎人夜晚死亡白天为空信息
+        displayInfo.setDaytimeRecord(roomState.getLastDaytimeRecord());
+        return displayInfo;
     }
 }
