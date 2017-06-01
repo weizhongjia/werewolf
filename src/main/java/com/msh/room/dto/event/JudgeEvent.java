@@ -11,6 +11,7 @@ public class JudgeEvent {
     private String roomCode;
     private JudgeEventType eventType;
     private Map<Roles, Integer> gameConfig;
+    private boolean sheriffSwich;
 
     private Integer wolfKillNumber;
     private Integer seerVerifyNumber;
@@ -83,5 +84,13 @@ public class JudgeEvent {
 
     public void setWitchPoisonNumber(Integer witchPoisonNumber) {
         this.witchPoisonNumber = witchPoisonNumber;
+    }
+
+    public boolean isSheriffSwich() {
+        return sheriffSwich;
+    }
+
+    public void setSheriffSwich(boolean sheriffSwich) {
+        this.sheriffSwich = sheriffSwich;
     }
 }

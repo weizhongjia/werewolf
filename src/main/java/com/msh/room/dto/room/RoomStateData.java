@@ -2,6 +2,7 @@ package com.msh.room.dto.room;
 
 import com.msh.room.dto.room.record.DaytimeRecord;
 import com.msh.room.dto.room.record.NightRecord;
+import com.msh.room.dto.room.record.SheriffRecord;
 import com.msh.room.dto.room.seat.PlayerSeatInfo;
 import com.msh.room.dto.room.state.HunterState;
 import com.msh.room.dto.room.state.MoronState;
@@ -32,6 +33,9 @@ public class RoomStateData {
 
     private String gameResult;
 
+    //本局游戏是否有上警环节,默认为关闭
+    boolean sheriff = false;
+    private SheriffRecord sheriffRecord;
 
     public String getRoomCode() {
         return roomCode;
@@ -183,5 +187,21 @@ public class RoomStateData {
 
     public void setGameResult(String gameResult) {
         this.gameResult = gameResult;
+    }
+
+    public boolean isSheriff() {
+        return sheriff;
+    }
+
+    public void setSheriff(boolean sheriff) {
+        this.sheriff = sheriff;
+    }
+
+    public SheriffRecord getSheriffRecord() {
+        return sheriffRecord;
+    }
+
+    public void setSheriffRecord(SheriffRecord sheriffRecord) {
+        this.sheriffRecord = sheriffRecord;
     }
 }

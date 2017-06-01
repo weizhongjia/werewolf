@@ -10,6 +10,7 @@ import com.msh.room.dto.room.RoomStateData;
 import com.msh.room.dto.room.RoomStatus;
 import com.msh.room.dto.room.record.DaytimeRecord;
 import com.msh.room.dto.room.record.NightRecord;
+import com.msh.room.dto.room.record.SheriffRecord;
 import com.msh.room.exception.RoomBusinessException;
 import com.msh.room.model.role.CommonPlayer;
 import com.msh.room.model.role.PlayerRoleFactory;
@@ -65,22 +66,24 @@ public class NightStateRoom extends AbstractStateRoom {
         }
         return roomState;
     }
+
     /**
      * 天亮了事件
      *
      * @param event
      */
     private void resolveDaytimeComing(JudgeEvent event) {
-        roomState.addDaytimeRecord(new DaytimeRecord());
         //判断是否需要竞选警长
         RoomStatus roomStatus = sheriffCompetitionStatus();
         roomState.setStatus(roomStatus);
         //如果不需要竞选
         if (RoomStatus.DAYTIME.equals(roomStatus)) {
+            roomState.addDaytimeRecord(new DaytimeRecord());
             //直接公布夜晚信息
             calculateNightInfo();
         }
     }
+
     public void calculateNightInfo() {
         NightRecord lastNightRecord = roomState.getLastNightRecord();
         List<Integer> dieList = new ArrayList();
@@ -98,13 +101,37 @@ public class NightStateRoom extends AbstractStateRoom {
             commonPlayer.killed();
         }
     }
+
     /**
      * 判断是否需要上警
      *
      * @return
      */
     private RoomStatus sheriffCompetitionStatus() {
-        return RoomStatus.DAYTIME;
+        if (roomState.isSheriff()) {
+            return sheriffInfoResolve();
+        } else {
+            return RoomStatus.DAYTIME;
+        }
+    }
+
+    private RoomStatus sheriffInfoResolve() {
+        SheriffRecord sheriffRecord = roomState.getSheriffRecord();
+        //还没有任何竞选信息,开始竞选
+        if (sheriffRecord == null) {
+            roomState.setSheriffRecord(new SheriffRecord());
+            return RoomStatus.SHERIFF_REGISTER;
+        } else {
+            //已有结果,直接进入白天
+            if (sheriffRecord.getSheriff() != null) {
+                return RoomStatus.DAYTIME;
+            } else {
+                //有竞选信息，但没有结果。说明狼人自爆，且还没有流失警徽。继续竞选
+                //TODO PK阶段自爆与竞选阶段自爆
+                //没有考虑PK阶段自爆的逻辑，此处仅考虑狼人在上警阶段才能自爆
+                return RoomStatus.SHERIFF_RUNNING;
+            }
+        }
     }
 
 

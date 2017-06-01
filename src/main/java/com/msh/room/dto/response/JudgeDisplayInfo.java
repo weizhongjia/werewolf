@@ -3,6 +3,7 @@ package com.msh.room.dto.response;
 import com.msh.room.dto.event.JudgeEventType;
 import com.msh.room.dto.room.record.DaytimeRecord;
 import com.msh.room.dto.room.record.NightRecord;
+import com.msh.room.dto.room.record.SheriffRecord;
 import com.msh.room.dto.room.seat.PlayerSeatInfo;
 import com.msh.room.dto.room.RoomStatus;
 
@@ -21,6 +22,10 @@ public class JudgeDisplayInfo {
     private NightRecord nightRecord;
     //白天情况
     private DaytimeRecord daytimeRecord;
+    //警长情况
+    private SheriffRecord sheriffRecord;
+
+
     public JudgeDisplayInfo() {
     }
 
@@ -88,5 +93,13 @@ public class JudgeDisplayInfo {
 
     public void setDaytimeRecord(DaytimeRecord daytimeRecord) {
         this.daytimeRecord = daytimeRecord;
+    }
+
+    public SheriffRecord getSheriffRecord() {
+        return sheriffRecord;
+    }
+
+    public void setSheriffRecord(SheriffRecord sheriffRecord) {
+        this.sheriffRecord = sheriffRecord;
     }
 }

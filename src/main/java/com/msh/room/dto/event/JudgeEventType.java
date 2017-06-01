@@ -28,9 +28,16 @@ public enum JudgeEventType {
     DAYTIME_COMING,
     //开始投票
     DAYTIME_VOTING,
-
     //PK投票
     DAYTIME_PK_VOTING,
+
+    //开始警长发言
+    SHERIFF_RUNNING,
+    //开始警长投票
+    SHERIFF_VOTEING,
+    //开始警长PK投票
+    SHERIFF_PK_VOTEING,
+
 
     //游戏结束
     GAME_ENDING,

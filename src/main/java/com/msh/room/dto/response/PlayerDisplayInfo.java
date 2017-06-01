@@ -3,6 +3,7 @@ package com.msh.room.dto.response;
 import com.msh.room.dto.event.PlayerEventType;
 import com.msh.room.dto.room.record.DaytimeRecord;
 import com.msh.room.dto.room.record.NightRecord;
+import com.msh.room.dto.room.record.SheriffRecord;
 import com.msh.room.dto.room.seat.PlayerSeatInfo;
 
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ public class PlayerDisplayInfo {
     private List<PlayerSeatInfo> playerSeatInfoList;
     private NightRecord nightRecord;
     private DaytimeRecord daytimeRecord;
+    private SheriffRecord sheriffRecord;
 
     public PlayerDisplayInfo() {
     }
@@ -74,5 +76,13 @@ public class PlayerDisplayInfo {
 
     public void setDaytimeRecord(DaytimeRecord daytimeRecord) {
         this.daytimeRecord = daytimeRecord;
+    }
+
+    public SheriffRecord getSheriffRecord() {
+        return sheriffRecord;
+    }
+
+    public void setSheriffRecord(SheriffRecord sheriffRecord) {
+        this.sheriffRecord = sheriffRecord;
     }
 }
