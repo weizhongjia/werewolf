@@ -6,6 +6,7 @@ import com.msh.room.dto.room.RoomStateData;
 import com.msh.room.dto.room.RoomStatus;
 import com.msh.room.dto.room.record.DaytimeRecord;
 import com.msh.room.dto.room.record.NightRecord;
+import com.msh.room.dto.room.record.SheriffRecord;
 import com.msh.room.dto.room.result.GameResult;
 import com.msh.room.dto.room.seat.PlayerSeatInfo;
 import com.msh.room.exception.RoomBusinessException;
@@ -87,8 +88,9 @@ public abstract class AssignedPlayer extends CommonPlayer {
 
     public void resolveCommonDisplayInfo(PlayerDisplayInfo displayInfo) {
         //注入昨夜信息
-        NightRecord lastNightRecord = this.roomState.getLastNightRecord();
-        displayInfo.setNightRecord(lastNightRecord);
+        displayInfo.setNightRecord(roomState.getLastNightRecord());
+        //则直接展示警长信息，投票阶段单独处理隐藏。
+        displayInfo.setSheriffRecord(roomState.getSheriffRecord());
         //除自己以外的玩家均覆盖身份
         displayInfo.setPlayerInfo(roomState.getPlayerSeatInfo().get(number - 1));
         List<PlayerSeatInfo> playerSeatInfos = PlayerRoleMask.maskPlayerRole(roomState.getPlayerSeatInfo(), Arrays.asList(number));

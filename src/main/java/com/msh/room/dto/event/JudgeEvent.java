@@ -2,6 +2,7 @@ package com.msh.room.dto.event;
 
 import com.msh.room.model.role.Roles;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -11,7 +12,7 @@ public class JudgeEvent {
     private String roomCode;
     private JudgeEventType eventType;
     private Map<Roles, Integer> gameConfig;
-    private boolean sheriffSwich;
+    private boolean sheriffSwitch = false;
 
     private Integer wolfKillNumber;
     private Integer seerVerifyNumber;
@@ -20,6 +21,8 @@ public class JudgeEvent {
     private boolean witchSave;
     //女巫毒人号码
     private Integer witchPoisonNumber;
+    //如果由法官操作竞选者，可以使用SheriffRunning事件包装该数据
+    private List<Integer> sheriffApplyList;
 
     //默认构造方法
     public JudgeEvent() {
@@ -86,11 +89,19 @@ public class JudgeEvent {
         this.witchPoisonNumber = witchPoisonNumber;
     }
 
-    public boolean isSheriffSwich() {
-        return sheriffSwich;
+    public boolean isSheriffSwitch() {
+        return sheriffSwitch;
     }
 
-    public void setSheriffSwich(boolean sheriffSwich) {
-        this.sheriffSwich = sheriffSwich;
+    public void setSheriffSwitch(boolean sheriffSwitch) {
+        this.sheriffSwitch = sheriffSwitch;
+    }
+
+    public List<Integer> getSheriffApplyList() {
+        return sheriffApplyList;
+    }
+
+    public void setSheriffApplyList(List<Integer> sheriffApplyList) {
+        this.sheriffApplyList = sheriffApplyList;
     }
 }

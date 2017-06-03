@@ -89,14 +89,14 @@ public class VotingStateRoom extends AbstractStateRoom {
 
         //投票结束
         if (lastDaytimeRecord.isDaytimeVoteComplete(roomState.getAliveCount())) {
-            return daytimeVoteResult(lastDaytimeRecord);
+            return daytimeVoteResult();
         }
         return roomState;
     }
 
-    protected RoomStateData daytimeVoteResult(DaytimeRecord lastDaytimeRecord) {
+    protected RoomStateData daytimeVoteResult() {
         DaytimeRecord daytimeRecord = roomState.getLastDaytimeRecord();
-        List<Integer> voteResult = lastDaytimeRecord.resolveVoteResult();
+        List<Integer> voteResult = daytimeRecord.resolveVoteResult();
         //如果有平票
         if (voteResult.size() > 1) {
             daytimeRecord.addNewPk();
@@ -106,6 +106,11 @@ public class VotingStateRoom extends AbstractStateRoom {
             }
             return roomState;
         } else {
+            if (voteResult.size() == 0) {
+                //全部弃票,直接无人死亡
+                daytimeRecord.setDiedNumber(0);
+                return roomState;
+            }
             Integer number = voteResult.get(0);
             daytimeRecord.setDiedNumber(number);
             CommonPlayer player = PlayerRoleFactory.createPlayerInstance(roomState, number);

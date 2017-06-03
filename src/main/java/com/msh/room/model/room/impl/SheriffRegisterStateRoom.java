@@ -7,6 +7,7 @@ import com.msh.room.dto.event.PlayerEventType;
 import com.msh.room.dto.response.JudgeDisplayInfo;
 import com.msh.room.dto.response.PlayerDisplayInfo;
 import com.msh.room.dto.room.RoomStateData;
+import com.msh.room.dto.room.RoomStatus;
 import com.msh.room.exception.RoomBusinessException;
 
 /**
@@ -21,6 +22,9 @@ public class SheriffRegisterStateRoom extends AbstractStateRoom {
     public RoomStateData resolveJudgeEvent(JudgeEvent event) {
         filterJudgeEventType(event);
         switch (event.getEventType()) {
+            case SHERIFF_RUNNING:
+                resolveSheriffRunning(event);
+                break;
             case RESTART_GAME:
                 resolveRestartGameEvent(event);
                 break;
@@ -31,10 +35,21 @@ public class SheriffRegisterStateRoom extends AbstractStateRoom {
         return roomState;
     }
 
+    private void resolveSheriffRunning(JudgeEvent event) {
+        //可以用此事件进行竞选注册
+        if (event.getSheriffApplyList() != null) {
+            event.getSheriffApplyList().stream().forEach(seatNumber -> {
+                roomState.getSheriffRecord().registerSheriff(seatNumber);
+            });
+        }
+        roomState.setStatus(RoomStatus.SHERIFF_RUNNING);
+    }
+
     @Override
     public JudgeDisplayInfo displayJudgeInfo() {
         JudgeDisplayInfo displayInfo = judgeCommonDisplayInfo();
         displayInfo.setSheriffRecord(roomState.getSheriffRecord());
+        displayInfo.addAcceptableEventType(JudgeEventType.SHERIFF_RUNNING);
         displayInfo.addAcceptableEventType(JudgeEventType.RESTART_GAME);
         displayInfo.addAcceptableEventType(JudgeEventType.DISBAND_GAME);
         return displayInfo;
@@ -56,7 +71,7 @@ public class SheriffRegisterStateRoom extends AbstractStateRoom {
         if (roomState.getSheriffRecord().getSheriffRegisterList().contains(seatNumber)) {
             throw new RoomBusinessException("您已上警");
         }
-        roomState.getSheriffRecord().registSheriff(seatNumber);
+        roomState.getSheriffRecord().registerSheriff(seatNumber);
     }
 
     @Override

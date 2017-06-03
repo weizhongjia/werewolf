@@ -44,6 +44,7 @@ public class VacancyStateRoom extends AbstractStateRoom {
     private void resolveCreateRoomEvent(JudgeEvent event) {
         roomState.setStatus(RoomStatus.CRATING);
         roomState.setGameConfig(event.getGameConfig());
+        roomState.setSheriff(event.isSheriffSwitch());
         //初始化座位
         roomState.setPlayerSeatInfo(initSeatInfo(event.getGameConfig()));
     }

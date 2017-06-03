@@ -11,6 +11,7 @@ import com.msh.room.dto.room.record.DaytimeRecord;
 import com.msh.room.exception.RoomBusinessException;
 import com.msh.room.model.role.CommonPlayer;
 import com.msh.room.model.role.PlayerRoleFactory;
+import com.msh.room.model.room.Room;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -109,6 +110,10 @@ public class PKVotingStateRoom extends AbstractStateRoom {
             }
             return roomState;
         } else {
+            //没可能所有人弃票
+            if (voteResult.size() == 0) {
+                throw new RoomBusinessException("状态不对，pk阶段无法弃票");
+            }
             Integer number = voteResult.get(0);
             daytimeRecord.setDiedNumber(number);
             CommonPlayer player = PlayerRoleFactory.createPlayerInstance(roomState, number);

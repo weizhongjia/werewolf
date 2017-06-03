@@ -22,6 +22,9 @@ public class PlayerEvent {
 
     private Integer shootNumber;
 
+    private Integer sheriffVoteNumber;
+    private Integer sheriffPKVoteNumber;
+
     public PlayerEvent() {
     }
 
@@ -101,5 +104,21 @@ public class PlayerEvent {
 
     public void setShootNumber(Integer shootNumber) {
         this.shootNumber = shootNumber;
+    }
+
+    public Integer getSheriffVoteNumber() {
+        return sheriffVoteNumber;
+    }
+
+    public void setSheriffVoteNumber(Integer sheriffVoteNumber) {
+        this.sheriffVoteNumber = sheriffVoteNumber;
+    }
+
+    public Integer getSheriffPKVoteNumber() {
+        return sheriffPKVoteNumber;
+    }
+
+    public void setSheriffPKVoteNumber(Integer sheriffPKVoteNumber) {
+        this.sheriffPKVoteNumber = sheriffPKVoteNumber;
     }
 }

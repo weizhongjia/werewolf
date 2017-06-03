@@ -12,12 +12,11 @@ import com.msh.room.dto.room.RoomStatus;
 import com.msh.room.model.role.Roles;
 import com.msh.room.model.room.RoomStateFactory;
 import com.msh.room.service.RoomService;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -36,7 +35,6 @@ public class SheriffTest {
         RoomStateData data = new RoomStateData();
         data.setRoomCode(roomCode);
         data.setStatus(RoomStatus.VACANCY);
-        data.setSheriff(true);
         repository.putRoomStateData(roomCode, data);
         service.setDataRepository(repository);
         service.setRoomFactory(new RoomStateFactory());
@@ -66,8 +64,10 @@ public class SheriffTest {
         gameConfig.put(Roles.SEER, 1);
         gameConfig.put(Roles.MORON, 1);
         createRoomEvent.setGameConfig(gameConfig);
-        //TODO 要处理创建房间event事件
-        createRoomEvent.setSheriffSwich(true);
+        /**
+         * 创建时指定本局是否上警
+         */
+        createRoomEvent.setSheriffSwitch(true);
         service.resolveJudgeEvent(createRoomEvent, roomCode);
     }
 
@@ -102,7 +102,7 @@ public class SheriffTest {
         JudgeDisplayInfo judgeDisplayInfo = service.resolveJudgeEvent(dayTimeEvent, roomCode);
         assertEquals(RoomStatus.SHERIFF_REGISTER, judgeDisplayInfo.getStatus());
         assertNotNull(judgeDisplayInfo.getSheriffRecord());
-        assertEquals(Arrays.asList(JudgeEventType.RESTART_GAME, JudgeEventType.DISBAND_GAME),
+        assertEquals(Arrays.asList(JudgeEventType.SHERIFF_RUNNING, JudgeEventType.RESTART_GAME, JudgeEventType.DISBAND_GAME),
                 judgeDisplayInfo.getAcceptableEventTypes());
         for (int i = 1; i < 13; i++) {
             PlayerDisplayInfo playerDisplayInfo = service.getPlayerDisplayResult(roomCode, i);
@@ -120,7 +120,136 @@ public class SheriffTest {
         }
         for (int i = 7; i < 13; i++) {
             PlayerDisplayInfo info = service.getPlayerDisplayResult(roomCode, i);
-            assertNull(info.getSheriffRecord());
         }
+
+        JudgeEvent sheriffRunning = new JudgeEvent(roomCode, JudgeEventType.SHERIFF_RUNNING);
+        JudgeDisplayInfo judgeDisplayResult = service.resolveJudgeEvent(sheriffRunning, roomCode);
+        assertEquals(Arrays.asList(JudgeEventType.SHERIFF_VOTEING, JudgeEventType.RESTART_GAME, JudgeEventType.DISBAND_GAME),
+                judgeDisplayResult.getAcceptableEventTypes());
+    }
+
+    @Test
+    public void testSheriffVoteWithOnlyOneRunning() {
+        simpleKillVillagerNight();
+        JudgeEvent dayTimeEvent = new JudgeEvent(roomCode, JudgeEventType.DAYTIME_COMING);
+        service.resolveJudgeEvent(dayTimeEvent, roomCode);
+        //一号上警
+        PlayerDisplayInfo info = service.getPlayerDisplayResult(roomCode, 1);
+        PlayerEvent playerEvent
+                = new PlayerEvent(PlayerEventType.SHERIFF_REGISTER, 1, info.getPlayerInfo().getUserID());
+        service.resolvePlayerEvent(playerEvent, roomCode);
+        JudgeEvent sheriffRunning = new JudgeEvent(roomCode, JudgeEventType.SHERIFF_RUNNING);
+        service.resolveJudgeEvent(sheriffRunning, roomCode);
+
+        JudgeEvent sheriffVoting = new JudgeEvent(roomCode, JudgeEventType.SHERIFF_VOTEING);
+        JudgeDisplayInfo judgeDisplayResult = service.resolveJudgeEvent(sheriffVoting, roomCode);
+        assertEquals(RoomStatus.DAYTIME, judgeDisplayResult.getStatus());
+        assertEquals(Integer.valueOf(1), judgeDisplayResult.getSheriffRecord().getSheriff());
+
+        for (int i = 1; i < 13; i++) {
+            PlayerDisplayInfo playerDisplayInfo = service.getPlayerDisplayResult(roomCode, i);
+            assertEquals(Integer.valueOf(1), playerDisplayInfo.getSheriffRecord().getSheriff());
+        }
+    }
+
+    @Test
+    public void testSheriffUnRegister() {
+        simpleKillVillagerNight();
+        JudgeEvent dayTimeEvent = new JudgeEvent(roomCode, JudgeEventType.DAYTIME_COMING);
+        service.resolveJudgeEvent(dayTimeEvent, roomCode);
+        //一号上警
+        PlayerDisplayInfo info = service.getPlayerDisplayResult(roomCode, 1);
+        PlayerEvent playerEvent
+                = new PlayerEvent(PlayerEventType.SHERIFF_REGISTER, 1, info.getPlayerInfo().getUserID());
+        service.resolvePlayerEvent(playerEvent, roomCode);
+        JudgeEvent sheriffRunning = new JudgeEvent(roomCode, JudgeEventType.SHERIFF_RUNNING);
+        service.resolveJudgeEvent(sheriffRunning, roomCode);
+
+        PlayerDisplayInfo playerDisplayInfo1 = service.getPlayerDisplayResult(roomCode, 1);
+        assertEquals(Arrays.asList(PlayerEventType.SHERIFF_UNREGISTER),
+                playerDisplayInfo1.getAcceptableEventTypeList());
+
+        PlayerEvent unregister = new PlayerEvent(PlayerEventType.SHERIFF_UNREGISTER, 1,
+                playerDisplayInfo1.getPlayerInfo().getUserID());
+        PlayerDisplayInfo playerResult = service.resolvePlayerEvent(unregister, roomCode);
+        assertFalse(playerResult.getSheriffRecord().getVotingRecord().containsKey(1));
+
+        JudgeEvent sheriffVoting = new JudgeEvent(roomCode, JudgeEventType.SHERIFF_VOTEING);
+        JudgeDisplayInfo judgeDisplayResult = service.resolveJudgeEvent(sheriffVoting, roomCode);
+        assertEquals(RoomStatus.DAYTIME, judgeDisplayResult.getStatus());
+        //无人当选
+        assertEquals(Integer.valueOf(0), judgeDisplayResult.getSheriffRecord().getSheriff());
+
+        for (int i = 1; i < 13; i++) {
+            PlayerDisplayInfo playerDisplayInfo = service.getPlayerDisplayResult(roomCode, i);
+            //无人当选
+            assertEquals(Integer.valueOf(0), playerDisplayInfo.getSheriffRecord().getSheriff());
+        }
+    }
+
+    @Test
+    public void testSheriffVote() {
+        simpleKillVillagerNight();
+        JudgeEvent dayTimeEvent = new JudgeEvent(roomCode, JudgeEventType.DAYTIME_COMING);
+        service.resolveJudgeEvent(dayTimeEvent, roomCode);
+        //一号上警
+        PlayerDisplayInfo info1 = service.getPlayerDisplayResult(roomCode, 1);
+        PlayerEvent registerEvent
+                = new PlayerEvent(PlayerEventType.SHERIFF_REGISTER, 1, info1.getPlayerInfo().getUserID());
+        service.resolvePlayerEvent(registerEvent, roomCode);
+        //二号上警
+        PlayerDisplayInfo info2 = service.getPlayerDisplayResult(roomCode, 2);
+        PlayerEvent registerEvent2
+                = new PlayerEvent(PlayerEventType.SHERIFF_REGISTER, 2, info2.getPlayerInfo().getUserID());
+        service.resolvePlayerEvent(registerEvent2, roomCode);
+
+        JudgeEvent sheriffRunning = new JudgeEvent(roomCode, JudgeEventType.SHERIFF_RUNNING);
+        service.resolveJudgeEvent(sheriffRunning, roomCode);
+
+        JudgeEvent sheriffVoting = new JudgeEvent(roomCode, JudgeEventType.SHERIFF_VOTEING);
+        JudgeDisplayInfo judgeDisplayResult = service.resolveJudgeEvent(sheriffVoting, roomCode);
+        assertEquals(RoomStatus.SHERIFF_VOTING, judgeDisplayResult.getStatus());
+        for (int i = 1; i < 13; i++) {
+            PlayerDisplayInfo playerDisplayInfo = service.getPlayerDisplayResult(roomCode, i);
+            if (i == 1 || i == 2) {
+                //1、2号不投票
+                assertFalse(playerDisplayInfo.getAcceptableEventTypeList().contains(PlayerEventType.SHERIFF_VOTE));
+            } else {
+                assertTrue(playerDisplayInfo.getAcceptableEventTypeList().contains(PlayerEventType.SHERIFF_VOTE));
+                Map<Integer, List<Integer>> votingRecord = playerDisplayInfo.getSheriffRecord().getVotingRecord();
+                votingRecord.values().forEach(Assert::assertNull);
+
+                PlayerEvent voteEvent = new PlayerEvent(PlayerEventType.SHERIFF_VOTE, i, "Richard_" + i);
+                Random random = new Random();
+                //随机投一个
+                voteEvent.setSheriffVoteNumber(random.nextInt(3));
+                PlayerDisplayInfo displayInfo = service.resolvePlayerEvent(voteEvent, roomCode);
+                assertFalse(displayInfo.getAcceptableEventTypeList().contains(PlayerEventType.SHERIFF_VOTE));
+            }
+        }
+        JudgeDisplayInfo judgeInfo = service.getJudgeDisplayResult(roomCode);
+
+        Map<Integer, List<Integer>> votingRecord = judgeInfo.getSheriffRecord().getVotingRecord();
+        for (Integer key : votingRecord.keySet()) {
+            System.out.print(key + "[");
+            votingRecord.get(key).parallelStream().forEach(integer -> System.out.print(integer + " "));
+            System.out.println("]");
+        }
+
+        List<Integer> voteResult = repository.loadRoomStateData(roomCode).getSheriffRecord().calculateVoteResult();
+        voteResult.forEach(i -> System.out.println("["+i+"]"));
+        if (voteResult.size() > 1) {
+            assertEquals(RoomStatus.SHERIFF_PK, judgeInfo.getStatus());
+            for (Integer number : voteResult) {
+                assertTrue(judgeInfo.getSheriffRecord().getPkVotingRecord().get(0).containsKey(number));
+            }
+        } else if (voteResult.size() == 1) {
+            assertEquals(RoomStatus.DAYTIME, judgeInfo.getStatus());
+            assertEquals(voteResult.get(0), judgeInfo.getSheriffRecord().getSheriff());
+        } else {
+            assertEquals(RoomStatus.DAYTIME, judgeInfo.getStatus());
+            assertEquals(Integer.valueOf(0), judgeInfo.getSheriffRecord().getSheriff());
+        }
+
     }
 }
