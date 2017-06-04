@@ -116,7 +116,7 @@ public class NightTest {
                 assertEquals(PlayerEventType.SEER_VERIFY, playerEventType);
             } else if (Roles.WITCH.equals(seatInfo.getRole())) {
                 //睁眼状态
-                //TODO 此处也应该是闭眼情况，面杀不应该允许两种身份睁眼
+                //TODO 此处也应该是闭眼情况，面杀不应该允许两种身份睁眼.目前完全由法官操作，暂不考虑
                 PlayerEventType playerEventType = displayInfo.getAcceptableEventTypeList().get(0);
                 assertEquals(PlayerEventType.WITCH_SAVE, playerEventType);
             } else {

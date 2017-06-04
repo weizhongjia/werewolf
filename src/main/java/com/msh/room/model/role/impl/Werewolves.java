@@ -15,6 +15,8 @@ import java.util.stream.Collectors;
  * Created by zhangruiqian on 2017/5/5.
  */
 public class Werewolves extends AssignedPlayer {
+    //TODO 需要添加自爆逻辑
+
     private boolean alive;
 
     public Werewolves(RoomStateData state, int number) {

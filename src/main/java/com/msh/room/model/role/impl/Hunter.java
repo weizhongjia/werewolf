@@ -17,8 +17,6 @@ public class Hunter extends AssignedPlayer {
         super(roomState, number);
     }
 
-//TODO 猎人需要单独处理kill和vote事件,并且需要接受shoot事件
-
     @Override
     public RoomStateData killed() {
         roomState = super.killed();

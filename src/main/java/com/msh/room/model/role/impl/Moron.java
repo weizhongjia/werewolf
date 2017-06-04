@@ -10,6 +10,8 @@ public class Moron extends AssignedPlayer{
     public Moron(RoomStateData roomState, int number) {
         super(roomState, number);
     }
+    //TODO 需要单独处理被投票情况
+
 
     @Override
     public PlayerDisplayInfo displayInfo() {
