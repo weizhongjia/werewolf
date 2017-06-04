@@ -104,6 +104,7 @@ public class DaytimeRecord {
     }
 
     public List<Integer> calculateVoteResult(Map<Integer, List<Integer>> voteRecord) {
+        //TODO 警长1.5票还没做
         List<Integer> result = new ArrayList<>();
         int biggestNumber = 0;
         for (Integer key : voteRecord.keySet()) {
