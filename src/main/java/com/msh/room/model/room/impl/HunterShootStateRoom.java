@@ -42,6 +42,9 @@ public class HunterShootStateRoom extends AbstractStateRoom {
     }
 
     private void resolveHunterShoot(JudgeEvent event) {
+        Integer hunterShoot = event.getHunterShoot();
+        int hunterSeat = roomState.getFirstSeatByRole(Roles.HUNTER);
+        resolveHunterShoot(hunterShoot, hunterSeat);
     }
 
     @Override
