@@ -95,8 +95,8 @@ public class HunterTest {
         JudgeDisplayInfo judgeDisplayInfo = service.resolveJudgeEvent(daytimeEvent, roomCode);
         //猎人时间
         assertEquals(RoomStatus.HUNTER_SHOOT, judgeDisplayInfo.getStatus());
-        //法官暂时没有办法操作
-        assertEquals(Arrays.asList(JudgeEventType.RESTART_GAME, JudgeEventType.DISBAND_GAME), judgeDisplayInfo.getAcceptableEventTypes());
+        //法官也可以代替猎人带人
+        assertEquals(Arrays.asList(JudgeEventType.HUNTER_SHOOT, JudgeEventType.RESTART_GAME, JudgeEventType.DISBAND_GAME), judgeDisplayInfo.getAcceptableEventTypes());
         String hunterUserName = "";
         for (int i = 1; i < 13; i++) {
             PlayerDisplayInfo displayResult = service.getPlayerDisplayResult(roomCode, i);
@@ -231,7 +231,7 @@ public class HunterTest {
 
         //猎人时间
         assertEquals(RoomStatus.HUNTER_SHOOT, judgeDisplayResult.getStatus());
-        assertEquals(Arrays.asList(JudgeEventType.RESTART_GAME, JudgeEventType.DISBAND_GAME), judgeDisplayResult.getAcceptableEventTypes());
+        assertEquals(Arrays.asList(JudgeEventType.HUNTER_SHOOT, JudgeEventType.RESTART_GAME, JudgeEventType.DISBAND_GAME), judgeDisplayResult.getAcceptableEventTypes());
         String hunterUserName = "";
         for (int i = 1; i < 13; i++) {
             PlayerDisplayInfo displayResult = service.getPlayerDisplayResult(roomCode, i);

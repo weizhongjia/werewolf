@@ -7,16 +7,11 @@ import com.msh.room.dto.response.JudgeDisplayInfo;
 import com.msh.room.dto.response.PlayerDisplayInfo;
 import com.msh.room.dto.room.RoomStateData;
 import com.msh.room.exception.RoomBusinessException;
-import com.msh.room.model.role.CommonPlayer;
 import com.msh.room.model.role.PlayerRoleFactory;
 import com.msh.room.model.role.Roles;
 import com.msh.room.model.role.impl.Hunter;
 
 import java.util.ArrayList;
-
-import static com.msh.room.dto.event.JudgeEventType.DISBAND_GAME;
-import static com.msh.room.dto.event.JudgeEventType.GAME_ENDING;
-import static com.msh.room.dto.event.JudgeEventType.RESTART_GAME;
 
 /**
  * Created by zhangruiqian on 2017/5/25.
@@ -30,6 +25,9 @@ public class HunterShootStateRoom extends AbstractStateRoom {
     public RoomStateData resolveJudgeEvent(JudgeEvent event) {
         filterJudgeEventType(event);
         switch (event.getEventType()) {
+            case HUNTER_SHOOT:
+                resolveHunterShoot(event);
+                break;
             case GAME_ENDING:
                 resolveGameEnding(event);
                 break;
@@ -43,6 +41,9 @@ public class HunterShootStateRoom extends AbstractStateRoom {
         return roomState;
     }
 
+    private void resolveHunterShoot(JudgeEvent event) {
+    }
+
     @Override
     public JudgeDisplayInfo displayJudgeInfo() {
         JudgeDisplayInfo displayInfo = judgeCommonDisplayInfo();
@@ -51,6 +52,7 @@ public class HunterShootStateRoom extends AbstractStateRoom {
             displayInfo.setAcceptableEventTypes(new ArrayList<>());
             displayInfo.addAcceptableEventType(JudgeEventType.GAME_ENDING);
         }
+        displayInfo.addAcceptableEventType(JudgeEventType.HUNTER_SHOOT);
         displayInfo.addAcceptableEventType(JudgeEventType.RESTART_GAME);
         displayInfo.addAcceptableEventType(JudgeEventType.DISBAND_GAME);
         return displayInfo;
@@ -71,8 +73,12 @@ public class HunterShootStateRoom extends AbstractStateRoom {
         if (!Roles.HUNTER.equals(roomState.getPlaySeatInfoBySeatNumber(event.getSeatNumber()).getRole())) {
             throw new RoomBusinessException("你不是猎人无法开枪");
         }
-        Hunter hunter = (Hunter) PlayerRoleFactory.createPlayerInstance(roomState, event.getSeatNumber());
-        return hunter.shoot(event.getShootNumber());
+        return resolveHunterShoot(event.getShootNumber(), event.getSeatNumber());
+    }
+
+    private RoomStateData resolveHunterShoot(Integer shootNumber, int hunterNumber) {
+        Hunter hunter = (Hunter) PlayerRoleFactory.createPlayerInstance(roomState, hunterNumber);
+        return hunter.shoot(shootNumber);
     }
 
     @Override

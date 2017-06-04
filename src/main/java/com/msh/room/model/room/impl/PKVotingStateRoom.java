@@ -87,14 +87,14 @@ public class PKVotingStateRoom extends AbstractStateRoom {
         Map<Integer, List<Integer>> lastPKRecord = lastDaytimeRecord.lastPKRecord();
         lastDaytimeRecord.addPKVote(event.getSeatNumber(), voteNumber);
         if (lastDaytimeRecord.isPKVoteComplete(roomState.getAliveCount() - lastPKRecord.size())) {
-            return pkVoteResult(lastDaytimeRecord);
+            return pkVoteResult();
         }
         return roomState;
     }
 
-    private RoomStateData pkVoteResult(DaytimeRecord lastDaytimeRecord) {
+    private RoomStateData pkVoteResult() {
         DaytimeRecord daytimeRecord = roomState.getLastDaytimeRecord();
-        List<Integer> voteResult = lastDaytimeRecord.resolvePKVoteResult();
+        List<Integer> voteResult = daytimeRecord.resolvePKVoteResult();
         //如果有平票
         if (voteResult.size() > 1) {
             //没到两轮

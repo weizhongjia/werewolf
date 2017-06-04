@@ -23,7 +23,8 @@ public class JudgeEvent {
     private Integer witchPoisonNumber;
     //如果由法官操作竞选者，可以使用SheriffRunning事件包装该数据
     private List<Integer> sheriffApplyList;
-
+    //猎人开枪
+    private Integer hunterShoot;
     //默认构造方法
     public JudgeEvent() {
     }
@@ -103,5 +104,13 @@ public class JudgeEvent {
 
     public void setSheriffApplyList(List<Integer> sheriffApplyList) {
         this.sheriffApplyList = sheriffApplyList;
+    }
+
+    public Integer getHunterShoot() {
+        return hunterShoot;
+    }
+
+    public void setHunterShoot(Integer hunterShoot) {
+        this.hunterShoot = hunterShoot;
     }
 }

@@ -6,6 +6,7 @@ import com.msh.room.dto.event.PlayerEvent;
 import com.msh.room.dto.response.JudgeDisplayInfo;
 import com.msh.room.dto.response.PlayerDisplayInfo;
 import com.msh.room.dto.room.RoomStateData;
+import com.msh.room.dto.room.RoomStatus;
 
 /**
  * Created by zhangruiqian on 2017/5/25.
@@ -33,7 +34,7 @@ public class SheriffPkStateRoom extends AbstractStateRoom {
     }
 
     private void resolveSheriffPkVoting(JudgeEvent event) {
-        return;
+        roomState.setStatus(RoomStatus.SHERIFF_PK_VOTING);
     }
 
     @Override

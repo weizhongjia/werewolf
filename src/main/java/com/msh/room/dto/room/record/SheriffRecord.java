@@ -106,7 +106,11 @@ public class SheriffRecord {
         return false;
     }
 
-    public List<Integer> calculateVoteResult() {
+    public List<Integer> resolveVoteResult() {
+        return calculateVoteResult(this.votingRecord);
+    }
+
+    protected List<Integer> calculateVoteResult(Map<Integer, List<Integer>> votingRecord) {
         List<Integer> result = new ArrayList<>();
         int biggestNumber = 0;
         for (Integer key : votingRecord.keySet()) {
@@ -131,7 +135,54 @@ public class SheriffRecord {
     }
 
     public void addPkNumber(Integer number) {
+        if (lastPKVotingRecord() != null) {
+            lastPKVotingRecord().put(number, new ArrayList<>());
+        }
+    }
+
+    public Map<Integer, List<Integer>> lastPKVotingRecord() {
         int size = pkVotingRecord.size();
-        pkVotingRecord.get(size - 1).put(number, new ArrayList<>());
+        if (size > 0) {
+            return pkVotingRecord.get(size - 1);
+        } else {
+            return null;
+        }
+    }
+
+    public boolean isPKVoted(int seatNumber) {
+        for (Integer key : lastPKVotingRecord().keySet()) {
+            if (lastPKVotingRecord().get(key).contains(seatNumber)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void addPKVote(int seatNumber, Integer voteNumber) {
+        if (voteNumber == 0) {
+            throw new RoomBusinessException("PK阶段不能弃票");
+        }
+        if (!lastPKVotingRecord().containsKey(voteNumber)) {
+            throw new RoomBusinessException("该玩家不在竞选列表，无法投票");
+        }
+        if (lastPKVotingRecord().containsKey(seatNumber)) {
+            throw new RoomBusinessException("您在竞选列表，无法投票");
+        }
+        lastPKVotingRecord().get(voteNumber).add(seatNumber);
+    }
+
+    public boolean isPKVoteComplete(int voteCount) {
+        int count = 0;
+        for (Integer key : lastPKVotingRecord().keySet()) {
+            count += lastPKVotingRecord().get(key).size();
+        }
+        if (count == voteCount) {
+            return true;
+        }
+        return false;
+    }
+
+    public List<Integer> resolvePKVoteResult() {
+        return calculateVoteResult(lastPKVotingRecord());
     }
 }

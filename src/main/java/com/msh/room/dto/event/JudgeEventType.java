@@ -23,7 +23,8 @@ public enum JudgeEventType {
     //女巫毒人
     WITCH_POISON,
     FAKE_WITCH_POISON,
-
+    //猎人开枪
+    HUNTER_SHOOT,
     //天亮了
     DAYTIME_COMING,
     //开始投票

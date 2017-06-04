@@ -74,7 +74,7 @@ public class SheriffVotingStateRoom extends AbstractStateRoom {
 
     private void sheriffVoteResult() {
         SheriffRecord sheriffRecord = roomState.getSheriffRecord();
-        List<Integer> voteResult = sheriffRecord.calculateVoteResult();
+        List<Integer> voteResult = sheriffRecord.resolveVoteResult();
         //如果有平票,进入PK阶段
         if (voteResult.size() > 1) {
             sheriffRecord.newPK();
@@ -112,7 +112,9 @@ public class SheriffVotingStateRoom extends AbstractStateRoom {
 
         Map<Integer, List<Integer>> newVotingRecord = new LinkedHashMap<>();
         for (Integer key : oldSheriffRecord.getVotingRecord().keySet()) {
-            newVotingRecord.put(key, null);
+            if (key != 0) {
+                newVotingRecord.put(key, null);
+            }
         }
 
         newSheriffRecord.setVotingRecord(newVotingRecord);
