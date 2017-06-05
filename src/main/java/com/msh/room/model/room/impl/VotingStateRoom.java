@@ -96,7 +96,11 @@ public class VotingStateRoom extends AbstractStateRoom {
 
     protected RoomStateData daytimeVoteResult() {
         DaytimeRecord daytimeRecord = roomState.getLastDaytimeRecord();
-        List<Integer> voteResult = daytimeRecord.resolveVoteResult();
+        Integer sheriff = 0;
+        if (roomState.isSheriff()) {
+            sheriff = roomState.getSheriffRecord().getSheriff();
+        }
+        List<Integer> voteResult = daytimeRecord.resolveVoteResult(sheriff);
         //如果有平票
         if (voteResult.size() > 1) {
             daytimeRecord.addNewPk();

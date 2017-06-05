@@ -35,5 +35,7 @@ public enum PlayerEventType {
     SHERIFF_VOTE,
     //上警PK投票
     SHERIFF_PK_VOTE,
+    //警徽移交
+    SHERIFF_SWITCH,
     ;
 }

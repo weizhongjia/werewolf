@@ -50,7 +50,7 @@ public abstract class AssignedPlayer extends CommonPlayer {
     }
 
 
-    protected void gameEndingCalculate() {
+    protected boolean gameEndingCalculate() {
         long wolfCount = roomState.getPlayerSeatInfo().parallelStream()
                 .filter(playerSeatInfo -> Roles.WEREWOLVES.equals(playerSeatInfo.getRole()))
                 .filter(playerSeatInfo -> playerSeatInfo.isAlive()).count();
@@ -63,26 +63,52 @@ public abstract class AssignedPlayer extends CommonPlayer {
                 .filter(playerSeatInfo -> playerSeatInfo.isAlive()).count();
         if (wolfCount == 0) {
             roomState.setGameResult(GameResult.VILLAGERS_WIN);
+            return true;
         }
         if (villagerCount == 0 || unCommonCount == 0) {
             roomState.setGameResult(GameResult.WEREWOLVES_WIN);
+            return true;
         }
+        return false;
     }
 
-
+    /**
+     * 玩家被投票死亡
+     *
+     * @return
+     */
     @Override
     public RoomStateData voted() {
         PlayerSeatInfo seatInfo = roomState.getPlaySeatInfoBySeatNumber(number);
         seatInfo.setAlive(false);
-        gameEndingCalculate();
+        if (!gameEndingCalculate()) {
+            //处理警长死亡情况
+            resolveSheriffDie();
+        }
         return roomState;
     }
 
+    protected void resolveSheriffDie() {
+        if (roomState.isSheriff() && roomState.getSheriffRecord().getSheriff() == this.number) {
+            //暂存当前状态
+            roomState.getSheriffRecord().setAfterSwitchSheriff(roomState.getStatus());
+            roomState.setStatus(RoomStatus.SHERIFF_SWITCH_TIME);
+        }
+    }
+
+    /**
+     * 玩家被杀死亡
+     *
+     * @return
+     */
     @Override
     public RoomStateData killed() {
         PlayerSeatInfo seatInfo = roomState.getPlaySeatInfoBySeatNumber(number);
         seatInfo.setAlive(false);
-        gameEndingCalculate();
+        if (!gameEndingCalculate()) {
+            //处理警长死亡情况
+            resolveSheriffDie();
+        }
         return roomState;
     }
 

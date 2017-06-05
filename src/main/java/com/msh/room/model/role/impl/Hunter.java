@@ -4,6 +4,7 @@ import com.msh.room.dto.event.PlayerEventType;
 import com.msh.room.dto.response.PlayerDisplayInfo;
 import com.msh.room.dto.room.RoomStateData;
 import com.msh.room.dto.room.RoomStatus;
+import com.msh.room.dto.room.seat.PlayerSeatInfo;
 import com.msh.room.dto.room.state.HunterState;
 import com.msh.room.exception.RoomBusinessException;
 import com.msh.room.model.role.CommonPlayer;
@@ -19,16 +20,20 @@ public class Hunter extends AssignedPlayer {
 
     @Override
     public RoomStateData killed() {
-        roomState = super.killed();
+        PlayerSeatInfo seatInfo = roomState.getPlaySeatInfoBySeatNumber(number);
+        seatInfo.setAlive(false);
+        gameEndingCalculate();
         //游戏没结束
         if (roomState.getGameResult() == null) {
-            //判断是否可以触发动作
+            //判断是否被毒
             if (roomState.getLastNightRecord().getWitchPoisoned() != number) {
                 HunterState hunterState = new HunterState();
                 //当前房间状态缓存
                 hunterState.setNextStatus(roomState.getStatus());
                 roomState.setHunterState(hunterState);
                 roomState.setStatus(RoomStatus.HUNTER_SHOOT);
+                //如果是警长死亡,会先要求移交警徽
+                resolveSheriffDie();
             }
         }
         return roomState;
@@ -36,7 +41,9 @@ public class Hunter extends AssignedPlayer {
 
     @Override
     public RoomStateData voted() {
-        roomState = super.voted();
+        PlayerSeatInfo seatInfo = roomState.getPlaySeatInfoBySeatNumber(number);
+        seatInfo.setAlive(false);
+        gameEndingCalculate();
         //游戏没结束
         if (roomState.getGameResult() == null) {
             HunterState hunterState = new HunterState();
@@ -44,6 +51,8 @@ public class Hunter extends AssignedPlayer {
             hunterState.setNextStatus(roomState.getStatus());
             roomState.setHunterState(hunterState);
             roomState.setStatus(RoomStatus.HUNTER_SHOOT);
+            //如果是警长死亡,会先要求移交警徽
+            resolveSheriffDie();
         }
         return roomState;
     }

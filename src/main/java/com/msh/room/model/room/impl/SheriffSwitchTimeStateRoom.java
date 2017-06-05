@@ -8,17 +8,12 @@ import com.msh.room.dto.response.JudgeDisplayInfo;
 import com.msh.room.dto.response.PlayerDisplayInfo;
 import com.msh.room.dto.room.RoomStateData;
 import com.msh.room.exception.RoomBusinessException;
-import com.msh.room.model.role.PlayerRoleFactory;
-import com.msh.room.model.role.Roles;
-import com.msh.room.model.role.impl.Hunter;
-
-import java.util.ArrayList;
 
 /**
- * Created by zhangruiqian on 2017/5/25.
+ * Created by zhangruiqian on 2017/6/5.
  */
-public class HunterShootStateRoom extends AbstractStateRoom {
-    public HunterShootStateRoom(RoomStateData data) {
+public class SheriffSwitchTimeStateRoom extends AbstractStateRoom {
+    public SheriffSwitchTimeStateRoom(RoomStateData data) {
         super(data);
     }
 
@@ -26,8 +21,8 @@ public class HunterShootStateRoom extends AbstractStateRoom {
     public RoomStateData resolveJudgeEvent(JudgeEvent event) {
         filterJudgeEventType(event);
         switch (event.getEventType()) {
-            case HUNTER_SHOOT:
-                resolveHunterShoot(event);
+            case SHERIFF_SWITCH:
+                resolveSheriffSwitch(event);
                 break;
             case GAME_ENDING:
                 resolveGameEnding(event);
@@ -42,21 +37,27 @@ public class HunterShootStateRoom extends AbstractStateRoom {
         return roomState;
     }
 
-    private void resolveHunterShoot(JudgeEvent event) {
-        Integer hunterShoot = event.getHunterShoot();
-        int hunterSeat = roomState.getFirstSeatByRole(Roles.HUNTER);
-        resolveHunterShoot(hunterShoot, hunterSeat);
+    private void resolveSheriffSwitch(JudgeEvent event) {
+        switchSheriff(event.getSheriffSwitchNumber());
+    }
+
+    private void switchSheriff(Integer sheriffSwitchNumber) {
+        if (sheriffSwitchNumber == null) {
+            sheriffSwitchNumber = 0;
+        }
+        if (sheriffSwitchNumber != 0 && !roomState.getPlaySeatInfoBySeatNumber(sheriffSwitchNumber).isAlive()) {
+            throw new RoomBusinessException("该玩家已死亡,无法移交警徽");
+        }
+        //重新设置警长
+        this.roomState.getSheriffRecord().setSheriff(sheriffSwitchNumber);
+        //设置缓存事件
+        this.roomState.setStatus(roomState.getSheriffRecord().getAfterSwitchSheriff());
     }
 
     @Override
     public JudgeDisplayInfo displayJudgeInfo() {
         JudgeDisplayInfo displayInfo = judgeCommonDisplayInfo();
-        //猎人可以结束游戏
-        if (roomState.getGameResult() != null) {
-            displayInfo.setAcceptableEventTypes(new ArrayList<>());
-            displayInfo.addAcceptableEventType(JudgeEventType.GAME_ENDING);
-        }
-        displayInfo.addAcceptableEventType(JudgeEventType.HUNTER_SHOOT);
+        displayInfo.addAcceptableEventType(JudgeEventType.SHERIFF_SWITCH);
         displayInfo.addAcceptableEventType(JudgeEventType.RESTART_GAME);
         displayInfo.addAcceptableEventType(JudgeEventType.DISBAND_GAME);
         return displayInfo;
@@ -66,30 +67,25 @@ public class HunterShootStateRoom extends AbstractStateRoom {
     public RoomStateData resolvePlayerEvent(PlayerEvent event) {
         filterPlayerEventType(event);
         switch (event.getEventType()) {
-            case HUNTER_SHOOT:
-                hunterShoot(event);
+            case SHERIFF_SWITCH:
+                sheriffSwitch(event);
                 break;
         }
         return roomState;
     }
 
-    private RoomStateData hunterShoot(PlayerEvent event) {
-        if (!Roles.HUNTER.equals(roomState.getPlaySeatInfoBySeatNumber(event.getSeatNumber()).getRole())) {
-            throw new RoomBusinessException("你不是猎人无法开枪");
-        }
-        return resolveHunterShoot(event.getShootNumber(), event.getSeatNumber());
-    }
-
-    private RoomStateData resolveHunterShoot(Integer shootNumber, int hunterNumber) {
-        Hunter hunter = (Hunter) PlayerRoleFactory.createPlayerInstance(roomState, hunterNumber);
-        return hunter.shoot(shootNumber);
+    private void sheriffSwitch(PlayerEvent event) {
+        switchSheriff(event.getSheriffSwitchNumber());
     }
 
     @Override
     public PlayerDisplayInfo displayPlayerInfo(int seatNumber) {
         PlayerDisplayInfo displayInfo = playerCommonDisplayInfo(seatNumber);
-        //进入猎人时间后，可以放开白天信息。猎人投票死亡需要公布票型，猎人夜晚死亡白天为空信息
+        //放开票型展示
         displayInfo.setDaytimeRecord(roomState.getLastDaytimeRecord());
+        if (roomState.getSheriffRecord().getSheriff() == seatNumber) {
+            displayInfo.addAcceptableEventType(PlayerEventType.SHERIFF_SWITCH);
+        }
         return displayInfo;
     }
 }

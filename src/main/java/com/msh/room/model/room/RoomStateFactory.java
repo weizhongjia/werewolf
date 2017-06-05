@@ -37,6 +37,8 @@ public class RoomStateFactory {
                 return new SheriffPkStateRoom(data);
             case SHERIFF_PK_VOTING:
                 return new SheriffPkVotingStateRoom(data);
+            case SHERIFF_SWITCH_TIME:
+                return new SheriffSwitchTimeStateRoom(data);
             case HUNTER_SHOOT:
                 return new HunterShootStateRoom(data);
             case MORON_TIME:

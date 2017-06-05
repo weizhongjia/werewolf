@@ -34,7 +34,8 @@ public enum RoomStatus {
     SHERIFF_PK,
     //警长PK投票
     SHERIFF_PK_VOTING,
-
+    //警长移交警徽事件
+    SHERIFF_SWITCH_TIME,
 
     //猎人时间
     HUNTER_SHOOT,
@@ -43,6 +44,5 @@ public enum RoomStatus {
     MORON_TIME,
 
     //游戏结束
-    GAME_OVER,
-    ;
+    GAME_OVER,;
 }

@@ -1,6 +1,8 @@
 package com.msh.room.dto.room.record;
 
+import com.msh.room.dto.room.RoomStatus;
 import com.msh.room.exception.RoomBusinessException;
+import com.msh.room.model.room.RoomState;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -12,11 +14,14 @@ import java.util.Map;
  */
 public class SheriffRecord {
     //共竞选几轮（狼人自爆第几轮）
-    private int sheriffRuningTime = 0;
+    private int sheriffRunningTime = 0;
     private List<Integer> sheriffRegisterList;
     private Map<Integer, List<Integer>> votingRecord;
     private List<Map<Integer, List<Integer>>> pkVotingRecord;
     private Integer sheriff;
+    //暂存警长死亡并移交警徽后的事件
+    private RoomStatus afterSwitchSheriff;
+
 
     public SheriffRecord() {
         sheriffRegisterList = new ArrayList<>();
@@ -54,6 +59,14 @@ public class SheriffRecord {
 
     public void setSheriff(Integer sheriff) {
         this.sheriff = sheriff;
+    }
+
+    public RoomStatus getAfterSwitchSheriff() {
+        return afterSwitchSheriff;
+    }
+
+    public void setAfterSwitchSheriff(RoomStatus afterSwitchSheriff) {
+        this.afterSwitchSheriff = afterSwitchSheriff;
     }
 
     public void registerSheriff(int seatNumber) {

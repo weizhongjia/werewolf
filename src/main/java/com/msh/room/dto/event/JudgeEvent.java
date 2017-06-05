@@ -25,6 +25,9 @@ public class JudgeEvent {
     private List<Integer> sheriffApplyList;
     //猎人开枪
     private Integer hunterShoot;
+    //警徽移交
+    private Integer sheriffSwitchNumber;
+
     //默认构造方法
     public JudgeEvent() {
     }
@@ -112,5 +115,13 @@ public class JudgeEvent {
 
     public void setHunterShoot(Integer hunterShoot) {
         this.hunterShoot = hunterShoot;
+    }
+
+    public Integer getSheriffSwitchNumber() {
+        return sheriffSwitchNumber;
+    }
+
+    public void setSheriffSwitchNumber(Integer sheriffSwitchNumber) {
+        this.sheriffSwitchNumber = sheriffSwitchNumber;
     }
 }

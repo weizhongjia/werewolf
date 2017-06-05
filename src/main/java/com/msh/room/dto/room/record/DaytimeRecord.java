@@ -99,19 +99,23 @@ public class DaytimeRecord {
         return count != 0;
     }
 
-    public List<Integer> resolvePKVoteResult() {
-        return calculateVoteResult(lastPKRecord());
+    public List<Integer> resolvePKVoteResult(int sheriffNumber) {
+        return calculateVoteResult(lastPKRecord(), sheriffNumber);
     }
 
-    public List<Integer> calculateVoteResult(Map<Integer, List<Integer>> voteRecord) {
-        //TODO 警长1.5票还没做
+    public List<Integer> calculateVoteResult(Map<Integer, List<Integer>> voteRecord, int sheriffNumber) {
         List<Integer> result = new ArrayList<>();
         int biggestNumber = 0;
         for (Integer key : voteRecord.keySet()) {
-            int number = voteRecord.get(key).size();
+            //统一乘以10，警长加5.
+            int number = voteRecord.get(key).size() * 10;
+            if (voteRecord.get(key).contains(sheriffNumber)) {
+                number += 5;
+            }
+
             if (number > biggestNumber && key != 0) {
                 biggestNumber = number;
-                result = new ArrayList<>();
+                result.clear();
                 result.add(key);
             } else if (number == biggestNumber && key != 0) {
                 result.add(key);
@@ -137,7 +141,7 @@ public class DaytimeRecord {
         return count != 0;
     }
 
-    public List<Integer> resolveVoteResult() {
-        return calculateVoteResult(votingRecord);
+    public List<Integer> resolveVoteResult(int sheriffNumber) {
+        return calculateVoteResult(votingRecord, sheriffNumber);
     }
 }

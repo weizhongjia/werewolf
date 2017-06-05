@@ -1,9 +1,12 @@
 package com.msh.room.dto.event;
 
+import com.msh.room.dto.room.RoomStatus;
+
 /**
  * Created by zhangruiqian on 2017/5/3.
  */
 public class PlayerEvent {
+    private RoomStatus status;
     private PlayerEventType eventType;
     private int seatNumber;
     private String userID;
@@ -24,6 +27,7 @@ public class PlayerEvent {
 
     private Integer sheriffVoteNumber;
     private Integer sheriffPKVoteNumber;
+    private Integer sheriffSwitchNumber;
 
     public PlayerEvent() {
     }
@@ -32,6 +36,14 @@ public class PlayerEvent {
         this.eventType = eventType;
         this.seatNumber = seatNumber;
         this.userID = userID;
+    }
+
+    public RoomStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(RoomStatus status) {
+        this.status = status;
     }
 
     public int getSeatNumber() {
@@ -120,5 +132,13 @@ public class PlayerEvent {
 
     public void setSheriffPKVoteNumber(Integer sheriffPKVoteNumber) {
         this.sheriffPKVoteNumber = sheriffPKVoteNumber;
+    }
+
+    public Integer getSheriffSwitchNumber() {
+        return sheriffSwitchNumber;
+    }
+
+    public void setSheriffSwitchNumber(Integer sheriffSwitchNumber) {
+        this.sheriffSwitchNumber = sheriffSwitchNumber;
     }
 }

@@ -11,7 +11,6 @@ import com.msh.room.dto.room.record.DaytimeRecord;
 import com.msh.room.exception.RoomBusinessException;
 import com.msh.room.model.role.CommonPlayer;
 import com.msh.room.model.role.PlayerRoleFactory;
-import com.msh.room.model.room.Room;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -94,7 +93,11 @@ public class PKVotingStateRoom extends AbstractStateRoom {
 
     private RoomStateData pkVoteResult() {
         DaytimeRecord daytimeRecord = roomState.getLastDaytimeRecord();
-        List<Integer> voteResult = daytimeRecord.resolvePKVoteResult();
+        int sheriff = 0;
+        if (roomState.isSheriff()) {
+            sheriff = roomState.getSheriffRecord().getSheriff();
+        }
+        List<Integer> voteResult = daytimeRecord.resolvePKVoteResult(sheriff);
         //如果有平票
         if (voteResult.size() > 1) {
             //没到两轮
