@@ -1,6 +1,7 @@
 package com.msh.room.model.room.impl;
 
 import com.msh.room.dto.event.JudgeEvent;
+import com.msh.room.dto.event.JudgeEventType;
 import com.msh.room.dto.event.PlayerEvent;
 import com.msh.room.dto.response.JudgeDisplayInfo;
 import com.msh.room.dto.response.PlayerDisplayInfo;
@@ -30,7 +31,10 @@ public class GameOverStateTime extends AbstractStateRoom {
 
     @Override
     public JudgeDisplayInfo displayJudgeInfo() {
-        return null;
+        JudgeDisplayInfo displayInfo = judgeCommonDisplayInfo();
+        displayInfo.addAcceptableEventType(JudgeEventType.RESTART_GAME);
+        displayInfo.addAcceptableEventType(JudgeEventType.DISBAND_GAME);
+        return displayInfo;
     }
 
     @Override
