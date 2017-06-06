@@ -9,6 +9,8 @@ import com.msh.room.dto.response.PlayerDisplayInfo;
 import com.msh.room.dto.room.RoomStateData;
 import com.msh.room.dto.room.RoomStatus;
 import com.msh.room.dto.room.record.SheriffRecord;
+import com.msh.room.dto.room.seat.PlayerSeatInfo;
+import com.msh.room.model.role.Roles;
 
 import java.util.List;
 import java.util.Map;
@@ -28,6 +30,9 @@ public class SheriffRunningStateRoom extends AbstractStateRoom {
             case SHERIFF_VOTEING:
                 resolveSheriffVoting(event);
                 break;
+            case WEREWOLVES_EXPLODE:
+                resolveWereWolfExplode(event);
+                break;
             case RESTART_GAME:
                 resolveRestartGameEvent(event);
                 break;
@@ -36,6 +41,27 @@ public class SheriffRunningStateRoom extends AbstractStateRoom {
                 break;
         }
         return roomState;
+    }
+
+    private void resolveWereWolfExplode(JudgeEvent event) {
+        Integer seatNumber = event.getExplodeWereWolf();
+        PlayerSeatInfo seatInfo = roomState.getPlaySeatInfoBySeatNumber(seatNumber);
+        if (seatInfo.isAlive() && Roles.WEREWOLVES.equals(seatInfo.getRole())) {
+            if (roomState.getSheriffRecord().getSheriffRunningTime() > 0) {
+                //已经有一轮自爆，则流失警徽
+                roomState.getSheriffRecord().setSheriff(0);
+            }else{
+                //该位置的退水
+                if (roomState.getSheriffRecord().getVotingRecord().containsKey(seatNumber)) {
+                    roomState.getSheriffRecord().unRegisterSheriff(seatNumber);
+                }
+                roomState.getSheriffRecord().addSheriffTime();
+            }
+            seatInfo.setAlive(false);
+            resolveNightComing();
+        } else {
+            throw new RuntimeException("该角色无法自爆");
+        }
     }
 
     private void resolveSheriffVoting(JudgeEvent event) {
@@ -64,6 +90,8 @@ public class SheriffRunningStateRoom extends AbstractStateRoom {
         JudgeDisplayInfo displayInfo = judgeCommonDisplayInfo();
         //可以触发上警投票
         displayInfo.addAcceptableEventType(JudgeEventType.SHERIFF_VOTEING);
+        //警上发言狼人自爆,由法官操作
+        displayInfo.addAcceptableEventType(JudgeEventType.WEREWOLVES_EXPLODE);
         displayInfo.addAcceptableEventType(JudgeEventType.RESTART_GAME);
         displayInfo.addAcceptableEventType(JudgeEventType.DISBAND_GAME);
         return displayInfo;

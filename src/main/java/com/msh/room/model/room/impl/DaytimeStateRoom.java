@@ -7,6 +7,8 @@ import com.msh.room.dto.response.JudgeDisplayInfo;
 import com.msh.room.dto.response.PlayerDisplayInfo;
 import com.msh.room.dto.room.RoomStateData;
 import com.msh.room.dto.room.RoomStatus;
+import com.msh.room.dto.room.seat.PlayerSeatInfo;
+import com.msh.room.model.role.Roles;
 
 import java.util.ArrayList;
 
@@ -25,6 +27,9 @@ public class DaytimeStateRoom extends AbstractStateRoom {
             case DAYTIME_VOTING:
                 resolveDaytimeVoting(event);
                 break;
+            case WEREWOLVES_EXPLODE:
+                resolveWereWolfExplode(event);
+                break;
             case GAME_ENDING:
                 resolveGameEnding(event);
                 break;
@@ -36,6 +41,18 @@ public class DaytimeStateRoom extends AbstractStateRoom {
                 break;
         }
         return roomState;
+    }
+
+    private void resolveWereWolfExplode(JudgeEvent event) {
+        Integer seatNumber = event.getExplodeWereWolf();
+        PlayerSeatInfo seatInfo = roomState.getPlaySeatInfoBySeatNumber(seatNumber);
+        if (seatInfo.isAlive() && Roles.WEREWOLVES.equals(seatInfo.getRole())) {
+            roomState.getLastDaytimeRecord().setDiedNumber(seatNumber);
+            seatInfo.setAlive(false);
+            resolveNightComing();
+        }else{
+            throw new RuntimeException("该角色无法自爆");
+        }
     }
 
 
@@ -53,6 +70,8 @@ public class DaytimeStateRoom extends AbstractStateRoom {
     public JudgeDisplayInfo displayJudgeInfo() {
         JudgeDisplayInfo displayInfo = judgeCommonDisplayInfo();
         displayInfo.addAcceptableEventType(JudgeEventType.DAYTIME_VOTING);
+        //白天狼人自爆,由法官操作
+        displayInfo.addAcceptableEventType(JudgeEventType.WEREWOLVES_EXPLODE);
         //白天阶段可以结束游戏
         if (roomState.getGameResult() != null) {
             displayInfo.setAcceptableEventTypes(new ArrayList<>());
@@ -70,6 +89,7 @@ public class DaytimeStateRoom extends AbstractStateRoom {
 
     @Override
     public PlayerDisplayInfo displayPlayerInfo(int seatNumber) {
-        return playerCommonDisplayInfo(seatNumber);
+        PlayerDisplayInfo displayInfo = playerCommonDisplayInfo(seatNumber);
+        return displayInfo;
     }
 }

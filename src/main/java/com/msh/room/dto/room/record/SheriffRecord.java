@@ -198,4 +198,16 @@ public class SheriffRecord {
     public List<Integer> resolvePKVoteResult() {
         return calculateVoteResult(lastPKVotingRecord());
     }
+
+    public int getSheriffRunningTime() {
+        return sheriffRunningTime;
+    }
+
+    public void setSheriffRunningTime(int sheriffRunningTime) {
+        this.sheriffRunningTime = sheriffRunningTime;
+    }
+
+    public void addSheriffTime() {
+        this.sheriffRunningTime++;
+    }
 }

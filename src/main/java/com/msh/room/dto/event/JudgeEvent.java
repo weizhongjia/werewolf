@@ -28,6 +28,9 @@ public class JudgeEvent {
     //警徽移交
     private Integer sheriffSwitchNumber;
 
+    //自爆狼人
+    private Integer explodeWereWolf;
+
     //默认构造方法
     public JudgeEvent() {
     }
@@ -123,5 +126,13 @@ public class JudgeEvent {
 
     public void setSheriffSwitchNumber(Integer sheriffSwitchNumber) {
         this.sheriffSwitchNumber = sheriffSwitchNumber;
+    }
+
+    public Integer getExplodeWereWolf() {
+        return explodeWereWolf;
+    }
+
+    public void setExplodeWereWolf(Integer explodeWereWolf) {
+        this.explodeWereWolf = explodeWereWolf;
     }
 }

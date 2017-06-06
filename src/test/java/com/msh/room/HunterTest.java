@@ -123,8 +123,9 @@ public class HunterTest {
         JudgeDisplayInfo judgeDisplayResult = service.getJudgeDisplayResult(roomCode);
         //进入白天
         assertEquals(RoomStatus.DAYTIME, judgeDisplayResult.getStatus());
-        //法官可以发起投票
+        //法官可以发起投票,可以点狼自爆
         assertEquals(Arrays.asList(JudgeEventType.DAYTIME_VOTING,
+                JudgeEventType.WEREWOLVES_EXPLODE,
                 JudgeEventType.RESTART_GAME,
                 JudgeEventType.DISBAND_GAME), judgeDisplayResult.getAcceptableEventTypes());
 
@@ -174,7 +175,8 @@ public class HunterTest {
         //正常天亮
         assertEquals(RoomStatus.DAYTIME, judgeDisplayInfo.getStatus());
         //正常发言
-        assertEquals(Arrays.asList(JudgeEventType.DAYTIME_VOTING, JudgeEventType.RESTART_GAME, JudgeEventType.DISBAND_GAME), judgeDisplayInfo.getAcceptableEventTypes());
+        assertEquals(Arrays.asList(JudgeEventType.DAYTIME_VOTING, JudgeEventType.WEREWOLVES_EXPLODE,
+                JudgeEventType.RESTART_GAME, JudgeEventType.DISBAND_GAME), judgeDisplayInfo.getAcceptableEventTypes());
         for (int i = 1; i < 13; i++) {
             PlayerDisplayInfo displayResult = service.getPlayerDisplayResult(roomCode, i);
             PlayerSeatInfo playerInfo = displayResult.getPlayerInfo();

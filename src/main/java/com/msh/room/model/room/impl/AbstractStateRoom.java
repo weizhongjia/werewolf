@@ -31,6 +31,7 @@ public abstract class AbstractStateRoom implements RoomState {
 
     /**
      * 判断是否法官可以处理该事件
+     *
      * @param event
      */
     protected void filterJudgeEventType(JudgeEvent event) {
@@ -42,6 +43,7 @@ public abstract class AbstractStateRoom implements RoomState {
 
     /**
      * 法官通用的display信息
+     *
      * @return
      */
     protected JudgeDisplayInfo judgeCommonDisplayInfo() {
@@ -65,6 +67,7 @@ public abstract class AbstractStateRoom implements RoomState {
 
     /**
      * 法官随时可以解散游戏
+     *
      * @param event
      */
     protected void resolveDisbandGameEvent(JudgeEvent event) {
@@ -76,6 +79,7 @@ public abstract class AbstractStateRoom implements RoomState {
 
     /**
      * 法官在任何状态下均可以重启游戏
+     *
      * @param event
      */
     protected void resolveRestartGameEvent(JudgeEvent event) {
@@ -99,6 +103,7 @@ public abstract class AbstractStateRoom implements RoomState {
 
     /**
      * 游戏结束处理，多个状态下均可能涉及
+     *
      * @param event
      */
     protected void resolveGameEnding(JudgeEvent event) {
@@ -107,6 +112,7 @@ public abstract class AbstractStateRoom implements RoomState {
 
     /**
      * 每个阶段都要处理，过滤本状态无法处理的事件
+     *
      * @param event
      */
     protected void filterPlayerEventType(PlayerEvent event) {
@@ -155,6 +161,7 @@ public abstract class AbstractStateRoom implements RoomState {
             commonPlayer.killed();
         }
     }
+
     /**
      * 判断是否需要上警
      *
@@ -182,6 +189,9 @@ public abstract class AbstractStateRoom implements RoomState {
                 //有竞选信息，但没有结果。说明狼人自爆，且还没有流失警徽。继续竞选
                 //如果有PK信息，说明狼人PK阶段自爆。再次PK
                 //TODO PK阶段自爆与竞选阶段自爆
+                if (sheriffRecord.getPkVotingRecord() != null) {
+                    return RoomStatus.SHERIFF_PK;
+                }
                 return RoomStatus.SHERIFF_RUNNING;
             }
         }

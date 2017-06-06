@@ -41,6 +41,9 @@ public enum JudgeEventType {
     //警徽移交
     SHERIFF_SWITCH,
 
+    //狼人自爆
+    WEREWOLVES_EXPLODE,
+
     //游戏结束
     GAME_ENDING,
     //重开游戏

@@ -7,6 +7,9 @@ import com.msh.room.dto.response.JudgeDisplayInfo;
 import com.msh.room.dto.response.PlayerDisplayInfo;
 import com.msh.room.dto.room.RoomStateData;
 import com.msh.room.dto.room.RoomStatus;
+import com.msh.room.dto.room.record.SheriffRecord;
+import com.msh.room.dto.room.seat.PlayerSeatInfo;
+import com.msh.room.model.role.Roles;
 
 /**
  * Created by zhangruiqian on 2017/5/25.
@@ -23,6 +26,9 @@ public class SheriffPkStateRoom extends AbstractStateRoom {
             case SHERIFF_PK_VOTEING:
                 resolveSheriffPkVoting(event);
                 break;
+            case WEREWOLVES_EXPLODE:
+                resolveWereWolfExplode(event);
+                break;
             case RESTART_GAME:
                 resolveRestartGameEvent(event);
                 break;
@@ -34,7 +40,36 @@ public class SheriffPkStateRoom extends AbstractStateRoom {
     }
 
     private void resolveSheriffPkVoting(JudgeEvent event) {
-        roomState.setStatus(RoomStatus.SHERIFF_PK_VOTING);
+        SheriffRecord sheriffRecord = roomState.getSheriffRecord();
+        //由于狼人自爆，导致PK无对手
+        if (sheriffRecord.lastPKVotingRecord().size() == 1) {
+            sheriffRecord.lastPKVotingRecord().keySet().forEach(seatNumber -> {
+                sheriffRecord.setSheriff(seatNumber);
+            });
+            resolveNightComing();
+        }else{
+            roomState.setStatus(RoomStatus.SHERIFF_PK_VOTING);
+        }
+    }
+
+    private void resolveWereWolfExplode(JudgeEvent event) {
+        Integer seatNumber = event.getExplodeWereWolf();
+        PlayerSeatInfo seatInfo = roomState.getPlaySeatInfoBySeatNumber(seatNumber);
+        if (seatInfo.isAlive() && Roles.WEREWOLVES.equals(seatInfo.getRole())) {
+            if (roomState.getSheriffRecord().getSheriffRunningTime() > 0) {
+                //已经有一轮自爆，则流失警徽
+                roomState.getSheriffRecord().setSheriff(0);
+            } else {
+                if (roomState.getSheriffRecord().lastPKVotingRecord().containsKey(seatNumber)) {
+                    roomState.getSheriffRecord().lastPKVotingRecord().remove(seatNumber);
+                }
+                roomState.getSheriffRecord().addSheriffTime();
+            }
+            seatInfo.setAlive(false);
+            resolveNightComing();
+        } else {
+            throw new RuntimeException("该角色无法自爆");
+        }
     }
 
     @Override
@@ -42,6 +77,8 @@ public class SheriffPkStateRoom extends AbstractStateRoom {
         JudgeDisplayInfo displayInfo = judgeCommonDisplayInfo();
         //可以触发上警PK投票
         displayInfo.addAcceptableEventType(JudgeEventType.SHERIFF_PK_VOTEING);
+        //警上PK发言狼人自爆,由法官操作
+        displayInfo.addAcceptableEventType(JudgeEventType.WEREWOLVES_EXPLODE);
         displayInfo.addAcceptableEventType(JudgeEventType.RESTART_GAME);
         displayInfo.addAcceptableEventType(JudgeEventType.DISBAND_GAME);
         return displayInfo;

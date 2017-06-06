@@ -15,8 +15,6 @@ import java.util.stream.Collectors;
  * Created by zhangruiqian on 2017/5/5.
  */
 public class Werewolves extends AssignedPlayer {
-    //TODO 需要添加自爆逻辑
-
     private boolean alive;
 
     public Werewolves(RoomStateData state, int number) {
@@ -35,7 +33,13 @@ public class Werewolves extends AssignedPlayer {
             if (RoomStatus.NIGHT.equals(roomState.getStatus()) && roomState.getLastNightRecord().getWolfKilledSeat() == null) {
                 displayInfo.addAcceptableEventType(PlayerEventType.WOLF_KILL);
             }
-
+            //仅发言阶段
+            if (RoomStatus.DAYTIME.equals(roomState.getStatus())
+                    || RoomStatus.PK.equals(roomState.getStatus())
+                    || RoomStatus.SHERIFF_RUNNING.equals(roomState.getStatus())
+                    || RoomStatus.SHERIFF_PK.equals(roomState.getStatus())) {
+                //TODO 狼人自爆
+            }
         }
         return displayInfo;
     }
