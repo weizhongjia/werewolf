@@ -38,11 +38,8 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         // String authToken = header.substring(7);
         User user = jwtTokenUtil.getUserFromToken(authToken);
 
-        logger.info("checking authentication für user " + user.getUserName() + " or " + user.getOpenid());
-
-        WerewolfAuthenticationToken authentication = createToken(user);
-        if (authentication != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-
+        if (user != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            WerewolfAuthenticationToken authentication = createToken(user);
             if (jwtTokenUtil.validateToken(authToken)) {
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 logger.info("authenticated user " + user.getUserName() + "or" + user.getOpenid() + ", setting security context");
