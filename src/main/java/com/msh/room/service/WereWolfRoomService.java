@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
  * Created by zhangruiqian on 2017/5/25.
  */
 @Component
-public class RoomService {
+public class WereWolfRoomService {
     @Autowired
     private RoomStateDataRepository dataRepository;
     @Autowired

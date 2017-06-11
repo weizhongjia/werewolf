@@ -13,7 +13,7 @@ import com.msh.room.dto.room.seat.PlayerSeatInfo;
 import com.msh.room.model.role.Roles;
 import com.msh.room.model.room.RoomState;
 import com.msh.room.model.room.RoomStateFactory;
-import com.msh.room.service.RoomService;
+import com.msh.room.service.WereWolfRoomService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,7 +28,7 @@ import static org.junit.Assert.*;
 public class SheriffTest {
     private RoomStateDataRepository repository;
     private String roomCode = "abc";
-    private RoomService service = new RoomService();
+    private WereWolfRoomService service = new WereWolfRoomService();
 
     @Before
     public void setup() {

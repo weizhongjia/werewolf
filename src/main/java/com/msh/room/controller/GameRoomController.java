@@ -4,7 +4,7 @@ import com.msh.room.dto.event.JudgeEvent;
 import com.msh.room.dto.event.PlayerEvent;
 import com.msh.room.dto.response.JudgeDisplayInfo;
 import com.msh.room.dto.response.PlayerDisplayInfo;
-import com.msh.room.service.RoomService;
+import com.msh.room.service.WereWolfRoomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,12 +16,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(value = "werewolf")
 public class GameRoomController {
     @Autowired
-    private RoomService roomService;
+    private WereWolfRoomService wereWolfRoomService;
 
 
     @RequestMapping(value = "room/{roomCode}/judge/event", method = RequestMethod.PUT)
     public JudgeDisplayInfo pushJudgeEvent(@PathVariable("roomCode") String roomCode, @RequestBody JudgeEvent event) {
-        return roomService.resolveJudgeEvent(event, roomCode);
+        return wereWolfRoomService.resolveJudgeEvent(event, roomCode);
     }
 
     @RequestMapping(value = "room/{roomCode}/player/{number}/event", method = RequestMethod.PUT)
@@ -31,13 +31,13 @@ public class GameRoomController {
         //此处需获取用户名
         //event.setUserID(userID);
         event.setSeatNumber(Integer.valueOf(number));
-        return roomService.resolvePlayerEvent(event, roomCode);
+        return wereWolfRoomService.resolvePlayerEvent(event, roomCode);
     }
 
 
     @RequestMapping(value = "room/{roomCode}/judge/info", method = RequestMethod.GET)
     public JudgeDisplayInfo getJudgeDisplayInfo(@PathVariable("roomCode") String roomCode) {
-        return roomService.getJudgeDisplayResult(roomCode);
+        return wereWolfRoomService.getJudgeDisplayResult(roomCode);
     }
 
 
@@ -45,7 +45,7 @@ public class GameRoomController {
     public PlayerDisplayInfo getPlayerEvent(@PathVariable("roomCode") String roomCode,
                                             @PathVariable("number") String number) {
         //应该添加userID参数，判断座位号与userID是否一致
-        return roomService.getPlayerDisplayResult(roomCode, Integer.valueOf(number));
+        return wereWolfRoomService.getPlayerDisplayResult(roomCode, Integer.valueOf(number));
     }
 
 }
