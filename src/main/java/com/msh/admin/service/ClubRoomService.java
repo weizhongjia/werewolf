@@ -9,14 +9,14 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class RoomService {
+public class ClubRoomService {
 
     @Autowired
     private RoomMapper roomMapper;
 
     public List<Room> getRooms (int p, int ps) {
         RowBounds rowBounds = new RowBounds(p * ps, ps);
-        return roomMapper.selectByRowBounds(new Room(), rowBounds);
+        return roomMapper.selectAll();
     }
 
     public void editRoom (Room room) {

@@ -1,9 +1,9 @@
 package com.msh.admin.controller;
 
 import com.msh.admin.service.ClubService;
-import com.msh.admin.service.RoomService;
 import com.msh.common.model.Club;
-import com.msh.common.model.Room;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,11 +17,19 @@ public class ClubController {
     @Autowired
     private ClubService clubService;
 
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Authorization token",
+                    required = true, dataType = "string", paramType = "header")
+    })
     @RequestMapping(value = "club", method = RequestMethod.GET)
-    public List<Club> getClubs (@RequestParam int p, @RequestParam int ps) {
-        return clubService.getClubs(p, ps);
+    public List<Club> getClubs () {
+        return clubService.getClubs();
     }
 
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Authorization token",
+                    required = true, dataType = "string", paramType = "header")
+    })
     @RequestMapping(value = "club", method = RequestMethod.PUT)
     public ResponseEntity<String> editClub (@RequestBody Club club) {
         clubService.editClub(club);

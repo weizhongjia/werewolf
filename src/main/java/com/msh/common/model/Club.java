@@ -14,7 +14,7 @@ public class Club {
 
     private String logoImg;
 
-    private String desc;
+    private String description;
 
     public long getId() {
         return Id;
@@ -44,7 +44,7 @@ public class Club {
         return latitude;
     }
 
-    public void setLantitude(float latitude) {
+    public void setLatitude(float latitude) {
         this.latitude = latitude;
     }
 
@@ -64,11 +64,11 @@ public class Club {
         this.logoImg = logoImg;
     }
 
-    public String getDesc() {
-        return desc;
+    public String getDescription() {
+        return description;
     }
 
-    public void setDesc(String desc) {
-        this.desc = desc;
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

@@ -36,16 +36,16 @@ public class JwtTokenUtil implements Serializable {
     private Long expiration;
 
     public User getUserFromToken(String token){
-        User user = new User();
         try {
+            User user = new User();
             final Claims claims = getClaimsFromToken(token);
             user.setOpenid((String)claims.get(CLAIM_KEY_OPENID));
             user.setUserName((String)claims.get(CLAIM_KEY_USERNAME));
             user.setHeadimgurl((String)claims.get(CLAIM_KEY_HEADIMG));
+            return user;
         } catch (Exception e) {
-            e.printStackTrace();
+            return null;
         }
-        return user;
     }
 
     public String getUsernameFromToken(String token) {

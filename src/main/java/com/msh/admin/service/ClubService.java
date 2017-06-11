@@ -16,9 +16,8 @@ public class ClubService {
     @Autowired
     private ClubMapper clubMapper;
 
-    public List<Club> getClubs (int p, int ps) {
-        RowBounds rowBounds = new RowBounds(p * ps, ps);
-        return clubMapper.selectByRowBounds(new Club(), rowBounds);
+    public List<Club> getClubs () {
+        return clubMapper.selectAll();
     }
 
     public void editClub (Club club) {
