@@ -43,6 +43,8 @@ public enum JudgeEventType {
 
     //狼人自爆
     WEREWOLVES_EXPLODE,
+    //白痴翻盘事件
+    MORON_SHOW,
 
     //游戏结束
     GAME_ENDING,

@@ -67,6 +67,9 @@ public class Witch extends AssignedPlayer {
     public void save(boolean witchSave) {
         if (roomState.getWitchState().isAntidoteAvailable()) {
             Integer killedSeat = roomState.getLastNightRecord().getWolfKilledSeat();
+            if (killedSeat.equals(this.number)) {
+                throw new RoomBusinessException("女巫无法自救");
+            }
             //空刀时相当于没救
             if (witchSave && killedSeat!=0) {
                 roomState.getLastNightRecord().setWitchSaved(killedSeat);

@@ -25,7 +25,8 @@ public enum PlayerEventType {
     PK_VOTE,
     //猎人时间
     HUNTER_SHOOT,
-
+    //白痴翻拍
+    MORON_SHOW,
     //上警
     SHERIFF_REGISTER,
     //退出竞选
@@ -36,8 +37,5 @@ public enum PlayerEventType {
     //上警PK投票
     SHERIFF_PK_VOTE,
     //警徽移交
-    SHERIFF_SWITCH,
-
-
-    ;
+    SHERIFF_SWITCH,;
 }

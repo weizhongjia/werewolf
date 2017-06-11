@@ -11,6 +11,7 @@ import com.msh.room.dto.room.record.DaytimeRecord;
 import com.msh.room.exception.RoomBusinessException;
 import com.msh.room.model.role.CommonPlayer;
 import com.msh.room.model.role.PlayerRoleFactory;
+import com.msh.room.model.role.Roles;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -136,6 +137,11 @@ public class PKVotingStateRoom extends AbstractStateRoom {
         if (roomState.getLastDaytimeRecord().getDiedNumber() != null) {
             //如果已经投票死人(无论是否无人死亡)，说明投票有结果了.公布白天投票信息
             displayInfo.setDaytimeRecord(roomState.getLastDaytimeRecord());
+        }
+
+        if (Roles.MORON.equals(roomState.getPlaySeatInfoBySeatNumber(seatNumber).getRole())
+                && roomState.getMoronState().isBeanVoted()) {
+            displayInfo.getAcceptableEventTypeList().remove(PK_VOTE);
         }
         return displayInfo;
     }

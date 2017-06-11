@@ -4,6 +4,7 @@ import com.msh.room.model.role.Roles;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.BooleanSupplier;
 
 /**
  * Created by zhangruiqian on 2017/5/3.
@@ -30,6 +31,9 @@ public class JudgeEvent {
 
     //自爆狼人
     private Integer explodeWereWolf;
+
+    //白痴是否翻牌
+    private Boolean moronShow;
 
     //默认构造方法
     public JudgeEvent() {
@@ -134,5 +138,13 @@ public class JudgeEvent {
 
     public void setExplodeWereWolf(Integer explodeWereWolf) {
         this.explodeWereWolf = explodeWereWolf;
+    }
+
+    public Boolean getMoronShow() {
+        return moronShow;
+    }
+
+    public void setMoronShow(Boolean moronShow) {
+        this.moronShow = moronShow;
     }
 }

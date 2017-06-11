@@ -11,6 +11,7 @@ import com.msh.room.dto.room.record.DaytimeRecord;
 import com.msh.room.exception.RoomBusinessException;
 import com.msh.room.model.role.CommonPlayer;
 import com.msh.room.model.role.PlayerRoleFactory;
+import com.msh.room.model.role.Roles;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -125,6 +126,7 @@ public class VotingStateRoom extends AbstractStateRoom {
     @Override
     public PlayerDisplayInfo displayPlayerInfo(int seatNumber) {
         PlayerDisplayInfo displayInfo = playerCommonDisplayInfo(seatNumber);
+
         if (!roomState.getLastDaytimeRecord().isDaytimeVoted(seatNumber)
                 && this.roomState.getPlaySeatInfoBySeatNumber(seatNumber).isAlive()) {
             displayInfo.addAcceptableEventType(DAYTIME_VOTE);
@@ -133,6 +135,10 @@ public class VotingStateRoom extends AbstractStateRoom {
             displayInfo.setDaytimeRecord(roomState.getLastDaytimeRecord());
         }
 
+        if (Roles.MORON.equals(roomState.getPlaySeatInfoBySeatNumber(seatNumber).getRole())
+                && roomState.getMoronState().isBeanVoted()) {
+            displayInfo.getAcceptableEventTypeList().remove(DAYTIME_VOTE);
+        }
 
         return displayInfo;
     }

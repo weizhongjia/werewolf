@@ -209,6 +209,53 @@ public class DaytimeTest {
         }
     }
 
+    @Test
+    public void testDaytimeVoteMoron() {
+//        Room room = roomManager.loadRoom(roomCode);
+        simpleKillVillagerNight();
+        JudgeEvent daytimeEvent = new JudgeEvent(roomCode, JudgeEventType.DAYTIME_COMING);
+        service.resolveJudgeEvent(daytimeEvent, roomCode);
+        JudgeEvent daytimeVotingEvent = new JudgeEvent(roomCode, JudgeEventType.DAYTIME_VOTING);
+        service.resolveJudgeEvent(daytimeVotingEvent, roomCode);
+
+        RoomStateData stateData = repository.loadRoomStateData(roomCode);
+        int moron = stateData.getAliveSeatByRole(Roles.MORON);
+        for (int i = 1; i < 13; i++) {
+            PlayerDisplayInfo displayInfo = service.getPlayerDisplayResult(roomCode, i);
+            PlayerSeatInfo playerInfo = displayInfo.getPlayerInfo();
+            if (playerInfo.isAlive()) {
+                PlayerEvent playerEvent = new PlayerEvent(PlayerEventType.DAYTIME_VOTE, i, playerInfo.getUserID());
+                if (Roles.MORON.equals(playerInfo.getRole())) {
+                    //白痴投预言家
+                    playerEvent.setDaytimeVoteNumber(0);
+                } else {
+                    //其他投白痴
+                    playerEvent.setDaytimeVoteNumber(moron);
+                }
+                service.resolvePlayerEvent(playerEvent, roomCode);
+            }
+        }
+        JudgeDisplayInfo judgeDisplayResult = service.getJudgeDisplayResult(roomCode);
+        assertNotNull(judgeDisplayResult.getDaytimeRecord());
+        assertEquals(Integer.valueOf(moron), judgeDisplayResult.getDaytimeRecord().getDiedNumber());
+        assertEquals(RoomStatus.MORON_TIME, judgeDisplayResult.getStatus());
+        for (int i = 1; i < 13; i++) {
+            PlayerDisplayInfo displayInfo = service.getPlayerDisplayResult(roomCode, i);
+            PlayerSeatInfo playerInfo = displayInfo.getPlayerInfo();
+            if (playerInfo.isAlive()) {
+                assertNotNull(displayInfo.getDaytimeRecord());
+                assertEquals(Integer.valueOf(moron), displayInfo.getDaytimeRecord().getDiedNumber());
+            }
+        }
+
+        JudgeEvent moronShow = new JudgeEvent(roomCode, JudgeEventType.MORON_SHOW);
+        moronShow.setMoronShow(true);
+        JudgeDisplayInfo judgeDisplayInfo = service.resolveJudgeEvent(moronShow, roomCode);
+        assertEquals(RoomStatus.VOTING, judgeDisplayInfo.getStatus());
+        assertTrue(judgeDisplayInfo.getAcceptableEventTypes().contains(JudgeEventType.NIGHT_COMING));
+        assertTrue(judgeDisplayInfo.getMoronBeenVote());
+
+    }
 
     @Test
     public void testDaytimeVotePK() {

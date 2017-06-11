@@ -54,6 +54,9 @@ public abstract class AbstractStateRoom implements RoomState {
         displayInfo.setNightRecord(roomState.getLastNightRecord());
         displayInfo.setDaytimeRecord(roomState.getLastDaytimeRecord());
         displayInfo.setSheriffRecord(roomState.getSheriffRecord());
+        if (roomState.getMoronState() != null) {
+            displayInfo.setMoronBeenVote(roomState.getMoronState().isBeanVoted());
+        }
         return displayInfo;
     }
 
@@ -97,7 +100,7 @@ public abstract class AbstractStateRoom implements RoomState {
         roomState.setMoronState(null);
         roomState.setWitchState(null);
         roomState.setGameResult(null);
-
+        roomState.setSheriffRecord(null);
         roomState.setStatus(RoomStatus.CRATING);
     }
 

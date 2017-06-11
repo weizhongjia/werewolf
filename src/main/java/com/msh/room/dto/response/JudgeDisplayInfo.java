@@ -25,6 +25,8 @@ public class JudgeDisplayInfo {
     //警长情况
     private SheriffRecord sheriffRecord;
 
+    //白痴是否已被投票
+    private Boolean moronBeenVote;
 
     public JudgeDisplayInfo() {
     }
@@ -101,5 +103,13 @@ public class JudgeDisplayInfo {
 
     public void setSheriffRecord(SheriffRecord sheriffRecord) {
         this.sheriffRecord = sheriffRecord;
+    }
+
+    public Boolean getMoronBeenVote() {
+        return moronBeenVote;
+    }
+
+    public void setMoronBeenVote(Boolean moronBeenVote) {
+        this.moronBeenVote = moronBeenVote;
     }
 }
