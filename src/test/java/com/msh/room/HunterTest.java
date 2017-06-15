@@ -90,8 +90,10 @@ public class HunterTest {
         //也没毒
         witchPoisonEvent.setWitchPoisonNumber(0);
         service.resolveJudgeEvent(witchPoisonEvent, roomCode);
-
+        //猎人询问时间
+        service.resolveJudgeEvent(new JudgeEvent(roomCode, JudgeEventType.HUNTER_STATE), roomCode);
         JudgeEvent daytimeEvent = new JudgeEvent(roomCode, JudgeEventType.DAYTIME_COMING);
+
         JudgeDisplayInfo judgeDisplayInfo = service.resolveJudgeEvent(daytimeEvent, roomCode);
         //猎人时间
         assertEquals(RoomStatus.HUNTER_SHOOT, judgeDisplayInfo.getStatus());
@@ -168,9 +170,13 @@ public class HunterTest {
         //毒猎人
         int hunterSeat = stateData.getAliveSeatByRole(Roles.HUNTER);
         witchPoisonEvent.setWitchPoisonNumber(hunterSeat);
-        service.resolveJudgeEvent(witchPoisonEvent, roomCode);
-
+        JudgeDisplayInfo info = service.resolveJudgeEvent(witchPoisonEvent, roomCode);
+        //猎人开枪状态为false，被毒了
+        assertFalse(info.getNightRecord().isHunterState());
+        //猎人询问时间
+        service.resolveJudgeEvent(new JudgeEvent(roomCode, JudgeEventType.HUNTER_STATE), roomCode);
         JudgeEvent daytimeEvent = new JudgeEvent(roomCode, JudgeEventType.DAYTIME_COMING);
+
         JudgeDisplayInfo judgeDisplayInfo = service.resolveJudgeEvent(daytimeEvent, roomCode);
         //正常天亮
         assertEquals(RoomStatus.DAYTIME, judgeDisplayInfo.getStatus());
@@ -211,6 +217,8 @@ public class HunterTest {
         //也没毒
         witchPoisonEvent.setWitchPoisonNumber(0);
         service.resolveJudgeEvent(witchPoisonEvent, roomCode);
+        //猎人询问时间
+        service.resolveJudgeEvent(new JudgeEvent(roomCode, JudgeEventType.HUNTER_STATE), roomCode);
 
         JudgeEvent daytimeEvent = new JudgeEvent(roomCode, JudgeEventType.DAYTIME_COMING);
         service.resolveJudgeEvent(daytimeEvent, roomCode);

@@ -7,18 +7,13 @@ import com.msh.room.dto.event.PlayerEventType;
 import com.msh.room.dto.response.JudgeDisplayInfo;
 import com.msh.room.dto.response.PlayerDisplayInfo;
 import com.msh.room.dto.room.RoomStateData;
-import com.msh.room.dto.room.RoomStatus;
-import com.msh.room.dto.room.record.DaytimeRecord;
 import com.msh.room.dto.room.record.NightRecord;
-import com.msh.room.dto.room.record.SheriffRecord;
 import com.msh.room.exception.RoomBusinessException;
-import com.msh.room.model.role.CommonPlayer;
 import com.msh.room.model.role.PlayerRoleFactory;
 import com.msh.room.model.role.Roles;
 import com.msh.room.model.role.impl.Seer;
 import com.msh.room.model.role.impl.Witch;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -54,6 +49,9 @@ public class NightStateRoom extends AbstractStateRoom {
             case FAKE_WITCH_POISON:
                 resolveFakeWitchPoison(event);
                 break;
+            case HUNTER_STATE:
+                resolveHunterStateNotify(event);
+                break;
             case DAYTIME_COMING:
                 resolveDaytimeComing(event);
                 break;
@@ -67,7 +65,9 @@ public class NightStateRoom extends AbstractStateRoom {
         return roomState;
     }
 
-
+    private void resolveHunterStateNotify(JudgeEvent event) {
+        roomState.getLastNightRecord().setHunterNotified(true);
+    }
 
 
     private void resolveFakeWitchSave(JudgeEvent event) {
@@ -137,41 +137,50 @@ public class NightStateRoom extends AbstractStateRoom {
         if (nightRecord.getWolfKilledSeat() == null) {
             //狼刀
             displayInfo.addAcceptableEventType(JudgeEventType.WOLF_KILL);
-        } else {
-            if (nightRecord.getSeerVerify() == null) {
-                //预言家
-                int seerSeat = roomState.getAliveSeatByRole(Roles.SEER);
-                //预言家已死则假装验人环节
-                JudgeEventType type = (seerSeat > 0) ? JudgeEventType.SEER_VERIFY : JudgeEventType.FAKE_SEER_VERIFY;
-                displayInfo.addAcceptableEventType(type);
-            } else {
-                int witchNumber = roomState.getAliveSeatByRole(Roles.WITCH);
-                //女巫已死
-                if (witchNumber < 0) {
-                    if (nightRecord.getWitchSaved() == null)
-                        displayInfo.addAcceptableEventType(JudgeEventType.FAKE_WITCH_SAVE);
-                    else if (nightRecord.getWitchPoisoned() == null)
-                        displayInfo.addAcceptableEventType(JudgeEventType.FAKE_WITCH_POISON);
-                }
-                Witch witch = (Witch) PlayerRoleFactory.createPlayerInstance(roomState, witchNumber);
-                //根据女巫的状态判断
-                PlayerDisplayInfo witchDisplayInfo = witch.displayInfo();
-                List<PlayerEventType> acceptableEventTypeList = witchDisplayInfo.getAcceptableEventTypeList();
-                //女巫有可能已经闭眼
-                if (acceptableEventTypeList.size() > 0) {
-                    JudgeEventType judgeEventType = JudgeEventType.valueOf(acceptableEventTypeList.get(0).name());
-                    displayInfo.addAcceptableEventType(judgeEventType);
-                }
-
+        } else if (nightRecord.getSeerVerify() == null) {
+            //预言家
+            int seerSeat = roomState.getAliveSeatByRole(Roles.SEER);
+            //预言家已死则假装验人环节
+            JudgeEventType type = (seerSeat > 0) ? JudgeEventType.SEER_VERIFY : JudgeEventType.FAKE_SEER_VERIFY;
+            displayInfo.addAcceptableEventType(type);
+        } else if (nightRecord.getWitchSaved() == null || nightRecord.getWitchPoisoned() == null) {
+            int witchNumber = roomState.getAliveSeatByRole(Roles.WITCH);
+            //女巫已死
+            if (witchNumber < 0) {
+                if (nightRecord.getWitchSaved() == null)
+                    displayInfo.addAcceptableEventType(JudgeEventType.FAKE_WITCH_SAVE);
+                else if (nightRecord.getWitchPoisoned() == null)
+                    displayInfo.addAcceptableEventType(JudgeEventType.FAKE_WITCH_POISON);
             }
+            Witch witch = (Witch) PlayerRoleFactory.createPlayerInstance(roomState, witchNumber);
+            //根据女巫的状态判断
+            PlayerDisplayInfo witchDisplayInfo = witch.displayInfo();
+            List<PlayerEventType> acceptableEventTypeList = witchDisplayInfo.getAcceptableEventTypeList();
+            //女巫有可能已经闭眼
+            if (acceptableEventTypeList.size() > 0) {
+                JudgeEventType judgeEventType = JudgeEventType.valueOf(acceptableEventTypeList.get(0).name());
+                displayInfo.addAcceptableEventType(judgeEventType);
+            }
+
+        } else if (!nightRecord.isHunterNotified()) {
+            //猎人还没问
+            displayInfo.addAcceptableEventType(JudgeEventType.HUNTER_STATE);
+            nightRecord.setHunterState(calculateHunterState(nightRecord));
         }
         if (nightRecord.getSeerVerify() != null && nightRecord.getWolfKilledSeat() != null
-                && nightRecord.getWitchSaved() != null && nightRecord.getWitchPoisoned() != null) {
+                && nightRecord.getWitchSaved() != null && nightRecord.getWitchPoisoned() != null
+                && nightRecord.isHunterNotified()) {
             displayInfo.addAcceptableEventType(JudgeEventType.DAYTIME_COMING);
         }
         displayInfo.addAcceptableEventType(JudgeEventType.RESTART_GAME);
         displayInfo.addAcceptableEventType(JudgeEventType.DISBAND_GAME);
         return displayInfo;
+    }
+
+    private boolean calculateHunterState(final NightRecord nightRecord) {
+        Integer witchPoisoned = nightRecord.getWitchPoisoned();
+        int hunterNumber = roomState.getFirstSeatByRole(Roles.HUNTER);
+        return !witchPoisoned.equals(hunterNumber);
     }
 
     @Override

@@ -239,10 +239,13 @@ public class NightTest {
         //毒这个狼
         witchPoisonEvent.setWitchPoisonNumber(wolfSeat);
         JudgeDisplayInfo judgeDisplayInfo = service.resolveJudgeEvent(witchPoisonEvent, roomCode);
-
+        //猎人询问时间
+        assertTrue(service.getJudgeDisplayResult(roomCode).getNightRecord().isHunterState());
+        JudgeDisplayInfo info = service.resolveJudgeEvent(new JudgeEvent(roomCode, JudgeEventType.HUNTER_STATE), roomCode);
+        assertTrue(info.getAcceptableEventTypes().contains(JudgeEventType.DAYTIME_COMING));
 
         RoomStateData stateData = repository.loadRoomStateData(roomCode);
-        assertEquals(JudgeEventType.DAYTIME_COMING, judgeDisplayInfo.getAcceptableEventTypes().get(0));
+        assertEquals(JudgeEventType.DAYTIME_COMING, info.getAcceptableEventTypes().get(0));
         //没救人
         assertEquals(Integer.valueOf(0), stateData.getLastNightRecord().getWitchSaved());
         //狼被毒了
@@ -290,9 +293,12 @@ public class NightTest {
         //也没毒
         witchPoisonEvent.setWitchPoisonNumber(0);
         service.resolveJudgeEvent(witchPoisonEvent, roomCode);
+        //猎人询问时间
+        assertTrue(service.getJudgeDisplayResult(roomCode).getNightRecord().isHunterState());
+        JudgeDisplayInfo info = service.resolveJudgeEvent(new JudgeEvent(roomCode, JudgeEventType.HUNTER_STATE), roomCode);
+        assertTrue(info.getAcceptableEventTypes().contains(JudgeEventType.DAYTIME_COMING));
 
         JudgeEvent daytimeEvent = new JudgeEvent(roomCode, JudgeEventType.DAYTIME_COMING);
-
         JudgeDisplayInfo judgeDisplayInfo = service.resolveJudgeEvent(daytimeEvent, roomCode);
         RoomStateData stateData = repository.loadRoomStateData(roomCode);
         assertEquals(RoomStatus.DAYTIME, judgeDisplayInfo.getStatus());
@@ -332,9 +338,12 @@ public class NightTest {
         JudgeEvent witchPoisonEvent = new JudgeEvent(roomCode, JudgeEventType.FAKE_WITCH_POISON);
         witchPoisonEvent.setWitchPoisonNumber(0);
         service.resolveJudgeEvent(witchPoisonEvent, roomCode);
+        //猎人询问时间
+        assertTrue(service.getJudgeDisplayResult(roomCode).getNightRecord().isHunterState());
+        JudgeDisplayInfo info = service.resolveJudgeEvent(new JudgeEvent(roomCode, JudgeEventType.HUNTER_STATE), roomCode);
+        assertTrue(info.getAcceptableEventTypes().contains(JudgeEventType.DAYTIME_COMING));
 
         JudgeEvent daytimeEvent = new JudgeEvent(roomCode, JudgeEventType.DAYTIME_COMING);
-
         JudgeDisplayInfo judgeDisplayInfo = service.resolveJudgeEvent(daytimeEvent, roomCode);
         RoomStateData stateData = repository.loadRoomStateData(roomCode);
 

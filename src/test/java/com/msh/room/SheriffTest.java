@@ -94,6 +94,9 @@ public class SheriffTest {
         //也没毒
         witchPoisonEvent.setWitchPoisonNumber(0);
         service.resolveJudgeEvent(witchPoisonEvent, roomCode);
+
+        //猎人询问时间
+        service.resolveJudgeEvent(new JudgeEvent(roomCode, JudgeEventType.HUNTER_STATE), roomCode);
         return;
     }
 
