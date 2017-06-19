@@ -3,6 +3,7 @@ package com.msh.room.model.role.impl;
 import com.msh.room.dto.response.PlayerDisplayInfo;
 import com.msh.room.dto.room.RoomStateData;
 import com.msh.room.dto.room.RoomStatus;
+import com.msh.room.dto.room.result.GameResult;
 import com.msh.room.dto.room.seat.PlayerSeatInfo;
 import com.msh.room.dto.room.state.MoronState;
 
@@ -28,6 +29,15 @@ public class Moron extends AssignedPlayer {
             gameEndingCalculate();
         }
         return roomState;
+    }
+
+    @Override
+    public void calculateScore() {
+        //TODO 白痴结算
+        if(GameResult.VILLAGERS_WIN.equals(roomState.getGameResult())){
+            PlayerSeatInfo seatInfo = roomState.getPlaySeatInfoBySeatNumber(this.number);
+            seatInfo.setFinalScore(5);
+        }
     }
 
     //决定翻牌

@@ -13,6 +13,7 @@ public class PlayerSeatInfo {
     //false 有人 true 空闲
     private boolean seatAvailable;
 
+    private int finalScore = 0;
 
     public PlayerSeatInfo(Integer seatNumber, boolean seatAvailable) {
         this.seatNumber = seatNumber;
@@ -57,5 +58,13 @@ public class PlayerSeatInfo {
 
     public void setSeatAvailable(boolean seatAvailable) {
         this.seatAvailable = seatAvailable;
+    }
+
+    public int getFinalScore() {
+        return finalScore;
+    }
+
+    public void setFinalScore(int finalScore) {
+        this.finalScore = finalScore;
     }
 }

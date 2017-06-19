@@ -4,6 +4,7 @@ import com.msh.room.dto.event.PlayerEventType;
 import com.msh.room.dto.response.PlayerDisplayInfo;
 import com.msh.room.dto.room.RoomStateData;
 import com.msh.room.dto.room.RoomStatus;
+import com.msh.room.dto.room.result.GameResult;
 import com.msh.room.dto.room.seat.PlayerSeatInfo;
 import com.msh.room.dto.room.state.HunterState;
 import com.msh.room.exception.RoomBusinessException;
@@ -37,6 +38,15 @@ public class Hunter extends AssignedPlayer {
             }
         }
         return roomState;
+    }
+
+    @Override
+    public void calculateScore() {
+        //TODO 猎人结算
+        if(GameResult.VILLAGERS_WIN.equals(roomState.getGameResult())){
+            PlayerSeatInfo seatInfo = roomState.getPlaySeatInfoBySeatNumber(this.number);
+            seatInfo.setFinalScore(5);
+        }
     }
 
     @Override

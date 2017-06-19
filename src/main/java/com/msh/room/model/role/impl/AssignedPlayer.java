@@ -123,4 +123,7 @@ public abstract class AssignedPlayer extends CommonPlayer {
         displayInfo.setPlayerSeatInfoList(playerSeatInfos);
         displayInfo.setAcceptableEventTypeList(new ArrayList<>());
     }
+
+
+    abstract public void calculateScore();
 }

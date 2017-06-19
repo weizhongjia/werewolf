@@ -4,6 +4,7 @@ import com.msh.room.dto.event.PlayerEventType;
 import com.msh.room.dto.response.PlayerDisplayInfo;
 import com.msh.room.dto.room.RoomStateData;
 import com.msh.room.dto.room.RoomStatus;
+import com.msh.room.dto.room.result.GameResult;
 import com.msh.room.dto.room.seat.PlayerSeatInfo;
 import com.msh.room.model.role.Roles;
 import com.msh.room.model.role.util.PlayerRoleMask;
@@ -20,6 +21,16 @@ public class Werewolves extends AssignedPlayer {
     public Werewolves(RoomStateData state, int number) {
         super(state, number);
         this.alive = state.getPlaySeatInfoBySeatNumber(number).isAlive();
+    }
+
+    @Override
+    public void calculateScore() {
+        //TODO 狼人结算
+        int initialScore = 6;
+        PlayerSeatInfo seatInfo = roomState.getPlaySeatInfoBySeatNumber(this.number);
+        if (GameResult.WEREWOLVES_WIN.equals(roomState.getGameResult())) {
+            seatInfo.setFinalScore(17);
+        }
     }
 
 

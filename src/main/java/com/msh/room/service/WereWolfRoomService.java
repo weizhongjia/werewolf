@@ -29,9 +29,9 @@ public class WereWolfRoomService {
             RoomStateData data = dataRepository.loadRoomStateData(roomCode);
             RoomState roomInstance = roomFactory.createRoomInstance(data);
             RoomStateData newData = roomInstance.resolveJudgeEvent(event);
-            //TODO 添加版本号
+            newData.addVersion();
             dataRepository.putRoomStateData(roomCode, newData);
-            //TODO 持久化记录Event
+            //TODO 持久化记录Event + 版本号
             return getJudgeDisplayResult(roomCode);
         }
     }
@@ -49,9 +49,9 @@ public class WereWolfRoomService {
             RoomStateData data = dataRepository.loadRoomStateData(roomCode);
             RoomState roomInstance = roomFactory.createRoomInstance(data);
             RoomStateData newData = roomInstance.resolvePlayerEvent(event);
-            //TODO 添加版本号
+            newData.addVersion();
             dataRepository.putRoomStateData(roomCode, newData);
-            //TODO 持久化记录Event
+            //TODO 持久化记录Event + 版本号
             return getPlayerDisplayResult(roomCode, event.getSeatNumber());
         }
     }

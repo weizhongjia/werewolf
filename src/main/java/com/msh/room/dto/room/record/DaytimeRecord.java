@@ -9,6 +9,7 @@ import java.util.*;
  */
 public class DaytimeRecord {
     private Map<Integer, List<Integer>> votingRecord;
+    //TODO 白天有猎人,应该是一个list
     private Integer diedNumber;
     private List<Map<Integer, List<Integer>>> pkVotingRecord;
 

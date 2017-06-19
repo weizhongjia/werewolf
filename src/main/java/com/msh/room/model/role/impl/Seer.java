@@ -1,20 +1,14 @@
 package com.msh.room.model.role.impl;
 
-import com.msh.room.dto.event.PlayerEvent;
 import com.msh.room.dto.event.PlayerEventType;
 import com.msh.room.dto.response.PlayerDisplayInfo;
+import com.msh.room.dto.room.RoomStateData;
 import com.msh.room.dto.room.RoomStatus;
 import com.msh.room.dto.room.record.NightRecord;
+import com.msh.room.dto.room.result.GameResult;
 import com.msh.room.dto.room.seat.PlayerSeatInfo;
-import com.msh.room.dto.room.RoomStateData;
 import com.msh.room.exception.RoomBusinessException;
-import com.msh.room.model.role.CommonPlayer;
 import com.msh.room.model.role.Roles;
-import com.msh.room.model.role.util.PlayerRoleMask;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Created by zhangruiqian on 2017/5/7.
@@ -25,6 +19,15 @@ public class Seer extends AssignedPlayer {
     public Seer(RoomStateData roomState, int number) {
         super(roomState, number);
         this.alive = roomState.getPlaySeatInfoBySeatNumber(number).isAlive();
+    }
+
+    @Override
+    public void calculateScore() {
+        //TODO 预言家结算
+        if (GameResult.VILLAGERS_WIN.equals(roomState.getGameResult())) {
+            PlayerSeatInfo seatInfo = roomState.getPlaySeatInfoBySeatNumber(this.number);
+            seatInfo.setFinalScore(5);
+        }
     }
 
     @Override
@@ -73,7 +76,7 @@ public class Seer extends AssignedPlayer {
         } else throw new RoomBusinessException("目前预言家无法验人");
     }
 
-    public void fakeVerify(){
+    public void fakeVerify() {
         NightRecord lastNightRecord = roomState.getLastNightRecord();
         lastNightRecord.setSeerVerify(0);
         lastNightRecord.setSeerVerifyResult(false);

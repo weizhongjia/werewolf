@@ -66,6 +66,7 @@ public class SheriffPkStateRoom extends AbstractStateRoom {
                 roomState.getSheriffRecord().addSheriffTime();
             }
             seatInfo.setAlive(false);
+            //TODO 还没结算前一晚，且警上自爆要吞毒
             resolveNightComing();
         } else {
             throw new RuntimeException("该角色无法自爆");

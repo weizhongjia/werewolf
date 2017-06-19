@@ -37,6 +37,8 @@ public class RoomStateData {
     boolean sheriff = false;
     private SheriffRecord sheriffRecord;
 
+    private int version = 0;
+
     public String getRoomCode() {
         return roomCode;
     }
@@ -203,5 +205,17 @@ public class RoomStateData {
 
     public void setSheriffRecord(SheriffRecord sheriffRecord) {
         this.sheriffRecord = sheriffRecord;
+    }
+
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
+    }
+
+    public void addVersion() {
+        this.version++;
     }
 }

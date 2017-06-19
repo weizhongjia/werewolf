@@ -13,6 +13,7 @@ import com.msh.room.exception.RoomBusinessException;
 import com.msh.room.model.role.CommonPlayer;
 import com.msh.room.model.role.PlayerRoleFactory;
 import com.msh.room.model.role.Roles;
+import com.msh.room.model.role.impl.AssignedPlayer;
 import com.msh.room.model.room.RoomState;
 
 import java.util.ArrayList;
@@ -111,6 +112,13 @@ public abstract class AbstractStateRoom implements RoomState {
      */
     protected void resolveGameEnding(JudgeEvent event) {
         this.roomState.setStatus(RoomStatus.GAME_OVER);
+        //计算积分
+        this.roomState.getPlayerSeatInfo().forEach(info -> {
+            AssignedPlayer player =
+                    (AssignedPlayer) PlayerRoleFactory.createPlayerInstance(this.roomState, info.getSeatNumber());
+            player.calculateScore();
+        });
+        //TODO 持久化游戏数据
     }
 
     /**
@@ -191,7 +199,6 @@ public abstract class AbstractStateRoom implements RoomState {
             } else {
                 //有竞选信息，但没有结果。说明狼人自爆，且还没有流失警徽。继续竞选
                 //如果有PK信息，说明狼人PK阶段自爆。再次PK
-                //TODO PK阶段自爆与竞选阶段自爆
                 if (sheriffRecord.getPkVotingRecord() != null) {
                     return RoomStatus.SHERIFF_PK;
                 }

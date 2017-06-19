@@ -47,6 +47,7 @@ public class CreatingStateRoom extends AbstractStateRoom {
         if (RoomStatus.CRATING.equals(roomState.getStatus()) || allPlayersReady()) {
             assignRoleCard();
             initRoleState();
+            //TODO 持久化角色GAME信息，获取GAME_ID
             roomState.setStatus(RoomStatus.CRATED);
         } else {
             throw new RoomBusinessException("房间目前状态还无法开始游戏");

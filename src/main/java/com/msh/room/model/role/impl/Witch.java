@@ -5,6 +5,8 @@ import com.msh.room.dto.response.PlayerDisplayInfo;
 import com.msh.room.dto.room.RoomStateData;
 import com.msh.room.dto.room.RoomStatus;
 import com.msh.room.dto.room.record.NightRecord;
+import com.msh.room.dto.room.result.GameResult;
+import com.msh.room.dto.room.seat.PlayerSeatInfo;
 import com.msh.room.exception.RoomBusinessException;
 
 /**
@@ -16,6 +18,15 @@ public class Witch extends AssignedPlayer {
     public Witch(RoomStateData roomState, int number) {
         super(roomState, number);
         alive = roomState.getPlaySeatInfoBySeatNumber(number).isAlive();
+    }
+
+    @Override
+    public void calculateScore() {
+        //TODO 女巫结算
+        if(GameResult.VILLAGERS_WIN.equals(roomState.getGameResult())){
+            PlayerSeatInfo seatInfo = roomState.getPlaySeatInfoBySeatNumber(this.number);
+            seatInfo.setFinalScore(5);
+        }
     }
 
     @Override
