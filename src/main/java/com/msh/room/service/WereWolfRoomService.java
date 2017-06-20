@@ -21,7 +21,8 @@ public class WereWolfRoomService {
     private RoomStateDataRepository dataRepository;
     @Autowired
     private RoomStateFactory roomFactory;
-    private RoomStateLockRepository lockRepository = new RoomStateLockRepository();
+    @Autowired
+    private RoomStateLockRepository lockRepository;
 
     public JudgeDisplayInfo resolveJudgeEvent(JudgeEvent event, String roomCode) {
         //房间锁

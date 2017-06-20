@@ -1,11 +1,14 @@
 package com.msh.room.cache;
 
+import org.springframework.stereotype.Component;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by zhangruiqian on 2017/6/18.
  */
+@Component
 //TODO 后续使用redis进行锁记录
 public class RoomStateLockRepository {
     private Map<String, RoomLock> lockCache = new ConcurrentHashMap<>();
