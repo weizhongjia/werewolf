@@ -1,6 +1,7 @@
 package com.msh.room;
 
 import com.msh.room.cache.RoomStateDataRepository;
+import com.msh.room.cache.RoomStateLockRepository;
 import com.msh.room.dto.event.JudgeEvent;
 import com.msh.room.dto.event.JudgeEventType;
 import com.msh.room.dto.event.PlayerEvent;
@@ -41,6 +42,7 @@ public class DaytimeTest {
         repository.putRoomStateData(roomCode, data);
         service.setDataRepository(repository);
         service.setRoomFactory(new RoomStateFactory());
+        service.setLockRepository(new RoomStateLockRepository());
         //create
         createRoom();
         //joinAll

@@ -70,4 +70,8 @@ public class WereWolfRoomService {
     public void setRoomFactory(RoomStateFactory roomFactory) {
         this.roomFactory = roomFactory;
     }
+
+    public void setLockRepository(RoomStateLockRepository lockRepository) {
+        this.lockRepository = lockRepository;
+    }
 }

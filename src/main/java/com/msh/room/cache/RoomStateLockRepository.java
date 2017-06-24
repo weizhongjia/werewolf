@@ -58,23 +58,23 @@ public class RoomStateLockRepository {
             }
         }
     }
-
-    public static void main(String[] args) {
-        RoomStateLockRepository roomStateLock = new RoomStateLockRepository();
-        String name = "abc";
-        final Integer[] number = {0};
-
-        Thread thread1 = new Thread(new CounterRunnable(roomStateLock, number, 1, name));
-        Thread thread2 = new Thread(new CounterRunnable(roomStateLock, number, 2, name));
-        Thread thread3 = new Thread(new CounterRunnable(roomStateLock, number, 3, name));
-        Thread thread4 = new Thread(new CounterRunnable(roomStateLock, number, 4, name));
-        Thread thread5 = new Thread(new CounterRunnable(roomStateLock, number, 5, name));
-        thread1.start();
-        thread2.start();
-        thread3.start();
-        thread4.start();
-        thread5.start();
-    }
+//
+//    public static void main(String[] args) {
+//        RoomStateLockRepository roomStateLock = new RoomStateLockRepository();
+//        String name = "abc";
+//        final Integer[] number = {0};
+//
+//        Thread thread1 = new Thread(new CounterRunnable(roomStateLock, number, 1, name));
+//        Thread thread2 = new Thread(new CounterRunnable(roomStateLock, number, 2, name));
+//        Thread thread3 = new Thread(new CounterRunnable(roomStateLock, number, 3, name));
+//        Thread thread4 = new Thread(new CounterRunnable(roomStateLock, number, 4, name));
+//        Thread thread5 = new Thread(new CounterRunnable(roomStateLock, number, 5, name));
+//        thread1.start();
+//        thread2.start();
+//        thread3.start();
+//        thread4.start();
+//        thread5.start();
+//    }
 }
 
 
