@@ -104,7 +104,9 @@ public class SheriffPkVotingStateRoom extends AbstractStateRoom {
     public PlayerDisplayInfo displayPlayerInfo(int seatNumber) {
         PlayerDisplayInfo displayInfo = playerCommonDisplayInfo(seatNumber);
         if (!roomState.getSheriffRecord().lastPKVotingRecord().keySet().contains(seatNumber)) {
-            if (!roomState.getSheriffRecord().isPKVoted(seatNumber)) {
+            //还没投票且还活着
+            if (!roomState.getSheriffRecord().isPKVoted(seatNumber) &&
+                    roomState.getPlaySeatInfoBySeatNumber(seatNumber).isAlive()) {
                 //隐藏投票信息
                 displayInfo.setSheriffRecord(copyNewSheriffRecord(displayInfo.getSheriffRecord()));
                 displayInfo.addAcceptableEventType(PlayerEventType.SHERIFF_PK_VOTE);
