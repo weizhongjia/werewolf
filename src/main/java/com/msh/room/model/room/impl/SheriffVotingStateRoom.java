@@ -97,7 +97,8 @@ public class SheriffVotingStateRoom extends AbstractStateRoom {
     public PlayerDisplayInfo displayPlayerInfo(int seatNumber) {
         PlayerDisplayInfo displayInfo = playerCommonDisplayInfo(seatNumber);
         if (!roomState.getSheriffRecord().getSheriffRegisterList().contains(seatNumber)) {
-            if (!roomState.getSheriffRecord().isVoted(seatNumber)) {
+            if (!roomState.getSheriffRecord().isVoted(seatNumber)
+                    && !roomState.getPlaySeatInfoBySeatNumber(seatNumber).isAlive()) {
                 //隐藏投票信息
                 displayInfo.setSheriffRecord(copyNewSheriffRecord(displayInfo.getSheriffRecord()));
                 displayInfo.addAcceptableEventType(PlayerEventType.SHERIFF_VOTE);

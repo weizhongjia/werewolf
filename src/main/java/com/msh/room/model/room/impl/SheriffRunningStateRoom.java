@@ -87,6 +87,12 @@ public class SheriffRunningStateRoom extends AbstractStateRoom {
     private void resolveSheriffVoting(JudgeEvent event) {
         SheriffRecord sheriffRecord = roomState.getSheriffRecord();
         Map<Integer, List<Integer>> votingRecord = sheriffRecord.getVotingRecord();
+        //死亡玩家先退选
+        votingRecord.keySet().forEach(i->{
+            if (!roomState.getPlaySeatInfoBySeatNumber(i).isAlive()){
+                sheriffRecord.unRegisterSheriff(i);
+            }
+        });
         //可投票人数
         int voteCount = roomState.getAliveCount() - sheriffRecord.getSheriffRegisterList().size();
         //无人可选或无人可投票
