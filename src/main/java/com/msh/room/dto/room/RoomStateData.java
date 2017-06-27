@@ -133,7 +133,7 @@ public class RoomStateData {
         return this.nightRecordList.get(size - 1);
     }
 
-    //没有则为0 死亡则为-1
+    //没有则为0
     public int getAliveSeatByRole(Roles role) {
         for (PlayerSeatInfo seatInfo : playerSeatInfo) {
             if (seatInfo.getRole().equals(role)) {
