@@ -100,7 +100,9 @@ public class Witch extends AssignedPlayer {
     public void poison(Integer witchPoisonNumber) {
         if (roomState.getWitchState().isPoisonAvailable()) {
             roomState.getLastNightRecord().setWitchPoisoned(witchPoisonNumber);
-            roomState.getWitchState().setPoisonAvailable(false);
+            if (witchPoisonNumber != 0) {
+                roomState.getWitchState().setPoisonAvailable(false);
+            }
         } else {
             throw new RoomBusinessException("女巫无法使用毒药");
         }
