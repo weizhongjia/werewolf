@@ -8,6 +8,7 @@ import com.msh.room.dto.room.record.NightRecord;
 import com.msh.room.dto.room.result.GameResult;
 import com.msh.room.dto.room.seat.PlayerSeatInfo;
 import com.msh.room.exception.RoomBusinessException;
+import com.msh.room.model.role.Roles;
 
 /**
  * Created by zhangruiqian on 2017/5/7.
@@ -23,7 +24,7 @@ public class Witch extends AssignedPlayer {
     @Override
     public void calculateScore() {
         //TODO 女巫结算
-        if(GameResult.VILLAGERS_WIN.equals(roomState.getGameResult())){
+        if (GameResult.VILLAGERS_WIN.equals(roomState.getGameResult())) {
             PlayerSeatInfo seatInfo = roomState.getPlaySeatInfoBySeatNumber(this.number);
             seatInfo.setFinalScore(5);
         }
@@ -46,16 +47,18 @@ public class Witch extends AssignedPlayer {
     }
 
     public PlayerEventType getWitchNightEvent(NightRecord nightRecord) {
+        Integer wolfKilledSeat = nightRecord.getWolfKilledSeat();
+        PlayerSeatInfo wolfKillInfo = roomState.getPlaySeatInfoBySeatNumber(wolfKilledSeat);
         //女巫用药询问逻辑,此处逻辑仅限不能同时用两种药的情况.逻辑处理不太好，需要再做封装
-        if (nightRecord.getWolfKilledSeat() == null) {
+        if (wolfKilledSeat == null) {
             return null;
         }
-        //女巫本轮未询问用解药==null，女巫解药可用: WITCH_SAVE
-        if (nightRecord.getWitchSaved() == null && roomState.getWitchState().isAntidoteAvailable()) {
+        //女巫本轮未询问用解药==null，女巫解药可用，狼人没有杀女巫: WITCH_SAVE
+        if (nightRecord.getWitchSaved() == null && roomState.getWitchState().isAntidoteAvailable() && !Roles.WITCH.equals(wolfKillInfo.getRole())) {
             return PlayerEventType.WITCH_SAVE;
         }
-        //女巫本轮未询问用解药==null，女巫解药不可用 FAKE_WITCH_SAVE
-        else if (nightRecord.getWitchSaved() == null && !roomState.getWitchState().isAntidoteAvailable()) {
+        //女巫本轮未询问用解药==null，(女巫解药不可用 或者 狼杀了女巫) FAKE_WITCH_SAVE
+        else if (nightRecord.getWitchSaved() == null && (!roomState.getWitchState().isAntidoteAvailable() || Roles.WITCH.equals(wolfKillInfo.getRole()))) {
             return PlayerEventType.FAKE_WITCH_SAVE;
         }
         //女巫本轮已询问用解药,但未用==0，但未询问用毒药==null，女巫毒药可用 WITCH_POISON
@@ -82,7 +85,7 @@ public class Witch extends AssignedPlayer {
                 throw new RoomBusinessException("女巫无法自救");
             }
             //空刀时相当于没救
-            if (witchSave && killedSeat!=0) {
+            if (witchSave && killedSeat != 0) {
                 roomState.getLastNightRecord().setWitchSaved(killedSeat);
                 roomState.getWitchState().setAntidoteAvailable(false);
             } else {
