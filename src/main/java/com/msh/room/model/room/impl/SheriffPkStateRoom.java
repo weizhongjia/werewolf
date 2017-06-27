@@ -43,16 +43,16 @@ public class SheriffPkStateRoom extends AbstractStateRoom {
     }
 
     private void resolveSheriffPkVoting(JudgeEvent event) {
-        SheriffRecord sheriffRecord = roomState.getSheriffRecord();
-        //由于狼人自爆，导致PK无对手
-        if (sheriffRecord.lastPKVotingRecord().size() == 1) {
-            sheriffRecord.lastPKVotingRecord().keySet().forEach(seatNumber -> {
-                sheriffRecord.setSheriff(seatNumber);
-            });
-            resolveNightComing();
-        } else {
-            roomState.setStatus(RoomStatus.SHERIFF_PK_VOTING);
-        }
+//        SheriffRecord sheriffRecord = roomState.getSheriffRecord();
+//        //由于狼人自爆，导致PK无对手
+//        if (sheriffRecord.lastPKVotingRecord().size() == 1) {
+//            sheriffRecord.lastPKVotingRecord().keySet().forEach(seatNumber -> {
+//                sheriffRecord.setSheriff(seatNumber);
+//            });
+//            roomState.setStatus(RoomStatus.DAYTIME);
+//        } else {
+        roomState.setStatus(RoomStatus.SHERIFF_PK_VOTING);
+//        }
     }
 
     private void resolveWereWolfExplode(JudgeEvent event) {

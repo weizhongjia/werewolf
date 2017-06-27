@@ -199,7 +199,7 @@ public abstract class AbstractStateRoom implements RoomState {
             } else {
                 //有竞选信息，但没有结果。说明狼人自爆，且还没有流失警徽。继续竞选
                 //如果有PK信息，说明狼人PK阶段自爆。再次PK
-                if (sheriffRecord.getPkVotingRecord() != null) {
+                if (sheriffRecord.getPkVotingRecord() != null && sheriffRecord.getPkVotingRecord().size() > 0) {
                     return RoomStatus.SHERIFF_PK;
                 }
                 return RoomStatus.SHERIFF_RUNNING;
