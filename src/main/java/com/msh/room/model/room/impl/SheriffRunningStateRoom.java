@@ -66,9 +66,9 @@ public class SheriffRunningStateRoom extends AbstractStateRoom {
 
             Werewolves werewolves = (Werewolves) PlayerRoleFactory.createPlayerInstance(roomState, seatNumber);
             werewolves.explode();
-            calculateNightInfo();
             //狼人自爆的房间状态
             roomState.setStatus(RoomStatus.WOLF_EXPLODE);
+            calculateNightInfo();
         } else {
             throw new RuntimeException("该角色无法自爆");
         }
