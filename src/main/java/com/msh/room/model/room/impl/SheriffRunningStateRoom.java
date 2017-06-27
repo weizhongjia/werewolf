@@ -30,6 +30,9 @@ public class SheriffRunningStateRoom extends AbstractStateRoom {
     public RoomStateData resolveJudgeEvent(JudgeEvent event) {
         filterJudgeEventType(event);
         switch (event.getEventType()) {
+            case SHERIFF_UNREGISTER:
+                resolveUnregister(event);
+                break;
             case SHERIFF_VOTEING:
                 resolveSheriffVoting(event);
                 break;
@@ -44,6 +47,13 @@ public class SheriffRunningStateRoom extends AbstractStateRoom {
                 break;
         }
         return roomState;
+    }
+
+    private void resolveUnregister(JudgeEvent event) {
+        Integer seatNumber = event.getUnregisterSheriff();
+        if (roomState.getSheriffRecord().getVotingRecord().keySet().contains(seatNumber)) {
+            roomState.getSheriffRecord().unRegisterSheriff(seatNumber);
+        }
     }
 
     private void resolveWereWolfExplode(JudgeEvent event) {
@@ -98,6 +108,9 @@ public class SheriffRunningStateRoom extends AbstractStateRoom {
     @Override
     public JudgeDisplayInfo displayJudgeInfo() {
         JudgeDisplayInfo displayInfo = judgeCommonDisplayInfo();
+        if (roomState.getSheriffRecord().getVotingRecord().size() > 0) {
+            displayInfo.addAcceptableEventType(JudgeEventType.SHERIFF_UNREGISTER);
+        }
         //可以触发上警投票
         displayInfo.addAcceptableEventType(JudgeEventType.SHERIFF_VOTEING);
         //警上发言狼人自爆,由法官操作

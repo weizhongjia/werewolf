@@ -41,6 +41,8 @@ public enum JudgeEventType {
     SHERIFF_VOTEING,
     //开始警长PK投票
     SHERIFF_PK_VOTEING,
+    //警上退选
+    SHERIFF_UNREGISTER,
     //警徽移交
     SHERIFF_SWITCH,
 

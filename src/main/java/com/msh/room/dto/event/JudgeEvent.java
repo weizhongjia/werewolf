@@ -24,6 +24,8 @@ public class JudgeEvent {
     private Integer witchPoisonNumber;
     //如果由法官操作竞选者，可以使用SheriffRunning事件包装该数据
     private List<Integer> sheriffApplyList;
+    //退水玩家
+    private Integer unregisterSheriff;
     //猎人开枪
     private Integer hunterShoot;
     //警徽移交
@@ -146,5 +148,13 @@ public class JudgeEvent {
 
     public void setMoronShow(Boolean moronShow) {
         this.moronShow = moronShow;
+    }
+
+    public Integer getUnregisterSheriff() {
+        return unregisterSheriff;
+    }
+
+    public void setUnregisterSheriff(Integer unregisterSheriff) {
+        this.unregisterSheriff = unregisterSheriff;
     }
 }
