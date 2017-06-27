@@ -145,21 +145,22 @@ public class NightStateRoom extends AbstractStateRoom {
             displayInfo.addAcceptableEventType(type);
         } else if (nightRecord.getWitchSaved() == null || nightRecord.getWitchPoisoned() == null) {
             int witchNumber = roomState.getAliveSeatByRole(Roles.WITCH);
-            //女巫已死
-            if (witchNumber < 0) {
+            //女巫已死或没有女巫
+            if (witchNumber <= 0) {
                 if (nightRecord.getWitchSaved() == null)
                     displayInfo.addAcceptableEventType(JudgeEventType.FAKE_WITCH_SAVE);
                 else if (nightRecord.getWitchPoisoned() == null)
                     displayInfo.addAcceptableEventType(JudgeEventType.FAKE_WITCH_POISON);
-            }
-            Witch witch = (Witch) PlayerRoleFactory.createPlayerInstance(roomState, witchNumber);
-            //根据女巫的状态判断
-            PlayerDisplayInfo witchDisplayInfo = witch.displayInfo();
-            List<PlayerEventType> acceptableEventTypeList = witchDisplayInfo.getAcceptableEventTypeList();
-            //女巫有可能已经闭眼
-            if (acceptableEventTypeList.size() > 0) {
-                JudgeEventType judgeEventType = JudgeEventType.valueOf(acceptableEventTypeList.get(0).name());
-                displayInfo.addAcceptableEventType(judgeEventType);
+            }else{
+                Witch witch = (Witch) PlayerRoleFactory.createPlayerInstance(roomState, witchNumber);
+                //根据女巫的状态判断
+                PlayerDisplayInfo witchDisplayInfo = witch.displayInfo();
+                List<PlayerEventType> acceptableEventTypeList = witchDisplayInfo.getAcceptableEventTypeList();
+                //女巫有可能已经闭眼
+                if (acceptableEventTypeList.size() > 0) {
+                    JudgeEventType judgeEventType = JudgeEventType.valueOf(acceptableEventTypeList.get(0).name());
+                    displayInfo.addAcceptableEventType(judgeEventType);
+                }
             }
 
         } else if (!nightRecord.isHunterNotified()) {
