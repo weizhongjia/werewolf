@@ -6,19 +6,14 @@ import com.msh.room.dto.event.PlayerEvent;
 import com.msh.room.dto.response.JudgeDisplayInfo;
 import com.msh.room.dto.response.PlayerDisplayInfo;
 import com.msh.room.dto.room.RoomStateData;
-import com.msh.room.dto.room.RoomStatus;
-import com.msh.room.dto.room.seat.PlayerSeatInfo;
-import com.msh.room.model.role.PlayerRoleFactory;
-import com.msh.room.model.role.Roles;
-import com.msh.room.model.role.impl.Werewolves;
 
 import java.util.ArrayList;
 
 /**
- * Created by zhangruiqian on 2017/5/25.
+ * Created by zhangruiqian on 2017/6/27.
  */
-public class DaytimeStateRoom extends AbstractStateRoom {
-    public DaytimeStateRoom(RoomStateData data) {
+public class WolfExplodeStateRoom extends AbstractStateRoom {
+    public WolfExplodeStateRoom(RoomStateData data) {
         super(data);
     }
 
@@ -26,11 +21,8 @@ public class DaytimeStateRoom extends AbstractStateRoom {
     public RoomStateData resolveJudgeEvent(JudgeEvent event) {
         filterJudgeEventType(event);
         switch (event.getEventType()) {
-            case DAYTIME_VOTING:
-                resolveDaytimeVoting(event);
-                break;
-            case WEREWOLVES_EXPLODE:
-                resolveWereWolfExplode(event);
+            case NIGHT_COMING:
+                resolveNightComing();
                 break;
             case GAME_ENDING:
                 resolveGameEnding(event);
@@ -45,36 +37,10 @@ public class DaytimeStateRoom extends AbstractStateRoom {
         return roomState;
     }
 
-    private void resolveWereWolfExplode(JudgeEvent event) {
-        Integer seatNumber = event.getExplodeWereWolf();
-        PlayerSeatInfo seatInfo = roomState.getPlaySeatInfoBySeatNumber(seatNumber);
-        if (seatInfo.isAlive() && Roles.WEREWOLVES.equals(seatInfo.getRole())) {
-            Werewolves werewolves = (Werewolves) PlayerRoleFactory.createPlayerInstance(roomState, seatNumber);
-            werewolves.explode();
-            //多加一个狼人自爆房间状态
-            roomState.setStatus(RoomStatus.WOLF_EXPLODE);
-        } else {
-            throw new RuntimeException("该角色无法自爆");
-        }
-    }
-
-
-    /**
-     * 开始投票事件
-     *
-     * @param event
-     */
-    private void resolveDaytimeVoting(JudgeEvent event) {
-        //开始投票
-        this.roomState.setStatus(RoomStatus.VOTING);
-    }
-
     @Override
     public JudgeDisplayInfo displayJudgeInfo() {
         JudgeDisplayInfo displayInfo = judgeCommonDisplayInfo();
-        displayInfo.addAcceptableEventType(JudgeEventType.DAYTIME_VOTING);
-        //白天狼人自爆,由法官操作
-        displayInfo.addAcceptableEventType(JudgeEventType.WEREWOLVES_EXPLODE);
+        displayInfo.addAcceptableEventType(JudgeEventType.NIGHT_COMING);
         //白天阶段可以结束游戏
         if (roomState.getGameResult() != null) {
             displayInfo.setAcceptableEventTypes(new ArrayList<>());
@@ -93,6 +59,8 @@ public class DaytimeStateRoom extends AbstractStateRoom {
     @Override
     public PlayerDisplayInfo displayPlayerInfo(int seatNumber) {
         PlayerDisplayInfo displayInfo = playerCommonDisplayInfo(seatNumber);
+        //添加白天记录
+        displayInfo.setDaytimeRecord(roomState.getLastDaytimeRecord());
         return displayInfo;
     }
 }

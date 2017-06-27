@@ -43,6 +43,8 @@ public class RoomStateFactory {
                 return new HunterShootStateRoom(data);
             case MORON_TIME:
                 return new MoronTimeState(data);
+            case WOLF_EXPLODE:
+                return new WolfExplodeStateRoom(data);
             case GAME_OVER:
                 return new GameOverStateTime(data);
             default:

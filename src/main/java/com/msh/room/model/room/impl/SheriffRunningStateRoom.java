@@ -8,9 +8,12 @@ import com.msh.room.dto.response.JudgeDisplayInfo;
 import com.msh.room.dto.response.PlayerDisplayInfo;
 import com.msh.room.dto.room.RoomStateData;
 import com.msh.room.dto.room.RoomStatus;
+import com.msh.room.dto.room.record.DaytimeRecord;
 import com.msh.room.dto.room.record.SheriffRecord;
 import com.msh.room.dto.room.seat.PlayerSeatInfo;
+import com.msh.room.model.role.PlayerRoleFactory;
 import com.msh.room.model.role.Roles;
+import com.msh.room.model.role.impl.Werewolves;
 
 import java.util.List;
 import java.util.Map;
@@ -50,16 +53,22 @@ public class SheriffRunningStateRoom extends AbstractStateRoom {
             if (roomState.getSheriffRecord().getSheriffRunningTime() > 0) {
                 //已经有一轮自爆，则流失警徽
                 roomState.getSheriffRecord().setSheriff(0);
-            }else{
+            } else {
                 //该位置的退水
                 if (roomState.getSheriffRecord().getVotingRecord().containsKey(seatNumber)) {
                     roomState.getSheriffRecord().unRegisterSheriff(seatNumber);
                 }
                 roomState.getSheriffRecord().addSheriffTime();
             }
-            seatInfo.setAlive(false);
-            //TODO 还没结算前一晚，且警上自爆要吞毒
-            resolveNightComing();
+            //添加白天记录
+            DaytimeRecord daytimeRecord = new DaytimeRecord();
+            roomState.addDaytimeRecord(daytimeRecord);
+
+            Werewolves werewolves = (Werewolves) PlayerRoleFactory.createPlayerInstance(roomState, seatNumber);
+            werewolves.explode();
+            calculateNightInfo();
+            //狼人自爆的房间状态
+            roomState.setStatus(RoomStatus.WOLF_EXPLODE);
         } else {
             throw new RuntimeException("该角色无法自爆");
         }

@@ -43,7 +43,7 @@ public class Hunter extends AssignedPlayer {
     @Override
     public void calculateScore() {
         //TODO 猎人结算
-        if(GameResult.VILLAGERS_WIN.equals(roomState.getGameResult())){
+        if (GameResult.VILLAGERS_WIN.equals(roomState.getGameResult())) {
             PlayerSeatInfo seatInfo = roomState.getPlaySeatInfoBySeatNumber(this.number);
             seatInfo.setFinalScore(5);
         }
@@ -77,6 +77,8 @@ public class Hunter extends AssignedPlayer {
         }
         roomState.setStatus(roomState.getHunterState().getNextStatus());
         roomState.getHunterState().setShootNumber(number);
+        //记录白天信息
+        roomState.getLastDaytimeRecord().setHunterShoot(number);
         return roomState;
     }
 

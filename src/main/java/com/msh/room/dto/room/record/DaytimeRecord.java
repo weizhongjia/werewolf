@@ -1,6 +1,7 @@
 package com.msh.room.dto.room.record;
 
 import com.msh.room.exception.RoomBusinessException;
+import io.swagger.models.auth.In;
 
 import java.util.*;
 
@@ -9,8 +10,12 @@ import java.util.*;
  */
 public class DaytimeRecord {
     private Map<Integer, List<Integer>> votingRecord;
-    //TODO 白天有猎人,应该是一个list
+    //被投票死的
     private Integer diedNumber;
+    //白天有猎人,猎人带走的人
+    private Integer hunterShoot;
+    //自爆狼人
+    private Integer wolfExplode;
     private List<Map<Integer, List<Integer>>> pkVotingRecord;
 
     public DaytimeRecord() {
@@ -49,6 +54,22 @@ public class DaytimeRecord {
 
     public void setPkVotingRecord(List<Map<Integer, List<Integer>>> pkVotingRecord) {
         this.pkVotingRecord = pkVotingRecord;
+    }
+
+    public Integer getHunterShoot() {
+        return hunterShoot;
+    }
+
+    public void setHunterShoot(Integer hunterShoot) {
+        this.hunterShoot = hunterShoot;
+    }
+
+    public Integer getWolfExplode() {
+        return wolfExplode;
+    }
+
+    public void setWolfExplode(Integer wolfExplode) {
+        this.wolfExplode = wolfExplode;
     }
 
     public void addNewPk() {

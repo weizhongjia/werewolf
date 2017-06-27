@@ -429,4 +429,35 @@ public class SheriffTest {
         assertEquals(Integer.valueOf(seer), judgeDisplayInfo.getSheriffRecord().getSheriff());
         assertEquals(Arrays.asList(Integer.valueOf(seat)), judgeDisplayInfo.getNightRecord().getDiedNumber());
     }
+
+    @Test
+    public void testWolfExplode() {
+        simpleKillVillagerNight();
+        JudgeEvent dayTimeEvent = new JudgeEvent(roomCode, JudgeEventType.DAYTIME_COMING);
+        service.resolveJudgeEvent(dayTimeEvent, roomCode);
+        int villager = repository.loadRoomStateData(roomCode).getAliveSeatByRole(Roles.VILLAGER);
+        int wolf = repository.loadRoomStateData(roomCode).getAliveSeatByRole(Roles.WEREWOLVES);
+        PlayerSeatInfo villagerInfo = repository.loadRoomStateData(roomCode).getPlaySeatInfoBySeatNumber(villager);
+        PlayerSeatInfo wolfInfo = repository.loadRoomStateData(roomCode).getPlaySeatInfoBySeatNumber(wolf);
+        PlayerEvent villagerRegister
+                = new PlayerEvent(PlayerEventType.SHERIFF_REGISTER, villagerInfo.getSeatNumber(), villagerInfo.getUserID());
+        PlayerEvent wolfRegister
+                = new PlayerEvent(PlayerEventType.SHERIFF_REGISTER, wolfInfo.getSeatNumber(), wolfInfo.getUserID());
+
+        service.resolvePlayerEvent(villagerRegister, roomCode);
+        service.resolvePlayerEvent(wolfRegister, roomCode);
+        PlayerDisplayInfo playerDisplayInfo1 = service.getPlayerDisplayResult(roomCode, wolf);
+        playerDisplayInfo1.getSheriffRecord();
+
+        JudgeEvent sheriffRunning = new JudgeEvent(roomCode, JudgeEventType.SHERIFF_RUNNING);
+        service.resolveJudgeEvent(sheriffRunning, roomCode);
+
+        JudgeEvent explodeEvent = new JudgeEvent(roomCode, JudgeEventType.WEREWOLVES_EXPLODE);
+        explodeEvent.setExplodeWereWolf(wolf);
+        JudgeDisplayInfo judgeDisplayInfo = service.resolveJudgeEvent(explodeEvent, roomCode);
+
+
+        PlayerDisplayInfo playerDisplayInfo = service.getPlayerDisplayResult(roomCode, wolf);
+        playerDisplayInfo.getSheriffRecord();
+    }
 }

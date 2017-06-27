@@ -89,10 +89,13 @@ public abstract class AssignedPlayer extends CommonPlayer {
     }
 
     protected void resolveSheriffDie() {
-        if (roomState.isSheriff() && roomState.getSheriffRecord().getSheriff() == this.number) {
-            //暂存当前状态
-            roomState.getSheriffRecord().setAfterSwitchSheriff(roomState.getStatus());
-            roomState.setStatus(RoomStatus.SHERIFF_SWITCH_TIME);
+        if (roomState.isSheriff()) {
+            Integer sheriff = roomState.getSheriffRecord().getSheriff();
+            if (sheriff != null && this.number == sheriff) {
+                //暂存当前状态
+                roomState.getSheriffRecord().setAfterSwitchSheriff(roomState.getStatus());
+                roomState.setStatus(RoomStatus.SHERIFF_SWITCH_TIME);
+            }
         }
     }
 

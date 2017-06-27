@@ -33,6 +33,13 @@ public class Werewolves extends AssignedPlayer {
         }
     }
 
+    public void explode() {
+        roomState.getLastDaytimeRecord().setDiedNumber(number);
+        roomState.getLastDaytimeRecord().setWolfExplode(number);
+        PlayerSeatInfo seatInfo = roomState.getPlaySeatInfoBySeatNumber(number);
+        seatInfo.setAlive(false);
+        gameEndingCalculate();
+    }
 
     @Override
     public PlayerDisplayInfo displayInfo() {

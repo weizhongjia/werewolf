@@ -42,6 +42,8 @@ public enum RoomStatus {
 
     //白痴被票时间(白痴需要决定是否翻拍)
     MORON_TIME,
+    //狼人自爆
+    WOLF_EXPLODE,
 
     //游戏结束
     GAME_OVER,;

@@ -155,7 +155,7 @@ public abstract class AbstractStateRoom implements RoomState {
         }
     }
 
-    private void calculateNightInfo() {
+    protected void calculateNightInfo() {
         NightRecord lastNightRecord = roomState.getLastNightRecord();
         List<Integer> dieList = new ArrayList();
         Integer wolfKilledSeat = lastNightRecord.getWolfKilledSeat();
