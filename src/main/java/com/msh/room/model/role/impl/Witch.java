@@ -48,17 +48,17 @@ public class Witch extends AssignedPlayer {
 
     public PlayerEventType getWitchNightEvent(NightRecord nightRecord) {
         Integer wolfKilledSeat = nightRecord.getWolfKilledSeat();
-        PlayerSeatInfo wolfKillInfo = roomState.getPlaySeatInfoBySeatNumber(wolfKilledSeat);
+
         //女巫用药询问逻辑,此处逻辑仅限不能同时用两种药的情况.逻辑处理不太好，需要再做封装
         if (wolfKilledSeat == null) {
             return null;
         }
         //女巫本轮未询问用解药==null，女巫解药可用，狼人没有杀女巫: WITCH_SAVE
-        if (nightRecord.getWitchSaved() == null && roomState.getWitchState().isAntidoteAvailable() && !Roles.WITCH.equals(wolfKillInfo.getRole())) {
+        if (nightRecord.getWitchSaved() == null && roomState.getWitchState().isAntidoteAvailable() && !wolfKilledSeat.equals(number)) {
             return PlayerEventType.WITCH_SAVE;
         }
         //女巫本轮未询问用解药==null，(女巫解药不可用 或者 狼杀了女巫) FAKE_WITCH_SAVE
-        else if (nightRecord.getWitchSaved() == null && (!roomState.getWitchState().isAntidoteAvailable() || Roles.WITCH.equals(wolfKillInfo.getRole()))) {
+        else if (nightRecord.getWitchSaved() == null && (!roomState.getWitchState().isAntidoteAvailable() || wolfKilledSeat.equals(number))) {
             return PlayerEventType.FAKE_WITCH_SAVE;
         }
         //女巫本轮已询问用解药,但未用==0，但未询问用毒药==null，女巫毒药可用 WITCH_POISON
