@@ -64,7 +64,7 @@ public class ProcessTest {
         service.resolveJudgeEvent(completeEvent, roomCode);
     }
 
-    private void simpleKillVillagerNight() {
+    private void simpleKillVillagerNight(boolean save) {
         //天黑
         JudgeEvent nightComingEvent = new JudgeEvent(roomCode, JudgeEventType.NIGHT_COMING);
         service.resolveJudgeEvent(nightComingEvent, roomCode);
@@ -82,9 +82,14 @@ public class ProcessTest {
         service.resolveJudgeEvent(seerVerifyEvent, roomCode);
         //没救
         JudgeEvent witchSaveEvent = new JudgeEvent(roomCode, JudgeEventType.WITCH_SAVE);
-        witchSaveEvent.setWitchSave(false);
+        witchSaveEvent.setWitchSave(save);
         service.resolveJudgeEvent(witchSaveEvent, roomCode);
-        JudgeEvent witchPoisonEvent = new JudgeEvent(roomCode, JudgeEventType.WITCH_POISON);
+        JudgeEvent witchPoisonEvent;
+        if (!save) {
+            witchPoisonEvent = new JudgeEvent(roomCode, JudgeEventType.WITCH_POISON);
+        } else {
+            witchPoisonEvent = new JudgeEvent(roomCode, JudgeEventType.FAKE_WITCH_POISON);
+        }
         //也没毒
         witchPoisonEvent.setWitchPoisonNumber(0);
         service.resolveJudgeEvent(witchPoisonEvent, roomCode);
@@ -96,19 +101,25 @@ public class ProcessTest {
 
     @Test
     public void testWholeProcessWithoutSheriff() {
-        simpleKillVillagerNight();
+        simpleKillVillagerNight(false);
         daytimeVote();
-        simpleKillVillagerNight();
+        simpleKillVillagerNight(false);
         daytimeVote();
-        simpleKillVillagerNight();
+        simpleKillVillagerNight(false);
         daytimeVote();
-        simpleKillVillagerNight();
-//        daytimeVote(room);
-        JudgeEvent daytimeEvent = new JudgeEvent(roomCode, JudgeEventType.DAYTIME_COMING);
-        service.resolveJudgeEvent(daytimeEvent, roomCode);
+        simpleKillVillagerNight(true);
+        daytimeVote();
+//        JudgeEvent daytimeEvent = new JudgeEvent(roomCode, JudgeEventType.DAYTIME_COMING);
+//        service.resolveJudgeEvent(daytimeEvent, roomCode);
         JudgeDisplayInfo judgeDisplayResult = service.getJudgeDisplayResult(roomCode);
         assertEquals(Arrays.asList(JudgeEventType.GAME_ENDING, JudgeEventType.RESTART_GAME, JudgeEventType.DISBAND_GAME),
                 judgeDisplayResult.getAcceptableEventTypes());
+        JudgeEvent judgeEvent = new JudgeEvent(roomCode, JudgeEventType.GAME_ENDING);
+        JudgeDisplayInfo judgeDisplayInfo = service.resolveJudgeEvent(judgeEvent, roomCode);
+        System.out.println(repository.loadRoomStateData(roomCode).getGameResult());
+        for (PlayerSeatInfo info : judgeDisplayInfo.getPlayerSeatInfoList()) {
+            System.out.println(info.getFinalScore() + ":" + info.getRole());
+        }
     }
 
     private void daytimeVote() {
