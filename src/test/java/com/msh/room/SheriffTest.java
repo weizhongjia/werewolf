@@ -138,7 +138,7 @@ public class SheriffTest {
         //此时为上警发言阶段
         assertEquals(RoomStatus.SHERIFF_RUNNING, judgeDisplayResult.getStatus());
         //法官可以发起上警投票
-        assertEquals(Arrays.asList(JudgeEventType.SHERIFF_VOTEING, JudgeEventType.WEREWOLVES_EXPLODE,
+        assertEquals(Arrays.asList(JudgeEventType.SHERIFF_UNREGISTER, JudgeEventType.SHERIFF_VOTEING, JudgeEventType.WEREWOLVES_EXPLODE,
                 JudgeEventType.RESTART_GAME, JudgeEventType.DISBAND_GAME),
                 judgeDisplayResult.getAcceptableEventTypes());
     }
