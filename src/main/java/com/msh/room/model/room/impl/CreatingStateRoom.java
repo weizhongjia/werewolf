@@ -87,7 +87,7 @@ public class CreatingStateRoom extends AbstractStateRoom {
         roomState.getPlayerSeatInfo().stream().forEach(seatInfo -> {
             int cardNum = 0;
             if (cardList.size() > 1) {
-                cardNum = random.nextInt(cardList.size() - 1);
+                cardNum = random.nextInt(cardList.size());
             }
             seatInfo.setRole(cardList.get(cardNum));
             cardList.remove(cardNum);
