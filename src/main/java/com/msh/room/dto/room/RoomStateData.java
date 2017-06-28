@@ -218,4 +218,12 @@ public class RoomStateData {
     public void addVersion() {
         this.version++;
     }
+
+    public List<PlayerSeatInfo> getPlayersByRoles(Roles role){
+        List<PlayerSeatInfo> playerList = new ArrayList<>();
+        this.playerSeatInfo.stream().filter(info -> role.equals(info.getRole())).forEach(info -> {
+            playerList.add(info);
+        });
+        return playerList;
+    }
 }
