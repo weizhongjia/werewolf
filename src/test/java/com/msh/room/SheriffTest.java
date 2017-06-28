@@ -12,7 +12,6 @@ import com.msh.room.dto.room.RoomStateData;
 import com.msh.room.dto.room.RoomStatus;
 import com.msh.room.dto.room.seat.PlayerSeatInfo;
 import com.msh.room.model.role.Roles;
-import com.msh.room.model.room.RoomState;
 import com.msh.room.model.room.RoomStateFactory;
 import com.msh.room.service.WereWolfRoomService;
 import org.junit.Assert;
