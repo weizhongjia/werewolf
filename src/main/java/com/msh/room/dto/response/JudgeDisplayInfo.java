@@ -4,11 +4,13 @@ import com.msh.room.dto.event.JudgeEventType;
 import com.msh.room.dto.room.record.DaytimeRecord;
 import com.msh.room.dto.room.record.NightRecord;
 import com.msh.room.dto.room.record.SheriffRecord;
+import com.msh.room.dto.room.result.GameResult;
 import com.msh.room.dto.room.seat.PlayerSeatInfo;
 import com.msh.room.dto.room.RoomStatus;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by zhangruiqian on 2017/5/3.
@@ -24,6 +26,8 @@ public class JudgeDisplayInfo {
     private DaytimeRecord daytimeRecord;
     //警长情况
     private SheriffRecord sheriffRecord;
+
+    private Map<String, List<Integer>> resultMap;
 
     //白痴是否已被投票
     private Boolean moronBeenVote;
@@ -111,5 +115,13 @@ public class JudgeDisplayInfo {
 
     public void setMoronBeenVote(Boolean moronBeenVote) {
         this.moronBeenVote = moronBeenVote;
+    }
+
+    public Map<String, List<Integer>> getResultMap() {
+        return resultMap;
+    }
+
+    public void setResultMap(Map<String, List<Integer>> resultMap) {
+        this.resultMap = resultMap;
     }
 }

@@ -107,10 +107,10 @@ public class ProcessTest {
         daytimeVote();
         simpleKillVillagerNight(false);
         daytimeVote();
-        simpleKillVillagerNight(true);
-        daytimeVote();
-//        JudgeEvent daytimeEvent = new JudgeEvent(roomCode, JudgeEventType.DAYTIME_COMING);
-//        service.resolveJudgeEvent(daytimeEvent, roomCode);
+        simpleKillVillagerNight(false);
+//        daytimeVote();
+        JudgeEvent daytimeEvent = new JudgeEvent(roomCode, JudgeEventType.DAYTIME_COMING);
+        service.resolveJudgeEvent(daytimeEvent, roomCode);
         JudgeDisplayInfo judgeDisplayResult = service.getJudgeDisplayResult(roomCode);
         assertEquals(Arrays.asList(JudgeEventType.GAME_ENDING, JudgeEventType.RESTART_GAME, JudgeEventType.DISBAND_GAME),
                 judgeDisplayResult.getAcceptableEventTypes());

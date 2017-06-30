@@ -21,6 +21,8 @@ public class PlayerDisplayInfo {
     private DaytimeRecord daytimeRecord;
     private SheriffRecord sheriffRecord;
 
+    private String gameResult;
+
     public PlayerDisplayInfo() {
     }
 
@@ -84,5 +86,13 @@ public class PlayerDisplayInfo {
 
     public void setSheriffRecord(SheriffRecord sheriffRecord) {
         this.sheriffRecord = sheriffRecord;
+    }
+
+    public String getGameResult() {
+        return gameResult;
+    }
+
+    public void setGameResult(String gameResult) {
+        this.gameResult = gameResult;
     }
 }
