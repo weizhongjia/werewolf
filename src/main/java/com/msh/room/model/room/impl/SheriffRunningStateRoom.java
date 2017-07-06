@@ -94,7 +94,7 @@ public class SheriffRunningStateRoom extends AbstractStateRoom {
             }
         });
         //可投票人数
-        int voteCount = roomState.getAliveCount() - sheriffRecord.getSheriffRegisterList().size();
+        int voteCount = roomState.getEnableVoteCount() - sheriffRecord.getSheriffRegisterList().size();
         //无人可选或无人可投票
         if (votingRecord.isEmpty() || voteCount == 0) {
             //直接流票

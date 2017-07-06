@@ -65,7 +65,7 @@ public class SheriffPkVotingStateRoom extends AbstractStateRoom {
         }
         Map<Integer, List<Integer>> lastPKRecord = sheriffRecord.lastPKVotingRecord();
         sheriffRecord.addPKVote(event.getSeatNumber(), voteNumber);
-        if (sheriffRecord.isPKVoteComplete(roomState.getAliveCount() - lastPKRecord.size())) {
+        if (sheriffRecord.isPKVoteComplete(roomState.getEnableVoteCount() - lastPKRecord.size())) {
             pkVoteResult();
         }
     }

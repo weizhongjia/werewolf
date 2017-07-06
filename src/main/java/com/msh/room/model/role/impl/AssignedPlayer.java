@@ -127,6 +127,10 @@ public abstract class AssignedPlayer extends CommonPlayer {
         displayInfo.setAcceptableEventTypeList(new ArrayList<>());
     }
 
+    @Override
+    public boolean voteEnable() {
+        return roomState.getPlaySeatInfoBySeatNumber(number).isAlive();
+    }
 
     abstract public void calculateScore();
 }

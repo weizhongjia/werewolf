@@ -130,6 +130,15 @@ public class Moron extends AssignedPlayer {
         }
     }
 
+    @Override
+
+    public boolean voteEnable() {
+        boolean alive = roomState.getPlaySeatInfoBySeatNumber(number).isAlive();
+        if (alive && roomState.getMoronState().isBeanVoted()) {
+            return false;
+        }
+        return alive;
+    }
 
     @Override
     public PlayerDisplayInfo displayInfo() {

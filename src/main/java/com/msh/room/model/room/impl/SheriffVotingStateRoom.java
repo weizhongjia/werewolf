@@ -65,7 +65,7 @@ public class SheriffVotingStateRoom extends AbstractStateRoom {
         }
         sheriffRecord.addVote(event.getSeatNumber(), voteNumber);
         //需投票人数 = 存活人数 - 上警人数
-        int voteCount = roomState.getAliveCount() - sheriffRecord.getSheriffRegisterList().size();
+        int voteCount = roomState.getEnableVoteCount() - sheriffRecord.getSheriffRegisterList().size();
         //投票结束
         if (sheriffRecord.isVoteComplete(voteCount)) {
             sheriffVoteResult();

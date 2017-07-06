@@ -25,4 +25,7 @@ public abstract class CommonPlayer {
 
     //被投票
     public abstract RoomStateData voted();
+
+    //能否投票
+    public abstract boolean voteEnable();
 }

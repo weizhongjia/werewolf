@@ -86,7 +86,7 @@ public class PKVotingStateRoom extends AbstractStateRoom {
         }
         Map<Integer, List<Integer>> lastPKRecord = lastDaytimeRecord.lastPKRecord();
         lastDaytimeRecord.addPKVote(event.getSeatNumber(), voteNumber);
-        if (lastDaytimeRecord.isPKVoteComplete(roomState.getAliveCount() - lastPKRecord.size())) {
+        if (lastDaytimeRecord.isPKVoteComplete(roomState.getEnableVoteCount() - lastPKRecord.size())) {
             return pkVoteResult();
         }
         return roomState;
@@ -130,18 +130,13 @@ public class PKVotingStateRoom extends AbstractStateRoom {
         PlayerDisplayInfo displayInfo = playerCommonDisplayInfo(seatNumber);
         Map<Integer, List<Integer>> pkRecord = roomState.getLastDaytimeRecord().lastPKRecord();
         if (!pkRecord.containsKey(seatNumber)
-                && this.roomState.getPlaySeatInfoBySeatNumber(seatNumber).isAlive()
+                && this.roomState.createPlayerInstance(seatNumber).voteEnable()
                 && !roomState.getLastDaytimeRecord().isPKVoted(seatNumber)) {
             displayInfo.addAcceptableEventType(PK_VOTE);
         }
         if (roomState.getLastDaytimeRecord().getDiedNumber() != null) {
             //如果已经投票死人(无论是否无人死亡)，说明投票有结果了.公布白天投票信息
             displayInfo.setDaytimeRecord(roomState.getLastDaytimeRecord());
-        }
-
-        if (Roles.MORON.equals(roomState.getPlaySeatInfoBySeatNumber(seatNumber).getRole())
-                && roomState.getMoronState().isBeanVoted()) {
-            displayInfo.getAcceptableEventTypeList().remove(PK_VOTE);
         }
         return displayInfo;
     }

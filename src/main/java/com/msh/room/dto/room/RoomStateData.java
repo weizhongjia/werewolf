@@ -8,6 +8,8 @@ import com.msh.room.dto.room.state.HunterState;
 import com.msh.room.dto.room.state.MoronState;
 import com.msh.room.dto.room.state.WitchState;
 import com.msh.room.exception.RoomBusinessException;
+import com.msh.room.model.role.CommonPlayer;
+import com.msh.room.model.role.PlayerRoleFactory;
 import com.msh.room.model.role.Roles;
 
 import java.util.ArrayList;
@@ -179,8 +181,13 @@ public class RoomStateData {
         return this.daytimeRecordList.get(size - 1);
     }
 
-    public int getAliveCount() {
-        return (int) this.playerSeatInfo.stream().filter(seatInfo -> seatInfo.isAlive()).count();
+    public int getEnableVoteCount() {
+        return (int) this.playerSeatInfo.stream()
+                .filter(seatInfo -> createPlayerInstance(seatInfo.getSeatNumber()).voteEnable()).count();
+    }
+
+    public CommonPlayer createPlayerInstance(int number) {
+        return PlayerRoleFactory.createPlayerInstance(this, number);
     }
 
     public String getGameResult() {
@@ -219,7 +226,7 @@ public class RoomStateData {
         this.version++;
     }
 
-    public List<PlayerSeatInfo> getPlayersByRoles(Roles role){
+    public List<PlayerSeatInfo> getPlayersByRoles(Roles role) {
         List<PlayerSeatInfo> playerList = new ArrayList<>();
         this.playerSeatInfo.stream().filter(info -> role.equals(info.getRole())).forEach(info -> {
             playerList.add(info);

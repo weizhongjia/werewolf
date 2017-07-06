@@ -42,4 +42,9 @@ public class UnAssignPlayer extends CommonPlayer {
     public RoomStateData voted() {
         return roomState;
     }
+
+    @Override
+    public boolean voteEnable() {
+        return false;
+    }
 }

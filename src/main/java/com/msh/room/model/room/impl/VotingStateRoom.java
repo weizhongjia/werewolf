@@ -89,7 +89,7 @@ public class VotingStateRoom extends AbstractStateRoom {
         lastDaytimeRecord.addVote(event.getSeatNumber(), voteNumber);
 
         //投票结束
-        if (lastDaytimeRecord.isDaytimeVoteComplete(roomState.getAliveCount())) {
+        if (lastDaytimeRecord.isDaytimeVoteComplete(roomState.getEnableVoteCount())) {
             return daytimeVoteResult();
         }
         return roomState;
@@ -128,18 +128,12 @@ public class VotingStateRoom extends AbstractStateRoom {
         PlayerDisplayInfo displayInfo = playerCommonDisplayInfo(seatNumber);
 
         if (!roomState.getLastDaytimeRecord().isDaytimeVoted(seatNumber)
-                && this.roomState.getPlaySeatInfoBySeatNumber(seatNumber).isAlive()) {
+                && this.roomState.createPlayerInstance(seatNumber).voteEnable()){
             displayInfo.addAcceptableEventType(DAYTIME_VOTE);
         } else if (roomState.getLastDaytimeRecord().getDiedNumber() != null) {
             //如果已经投票死人，说明投票有结果了.公布白天投票信息
             displayInfo.setDaytimeRecord(roomState.getLastDaytimeRecord());
         }
-
-        if (Roles.MORON.equals(roomState.getPlaySeatInfoBySeatNumber(seatNumber).getRole())
-                && roomState.getMoronState().isBeanVoted()) {
-            displayInfo.getAcceptableEventTypeList().remove(DAYTIME_VOTE);
-        }
-
         return displayInfo;
     }
 
