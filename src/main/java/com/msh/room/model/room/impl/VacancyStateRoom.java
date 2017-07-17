@@ -1,5 +1,9 @@
 package com.msh.room.model.room.impl;
 
+import com.msh.common.mapper.RaceMapper;
+import com.msh.common.mapper.RoomMapper;
+import com.msh.common.model.Race;
+import com.msh.common.model.Room;
 import com.msh.room.dto.event.JudgeEvent;
 import com.msh.room.dto.event.JudgeEventType;
 import com.msh.room.dto.event.PlayerEvent;
@@ -10,6 +14,7 @@ import com.msh.room.dto.room.RoomStatus;
 import com.msh.room.dto.room.seat.PlayerSeatInfo;
 import com.msh.room.exception.RoomBusinessException;
 import com.msh.room.model.role.Roles;
+import com.msh.util.SpringContextHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +52,9 @@ public class VacancyStateRoom extends AbstractStateRoom {
         roomState.setSheriff(event.isSheriffSwitch());
         //初始化座位
         roomState.setPlayerSeatInfo(initSeatInfo(event.getGameConfig()));
+        dataBaseService.resolveRaceId(roomState);
     }
+
 
     private List<PlayerSeatInfo> initSeatInfo(Map<Roles, Integer> gameConfig) {
         List playerInfoList = new ArrayList();

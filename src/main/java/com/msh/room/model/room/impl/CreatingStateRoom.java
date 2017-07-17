@@ -48,11 +48,13 @@ public class CreatingStateRoom extends AbstractStateRoom {
             assignRoleCard();
             initRoleState();
             //TODO 持久化角色GAME信息，获取GAME_ID
+            dataBaseService.saveGameInfo(roomState);
             roomState.setStatus(RoomStatus.CRATED);
         } else {
             throw new RoomBusinessException("房间目前状态还无法开始游戏");
         }
     }
+
 
     private void initRoleState() {
         if (roomState.getGameConfig().get(Roles.WITCH) == 1) {

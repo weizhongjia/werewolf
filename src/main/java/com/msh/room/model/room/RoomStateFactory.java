@@ -2,6 +2,8 @@ package com.msh.room.model.room;
 
 import com.msh.room.dto.room.RoomStateData;
 import com.msh.room.model.room.impl.*;
+import com.msh.room.service.DataBaseService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -9,46 +11,78 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class RoomStateFactory {
+    @Autowired
+    private DataBaseService dataBaseService;
+
     public RoomState createRoomInstance(RoomStateData data) {
+        RoomState roomState;
         switch (data.getStatus()) {
             case VACANCY:
-                return new VacancyStateRoom(data);
+                roomState = new VacancyStateRoom(data);
+                break;
             case CRATING:
-                return new CreatingStateRoom(data);
+                roomState = new CreatingStateRoom(data);
+                break;
             case CRATED:
-                return new CreatedStateRoom(data);
+                roomState = new CreatedStateRoom(data);
+                break;
             case NIGHT:
-                return new NightStateRoom(data);
+                roomState = new NightStateRoom(data);
+                break;
             case DAYTIME:
-                return new DaytimeStateRoom(data);
+                roomState = new DaytimeStateRoom(data);
+                break;
             case VOTING:
-                return new VotingStateRoom(data);
+                roomState = new VotingStateRoom(data);
+                break;
             case PK:
-                return new PKStateRoom(data);
+                roomState = new PKStateRoom(data);
+                break;
             case PK_VOTING:
-                return new PKVotingStateRoom(data);
+                roomState = new PKVotingStateRoom(data);
+                break;
             case SHERIFF_REGISTER:
-                return new SheriffRegisterStateRoom(data);
+                roomState = new SheriffRegisterStateRoom(data);
+                break;
             case SHERIFF_RUNNING:
-                return new SheriffRunningStateRoom(data);
+                roomState = new SheriffRunningStateRoom(data);
+                break;
             case SHERIFF_VOTING:
-                return new SheriffVotingStateRoom(data);
+                roomState = new SheriffVotingStateRoom(data);
+                break;
             case SHERIFF_PK:
-                return new SheriffPkStateRoom(data);
+                roomState = new SheriffPkStateRoom(data);
+                break;
             case SHERIFF_PK_VOTING:
-                return new SheriffPkVotingStateRoom(data);
+                roomState = new SheriffPkVotingStateRoom(data);
+                break;
             case SHERIFF_SWITCH_TIME:
-                return new SheriffSwitchTimeStateRoom(data);
+                roomState = new SheriffSwitchTimeStateRoom(data);
+                break;
             case HUNTER_SHOOT:
-                return new HunterShootStateRoom(data);
+                roomState = new HunterShootStateRoom(data);
+                break;
             case MORON_TIME:
-                return new MoronTimeState(data);
+                roomState = new MoronTimeState(data);
+                break;
             case WOLF_EXPLODE:
-                return new WolfExplodeStateRoom(data);
+                roomState = new WolfExplodeStateRoom(data);
+                break;
             case GAME_OVER:
-                return new GameOverStateTime(data);
+                roomState = new GameOverStateTime(data);
+                break;
             default:
                 return null;
         }
+        roomState.setDataService(dataBaseService);
+        return roomState;
+    }
+
+    /**
+     * 用于testUnit注入mock
+     * @param dataBaseService
+     */
+    public void setDataBaseService(DataBaseService dataBaseService) {
+        this.dataBaseService = dataBaseService;
     }
 }

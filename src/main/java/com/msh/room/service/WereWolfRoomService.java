@@ -23,6 +23,8 @@ public class WereWolfRoomService {
     private RoomStateFactory roomFactory;
     @Autowired
     private RoomStateLockRepository lockRepository;
+    @Autowired
+    private DataBaseService dataBaseService;
 
     public JudgeDisplayInfo resolveJudgeEvent(JudgeEvent event, String roomCode) {
         //房间锁
@@ -32,7 +34,8 @@ public class WereWolfRoomService {
             RoomStateData newData = roomInstance.resolveJudgeEvent(event);
             newData.addVersion();
             dataRepository.putRoomStateData(roomCode, newData);
-            //TODO 持久化记录Event + 版本号
+            //持久化记录Event + 版本号
+            dataBaseService.saveJudgeEvent(newData.getGameID(), event, newData.getVersion());
             return getJudgeDisplayResult(roomCode);
         }
     }
@@ -52,7 +55,8 @@ public class WereWolfRoomService {
             RoomStateData newData = roomInstance.resolvePlayerEvent(event);
             newData.addVersion();
             dataRepository.putRoomStateData(roomCode, newData);
-            //TODO 持久化记录Event + 版本号
+            //持久化记录Event + 版本号
+            dataBaseService.savePlayerEvent(newData.getGameID(), event, newData.getVersion());
             return getPlayerDisplayResult(roomCode, event.getSeatNumber());
         }
     }

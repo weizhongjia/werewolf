@@ -21,6 +21,8 @@ import java.util.Map;
  */
 public class RoomStateData {
     private String roomCode;
+    private String raceID;
+    private String gameID;
     private RoomStatus status;
     private List<PlayerSeatInfo> playerSeatInfo;
     private Map<Roles, Integer> gameConfig;
@@ -232,5 +234,21 @@ public class RoomStateData {
             playerList.add(info);
         });
         return playerList;
+    }
+
+    public String getRaceID() {
+        return raceID;
+    }
+
+    public void setRaceID(String raceID) {
+        this.raceID = raceID;
+    }
+
+    public String getGameID() {
+        return gameID;
+    }
+
+    public void setGameID(String gameID) {
+        this.gameID = gameID;
     }
 }

@@ -2,6 +2,7 @@ package com.msh.room;
 
 import com.msh.room.cache.RoomStateDataRepository;
 import com.msh.room.cache.RoomStateLockRepository;
+import com.msh.room.database.MockDataBaseService;
 import com.msh.room.dto.event.JudgeEvent;
 import com.msh.room.dto.event.JudgeEventType;
 import com.msh.room.dto.event.PlayerEvent;
@@ -39,7 +40,9 @@ public class SheriffTest {
         data.setStatus(RoomStatus.VACANCY);
         repository.putRoomStateData(roomCode, data);
         service.setDataRepository(repository);
-        service.setRoomFactory(new RoomStateFactory());
+        RoomStateFactory roomFactory = new RoomStateFactory();
+        roomFactory.setDataBaseService(new MockDataBaseService());
+        service.setRoomFactory(roomFactory);
         service.setLockRepository(new RoomStateLockRepository());
         //create
         createRoom();

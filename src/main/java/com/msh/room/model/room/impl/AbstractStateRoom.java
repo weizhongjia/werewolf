@@ -15,6 +15,7 @@ import com.msh.room.model.role.PlayerRoleFactory;
 import com.msh.room.model.role.Roles;
 import com.msh.room.model.role.impl.AssignedPlayer;
 import com.msh.room.model.room.RoomState;
+import com.msh.room.service.DataBaseService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,9 +26,20 @@ import java.util.List;
  */
 public abstract class AbstractStateRoom implements RoomState {
     protected RoomStateData roomState;
+    protected DataBaseService dataBaseService;
+
 
     public AbstractStateRoom(RoomStateData data) {
         this.roomState = data;
+    }
+
+    public DataBaseService getDataBaseService() {
+        return dataBaseService;
+    }
+
+    @Override
+    public void setDataService(DataBaseService service) {
+        this.dataBaseService = service;
     }
 
     /**
@@ -117,8 +129,10 @@ public abstract class AbstractStateRoom implements RoomState {
             AssignedPlayer player =
                     (AssignedPlayer) PlayerRoleFactory.createPlayerInstance(this.roomState, info.getSeatNumber());
             player.calculateScore();
+            //TODO 持久化游戏数据
+            dataBaseService.savePlayerScore(info.getUserID(),roomState.getGameID(),roomState.getRaceID(),info.getFinalScore());
         });
-        //TODO 持久化游戏数据
+
     }
 
     /**
