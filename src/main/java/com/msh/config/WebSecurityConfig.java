@@ -55,7 +55,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 // allow anonymous resource requests
                 .antMatchers("/werewolf/auth/**").permitAll()
-                .antMatchers("/werewolf/room/**").permitAll()
+                //.antMatchers("/werewolf/room/**").permitAll()
                 .antMatchers(
                         "/v2/api-docs",
                         "/configuration/ui",

@@ -47,6 +47,7 @@ public class DaytimeTest {
         roomFactory.setDataBaseService(new MockDataBaseService());
         service.setRoomFactory(roomFactory);
         service.setLockRepository(new RoomStateLockRepository());
+        service.setDataBaseService(new MockDataBaseService());
         //create
         createRoom();
         //joinAll

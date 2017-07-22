@@ -47,6 +47,7 @@ public class HunterTest {
         roomFactory.setDataBaseService(new MockDataBaseService());
         service.setRoomFactory(roomFactory);
         service.setLockRepository(new RoomStateLockRepository());
+        service.setDataBaseService(new MockDataBaseService());
 
         //create
         JudgeEvent createRoomEvent = new JudgeEvent(roomCode, JudgeEventType.CREATE_ROOM);

@@ -53,9 +53,10 @@ public class WerewolfAuthProvider implements AuthenticationProvider {
                 }else {
                     token.setHeadImgUrl(users.get(0).getHeadimgurl());
                 }
+                token.setOpenId(openId);
                 return token;
             } catch (WxErrorException e) {
-                logger.info("User trying google/login not already a registered user. Register Him !!");
+                logger.info("User trying google/login not already a registered user. Register Him !!", e);
                 return null;
             }
         } else {

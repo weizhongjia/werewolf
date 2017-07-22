@@ -1,6 +1,7 @@
 # config context path to "/" by setting an empty string
 server:
   contextPath:
+  port: 8080
 
 # JACKSON
 spring:
@@ -24,9 +25,9 @@ wechat:
     token: aa
     aesKey: bb
 druid:
-  url: jdbc:mysql://127.0.0.1:8001/werewolf
+  url: jdbc:mysql://werewolf.mrourou.com:3306/werewolf
   username: werewolf
-  password: 123456
+  password: pass1234
   initial-size: 1
   min-idle: 1
   max-active: 20
@@ -52,6 +53,7 @@ security:
       tokenName: access_token
       authenticationScheme: query
       clientAuthenticationScheme: form
+      url: http://werewolf.mrourou.com/#/
     resource:
       userInfoUri: https://api.weixin.qq.com/sns/userinfo
 

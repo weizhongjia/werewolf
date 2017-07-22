@@ -23,6 +23,7 @@ public class WereWolfRoomService {
     private RoomStateFactory roomFactory;
     @Autowired
     private RoomStateLockRepository lockRepository;
+
     @Autowired
     private DataBaseService dataBaseService;
 
@@ -77,5 +78,9 @@ public class WereWolfRoomService {
 
     public void setLockRepository(RoomStateLockRepository lockRepository) {
         this.lockRepository = lockRepository;
+    }
+
+    public void setDataBaseService(DataBaseService dataBaseService) {
+        this.dataBaseService = dataBaseService;
     }
 }
