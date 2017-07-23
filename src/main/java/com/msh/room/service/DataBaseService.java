@@ -9,6 +9,9 @@ import com.msh.room.dto.room.RoomStateData;
 import com.msh.room.exception.RoomBusinessException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import tk.mybatis.mapper.entity.Example;
+
+import java.util.List;
 
 /**
  * Created by zhangruiqian on 2017/7/13.
@@ -47,10 +50,12 @@ public class DataBaseService {
             throw new RoomBusinessException("没有这个房间，请联系运营人员创建房间");
         }
         long clubID = room.getClub();
-        Race raceParameter = new Race();
-        raceParameter.setClub(clubID);
-        Race race = raceMapper.selectOne(raceParameter);
-        if (race != null) {
+
+        Example example = new Example(Race.class);
+        example.createCriteria().andEqualTo("club", clubID);
+        List<Race> races = raceMapper.selectByExample(example);
+        if (races.size() > 0) {
+            Race race = races.get(0);
             roomState.setRaceID(String.valueOf(race.getId()));
         }
     }

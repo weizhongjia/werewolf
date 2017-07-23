@@ -36,7 +36,9 @@ public class WereWolfRoomService {
             newData.addVersion();
             dataRepository.putRoomStateData(roomCode, newData);
             //持久化记录Event + 版本号
-            dataBaseService.saveJudgeEvent(newData.getGameID(), event, newData.getVersion());
+            if (newData.getGameID() != null) {
+                dataBaseService.saveJudgeEvent(newData.getGameID(), event, newData.getVersion());
+            }
             return getJudgeDisplayResult(roomCode);
         }
     }
@@ -57,7 +59,9 @@ public class WereWolfRoomService {
             newData.addVersion();
             dataRepository.putRoomStateData(roomCode, newData);
             //持久化记录Event + 版本号
-            dataBaseService.savePlayerEvent(newData.getGameID(), event, newData.getVersion());
+            if (newData.getGameID() != null) {
+                dataBaseService.savePlayerEvent(newData.getGameID(), event, newData.getVersion());
+            }
             return getPlayerDisplayResult(roomCode, event.getSeatNumber());
         }
     }

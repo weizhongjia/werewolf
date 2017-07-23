@@ -2,11 +2,16 @@ package com.msh.common.model;
 
 
 import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import java.io.Serializable;
 
 public class Room implements Serializable {
 
     private static final long serialVersionUID = 2136991678011998629L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     private int club;

@@ -105,7 +105,7 @@ public class Seer extends AssignedPlayer {
             roomState.getNightRecordList().stream().forEach(
                     nightRecord -> {
                         Integer seerVerify = nightRecord.getSeerVerify();
-                        if (seerVerify != null) {
+                        if (seerVerify != null && seerVerify != 0) {
                             if (Roles.WEREWOLVES.equals(roomState.getPlaySeatInfoBySeatNumber(seerVerify).getRole())) {
                                 displayInfo.getPlayerSeatInfoList().get(seerVerify - 1).setRole(Roles.WEREWOLVES);
                             } else {
