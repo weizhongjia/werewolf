@@ -40,7 +40,9 @@ public class DataBaseService {
      * 查询获取当前房间号的比赛
      */
     public void resolveRaceId(RoomStateData roomState) {
-        Room room = roomMapper.selectByPrimaryKey(Integer.valueOf(roomState.getRoomCode()));
+        Room queryRoom = new Room();
+        queryRoom.setId(Integer.parseInt(roomState.getRoomCode()));
+        Room room = roomMapper.selectByPrimaryKey(queryRoom);
         if (room == null) {
             throw new RoomBusinessException("没有这个房间，请联系运营人员创建房间");
         }

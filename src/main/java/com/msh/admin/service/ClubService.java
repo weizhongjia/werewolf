@@ -28,4 +28,10 @@ public class ClubService {
         }
 
     }
+
+    public Club getClub(String id){
+        Club club = new Club();
+        club.setId(Long.parseLong(id));
+        return clubMapper.selectByPrimaryKey(club);
+    }
 }

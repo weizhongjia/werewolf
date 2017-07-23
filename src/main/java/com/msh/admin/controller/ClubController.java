@@ -35,5 +35,9 @@ public class ClubController {
         clubService.editClub(club);
         return ResponseEntity.ok("编辑成功");
     }
+    @RequestMapping(value = "club/_get", method = RequestMethod.GET)
+    public Club getClub (@RequestParam String id) {
+        return clubService.getClub(id);
+    }
 
 }
