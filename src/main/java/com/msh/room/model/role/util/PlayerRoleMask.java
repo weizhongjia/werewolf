@@ -18,6 +18,7 @@ public class PlayerRoleMask {
             playerSeatInfo.setSeatNumber(seatInfo.getSeatNumber());
             playerSeatInfo.setUserID(seatInfo.getUserID());
             playerSeatInfo.setRole(null);
+            playerSeatInfo.setFinalScore(seatInfo.getFinalScore());
             if (unmaskNumber.contains(seatInfo.getSeatNumber())) {
                 playerSeatInfo.setRole(seatInfo.getRole());
             }
