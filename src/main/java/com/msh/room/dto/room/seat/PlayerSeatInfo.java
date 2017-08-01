@@ -13,6 +13,10 @@ public class PlayerSeatInfo {
     //false 有人 true 空闲
     private boolean seatAvailable;
 
+    private String headImgUrl;
+
+    private String nickName;
+
     private int finalScore = 0;
 
     public PlayerSeatInfo(Integer seatNumber, boolean seatAvailable) {
@@ -58,6 +62,22 @@ public class PlayerSeatInfo {
 
     public void setSeatAvailable(boolean seatAvailable) {
         this.seatAvailable = seatAvailable;
+    }
+
+    public String getHeadImgUrl() {
+        return headImgUrl;
+    }
+
+    public void setHeadImgUrl(String headImgUrl) {
+        this.headImgUrl = headImgUrl;
+    }
+
+    public String getNickName() {
+        return nickName;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
     }
 
     public int getFinalScore() {

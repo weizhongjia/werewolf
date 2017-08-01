@@ -3,6 +3,7 @@ package com.msh.room.service;
 import com.google.gson.Gson;
 import com.msh.common.mapper.*;
 import com.msh.common.model.*;
+import com.msh.common.model.security.User;
 import com.msh.room.dto.event.JudgeEvent;
 import com.msh.room.dto.event.PlayerEvent;
 import com.msh.room.dto.room.RoomStateData;
@@ -28,6 +29,8 @@ public class DataBaseService {
     private EventMapper eventMapper;
     @Autowired
     private UserScoreDetailMapper userScoreDetailMapper;
+    @Autowired
+    private UserMapper userMapper;
 
     public void saveGameInfo(RoomStateData roomState) {
         Game game = new Game();
@@ -83,5 +86,11 @@ public class DataBaseService {
         scoreDetail.setUser(Long.valueOf(userID));
         scoreDetail.setFinalScore(finalScore);
         userScoreDetailMapper.insert(scoreDetail);
+    }
+
+    public User getUserByOpenId(String openId) {
+        User user = new User();
+        user.setOpenid(openId);
+        return userMapper.selectOne(user);
     }
 }

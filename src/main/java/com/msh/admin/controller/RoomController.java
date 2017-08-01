@@ -16,8 +16,8 @@ public class RoomController {
     private ClubRoomService clubRoomService;
 
     @RequestMapping(value = "room", method = RequestMethod.GET)
-    public List<Room> getRooms (@RequestParam int p, @RequestParam int ps) {
-        return clubRoomService.getRooms(p, ps);
+    public List<Room> getRooms () {
+        return clubRoomService.getRooms();
     }
 
     @RequestMapping(value = "room", method = RequestMethod.PUT)

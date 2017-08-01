@@ -11,7 +11,7 @@ public class User {
 
     private String nickname;
 
-    private Integer sex;
+    private String sex;
 
     private String city;
 
@@ -19,7 +19,7 @@ public class User {
 
     private String country;
 
-    private String headimgurl;
+    private String headImgUrl;
 
     @Column(name = "subscribe_time")
     private Integer subscribeTime;
@@ -107,14 +107,14 @@ public class User {
     /**
      * @return sex
      */
-    public Integer getSex() {
+    public String getSex() {
         return sex;
     }
 
     /**
      * @param sex
      */
-    public void setSex(Integer sex) {
+    public void setSex(String sex) {
         this.sex = sex;
     }
 
@@ -160,18 +160,12 @@ public class User {
         this.country = country;
     }
 
-    /**
-     * @return headimgurl
-     */
-    public String getHeadimgurl() {
-        return headimgurl;
+    public String getHeadImgUrl() {
+        return headImgUrl;
     }
 
-    /**
-     * @param headimgurl
-     */
-    public void setHeadimgurl(String headimgurl) {
-        this.headimgurl = headimgurl;
+    public void setHeadImgUrl(String headImgUrl) {
+        this.headImgUrl = headImgUrl;
     }
 
     /**

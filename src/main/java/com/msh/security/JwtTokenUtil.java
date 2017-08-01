@@ -41,7 +41,7 @@ public class JwtTokenUtil implements Serializable {
             final Claims claims = getClaimsFromToken(token);
             user.setOpenid((String)claims.get(CLAIM_KEY_OPENID));
             user.setUserName((String)claims.get(CLAIM_KEY_USERNAME));
-            user.setHeadimgurl((String)claims.get(CLAIM_KEY_HEADIMG));
+            user.setHeadImgUrl((String)claims.get(CLAIM_KEY_HEADIMG));
             return user;
         } catch (Exception e) {
             return null;

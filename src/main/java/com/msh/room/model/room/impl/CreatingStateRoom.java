@@ -1,5 +1,6 @@
 package com.msh.room.model.room.impl;
 
+import com.msh.common.model.security.User;
 import com.msh.room.dto.event.JudgeEvent;
 import com.msh.room.dto.event.JudgeEventType;
 import com.msh.room.dto.event.PlayerEvent;
@@ -12,6 +13,7 @@ import com.msh.room.dto.room.state.MoronState;
 import com.msh.room.dto.room.state.WitchState;
 import com.msh.room.exception.RoomBusinessException;
 import com.msh.room.model.role.Roles;
+import com.msh.room.service.DataBaseService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -145,10 +147,13 @@ public class CreatingStateRoom extends AbstractStateRoom {
         }
         PlayerSeatInfo seatInfo = roomState.getPlayerSeatInfo().get(event.getSeatNumber() - 1);
         if (seatInfo.isSeatAvailable() && seatInfo.getSeatNumber() == event.getSeatNumber()) {
+            User user = dataBaseService.getUserByOpenId(event.getUserID());
             seatInfo.setRole(Roles.UNASSIGN);
             seatInfo.setSeatAvailable(false);
             seatInfo.setAlive(true);
             seatInfo.setUserID(event.getUserID());
+            seatInfo.setHeadImgUrl(user.getHeadImgUrl());
+            seatInfo.setNickName(user.getNickname());
         } else {
             throw new RoomBusinessException("该座位已被占用，请联系法官");
         }

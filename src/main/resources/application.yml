@@ -25,7 +25,7 @@ wechat:
     token: aa
     aesKey: bb
 druid:
-  url: jdbc:mysql://werewolf.mrourou.com:3306/werewolf
+  url: jdbc:mysql://werewolf.mrourou.com:3306/werewolf?useUnicode=true&characterEncoding=utf8
   username: werewolf
   password: pass1234
   initial-size: 1

@@ -57,7 +57,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
             return new WerewolfAuthenticationToken(user.getUserName(), authorities);
         }else if (StringUtils.isNotEmpty(user.getOpenid())){
             authorities.add(new SimpleGrantedAuthority(AuthorityName.ROLE_USER.name()));
-            return new WerewolfAuthenticationToken(user.getOpenid(), user.getHeadimgurl(), authorities);
+            return new WerewolfAuthenticationToken(user.getOpenid(), user.getHeadImgUrl(), authorities);
         }else {
             return null;
         }

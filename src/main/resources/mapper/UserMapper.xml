@@ -8,11 +8,11 @@
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="openid" property="openid" jdbcType="VARCHAR" />
     <result column="nickname" property="nickname" jdbcType="VARCHAR" />
-    <result column="sex" property="sex" jdbcType="INTEGER" />
+    <result column="sex" property="sex" jdbcType="CHAR" />
     <result column="city" property="city" jdbcType="VARCHAR" />
     <result column="province" property="province" jdbcType="VARCHAR" />
     <result column="country" property="country" jdbcType="VARCHAR" />
-    <result column="headimgurl" property="headimgurl" jdbcType="VARCHAR" />
+    <result column="headImgUrl" property="headImgUrl" jdbcType="VARCHAR" />
     <result column="subscribe_time" property="subscribeTime" jdbcType="INTEGER" />
     <result column="remark" property="remark" jdbcType="VARCHAR" />
     <result column="groupid" property="groupid" jdbcType="VARCHAR" />

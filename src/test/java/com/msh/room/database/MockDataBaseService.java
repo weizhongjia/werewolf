@@ -1,5 +1,6 @@
 package com.msh.room.database;
 
+import com.msh.common.model.security.User;
 import com.msh.room.dto.event.JudgeEvent;
 import com.msh.room.dto.event.PlayerEvent;
 import com.msh.room.dto.room.RoomStateData;
@@ -29,5 +30,10 @@ public class MockDataBaseService extends DataBaseService{
     }
     @Override
     public void savePlayerScore(String userID, String gameID, String raceID, int finalScore) {
+    }
+
+    @Override
+    public User getUserByOpenId(String openId) {
+        return new User();
     }
 }

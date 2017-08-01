@@ -49,9 +49,9 @@ public class WerewolfAuthProvider implements AuthenticationProvider {
                     WxMpUser wxMpUser = wxMpService.oauth2getUserInfo(wxMpOAuth2AccessToken, null);
                     BeanUtils.copyProperties(wxMpUser, user);
                     userMapper.insert(user);
-                    token.setHeadImgUrl(user.getHeadimgurl());
+                    token.setHeadImgUrl(user.getHeadImgUrl());
                 }else {
-                    token.setHeadImgUrl(users.get(0).getHeadimgurl());
+                    token.setHeadImgUrl(users.get(0).getHeadImgUrl());
                 }
                 token.setOpenId(openId);
                 return token;

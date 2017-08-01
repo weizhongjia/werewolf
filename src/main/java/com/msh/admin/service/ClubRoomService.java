@@ -14,8 +14,7 @@ public class ClubRoomService {
     @Autowired
     private RoomMapper roomMapper;
 
-    public List<Room> getRooms (int p, int ps) {
-        RowBounds rowBounds = new RowBounds(p * ps, ps);
+    public List<Room> getRooms () {
         return roomMapper.selectAll();
     }
 

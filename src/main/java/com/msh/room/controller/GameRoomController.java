@@ -5,7 +5,9 @@ import com.msh.room.dto.event.PlayerEvent;
 import com.msh.room.dto.response.JudgeDisplayInfo;
 import com.msh.room.dto.response.PlayerDisplayInfo;
 import com.msh.room.service.WereWolfRoomService;
+import com.msh.security.WerewolfAuthenticationToken;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -28,8 +30,8 @@ public class GameRoomController {
     public PlayerDisplayInfo pushPlayerEvent(@PathVariable("roomCode") String roomCode,
                                              @PathVariable("number") String number,
                                              @RequestBody PlayerEvent event) {
-        //此处需获取用户名
-        //event.setUserID(userID);
+        WerewolfAuthenticationToken token = (WerewolfAuthenticationToken)SecurityContextHolder.getContext().getAuthentication();
+        event.setUserID(token.getOpenId());
         event.setSeatNumber(Integer.valueOf(number));
         return wereWolfRoomService.resolvePlayerEvent(event, roomCode);
     }
